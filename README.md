@@ -13,7 +13,7 @@ This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.
 * ROS Kinetic
 * Movidius Neural Compute Stick (NCS)
 * Movidius Neural Compute (MvNC) SDK
-* USB Camera, e.g. Realsense camera or standard USB camera
+* USB Camera, e.g. Realsense ZR300 camera or standard USB camera
 
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
@@ -29,8 +29,8 @@ After that, make sure you can find graph data in ```/opt/NCS/ncapi/networks``` a
   ```Shell
   sudo apt-get install ros-kinetic-usb-cam
   ```
-  2. Realsense camera  
-  Install Realsense camera package ([guide](http://wiki.ros.org/RealSense)).
+  2. Realsense ZR300 camera  
+  Install Realsense camera package ([guide](https://github.com/IntelRealSense/realsense_samples_ros)). Refer to [Realsense ROS WiKi](http://wiki.ros.org/RealSense) for more information.
   
 ## 4 Building and Installation
 ```Shell
@@ -57,7 +57,7 @@ Launch image viewer to show the inference result.
 ```Shell
 roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/image_raw"
 ```
-#### 5.1.2 NCS and Realsense Camera
+#### 5.1.2 NCS and Realsense ZR300 Camera
 Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
 ```Shell
 roslaunch movidius_ncs_launch ncs_realsense.launch
@@ -162,7 +162,9 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 |Age|[weights](https://dl.dropboxusercontent.com/u/38822310/age_net.caffemodel)|Not supported|
 
 ## 8 Known Issues
-*  Only absolute path of image file supported in image inference demo
+* Only absolute path of image file supported in image inference demo
+* Only test on Realsense ZR300 camera and Microsoft HD-300 USB camera
+
 ## 9 TODO
 *  Support multiple NCS devices
 *  Support more CNN models
