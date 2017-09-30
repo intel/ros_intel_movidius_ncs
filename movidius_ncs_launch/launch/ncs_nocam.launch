@@ -1,0 +1,44 @@
+<!--
+Copyright (c) 2017 Intel Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<launch> 
+  <arg name="manager"                     default="movidius_manager" />
+  <arg name="namespace"                   default="movidius_ncs_nodelet" />
+  <arg name="input_topic"                 default="/camera/color/image_raw" />
+  <arg name="output_topic"                default="classified_object" />
+  <arg name="device_index"                default="0" />
+  <arg name="log_level"                   default="1" />
+  <arg name="network_conf_path"           default="/opt/NCS/ncapi/networks/GoogLeNet" />
+  <arg name="top_n"                       default="3" />
+
+  <group ns="$(arg namespace)">
+      <node pkg="nodelet"
+              type="nodelet"
+              name="$(arg manager)"
+              args="manager"
+              output="screen" />
+
+      <include file="$(find movidius_ncs_launch)/launch/includes/ncs_stream.launch">
+          <arg name="manager"                   value="$(arg manager)" />
+          <arg name="input_topic"               value="$(arg input_topic)" />
+          <arg name="output_topic"              value="$(arg output_topic)" />
+          <arg name="device_index"              value="$(arg device_index)" />
+          <arg name="log_level"                 value="$(arg log_level)" />
+          <arg name="network_conf_path"         value="$(arg network_conf_path)" />
+          <arg name="top_n"                     value="$(arg top_n)" />
+      </include>
+   </group>
+</launch>
