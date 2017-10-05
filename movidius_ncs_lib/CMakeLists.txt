@@ -101,6 +101,10 @@ if(UNIX OR APPLE)
   set( CUDA_PROPAGATE_HOST_FLAGS OFF )
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
+
+  # Add x86 intrinsic compiler support
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 endif()
 
 # Install nodelet library
