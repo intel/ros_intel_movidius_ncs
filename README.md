@@ -18,7 +18,7 @@ This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
 * Create a catkin workspace ([guide](http://wiki.ros.org/catkin/Tutorials/create_a_workspace))
-* Install NCS SDK ([guide](https://developer.movidius.com/start/software-setup))  
+* Install NCS SDK ([guide](https://developer.movidius.com/start))
 * Create a symbol link in ```/opt``` to the installation path of NCS SDK ```<ncs-sdk-installation-path>```
 ```Shell
 sudo ln -s <ncs-sdk-installation-path> /opt/NCS
