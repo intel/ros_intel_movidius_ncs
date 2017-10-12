@@ -2,7 +2,7 @@
 
 ## 1 Introduction
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.  
-This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.com/discussion/98/latest-version-movidius-neural-compute-sdk), providing the following features in the latest release(v0.3.0):
+This project is a ROS wrapper for NC API of [NC SDK](https://movidius.github.io/ncsdk/), providing the following features in the latest release(v0.3.0):
 * A ROS service for classifying objects in a static image file
 * A ROS publisher for classifying objects in a video stream from a USB camera
 * Demo applications to show the capbilities of ROS service and publisher
@@ -18,12 +18,12 @@ This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
 * Create a catkin workspace ([guide](http://wiki.ros.org/catkin/Tutorials/create_a_workspace))
-* Install NCS SDK ([guide](https://developer.movidius.com/start/software-setup))  
-* Create a symbol link in ```/opt``` to the installation path of NCS SDK ```<ncs-sdk-installation-path>```
+* Install NC SDK [v1.09.00](https://github.com/movidius/ncsdk.git) ([NCS Quick Start](https://developer.movidius.com/start))  
+* Create a symbol link in ```/opt/movidius``` to the folder of ```example``` in NC SDK directory which is git-cloned from [github](https://github.com/movidius/ncsdk.git)
 ```Shell
-sudo ln -s <ncs-sdk-installation-path> /opt/NCS
+sudo ln -s <ncsdk-directory>/examples /opt/movidius/examples
 ```  
-After that, make sure you can find graph data in ```/opt/NCS/ncapi/networks``` and image data in ```/opt/NCS/ncapi/images```
+After that, make sure you can find graph data in ```/opt/movidius/examples/caffe``` or ```/opt/movidius/examples/tensorflow``` and image data in ```/opt/movidius/examples/data/images```
 * Install ROS package for different cameras as needed. e.g.
   1. Standard USB camera
   ```Shell
@@ -112,21 +112,21 @@ rosrun movidius_ncs_example movidius_ncs_example_image <image_path_to_be_inferre
 ```
 e.g.
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image /opt/NCS/ncapi/images/cat.jpg
+rosrun movidius_ncs_example movidius_ncs_example_image /opt/movidius/examples/data/images/cat.jpg
 ```
 ### 5.3 Choose Different CNN Models
 You can choose different CNN Models for inference through the argument of ```network_conf_path```. e.g.  
 Using Realsense camera
 ```Shell
 #one console
-roslaunch movidius_ncs_launch ncs_realsense.launch network_conf_path:="/opt/NCS/ncapi/networks/SqueezeNet/"
+roslaunch movidius_ncs_launch ncs_realsense.launch network_conf_path:="/opt/movidius/examples/caffe/SqueezeNet"
 #another console
 roslaunch movidius_ncs_launch ncs_stream_example.launch
 ```
 Using standard USB camera
 ```Shell
 #one console
-roslaunch movidius_ncs_launch ncs_usbcam.launch network_conf_path:="/opt/NCS/ncapi/networks/AlexNet/"
+roslaunch movidius_ncs_launch ncs_usbcam.launch network_conf_path:="/opt/movidius/examples/caffe/AlexNet"
 #another console
 roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/image_raw"
 ```
