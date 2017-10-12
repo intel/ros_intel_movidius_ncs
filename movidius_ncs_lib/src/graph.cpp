@@ -105,7 +105,7 @@ std::string Graph::getDebugInfo()
   char* debug_info;
   unsigned int length;
   int ret = mvncGetGraphOption(handle_,
-                               MVNC_DEBUGINFO,
+                               MVNC_DEBUG_INFO,
                                reinterpret_cast<void**>(&debug_info),
                                &length);
   ExceptionUtil::tryToThrowMvncException(ret);
@@ -119,7 +119,7 @@ float Graph::getTimeTaken()
   float* time_taken;
   unsigned int length;
   int ret = mvncGetGraphOption(handle_,
-                               MVNC_TIMETAKEN,
+                               MVNC_TIME_TAKEN,
                                reinterpret_cast<void**>(&time_taken),
                                &length);
   ExceptionUtil::tryToThrowMvncException(ret);

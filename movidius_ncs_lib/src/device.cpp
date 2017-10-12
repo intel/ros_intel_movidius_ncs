@@ -91,7 +91,7 @@ void Device::setLogLevel(LogLevel log_level)
 {
   int level = log_level;
   int ret = mvncSetDeviceOption(0,
-                                MVNC_LOGLEVEL,
+                                MVNC_LOG_LEVEL,
                                 static_cast<void*>(&level),
                                 sizeof(level));
   ExceptionUtil::tryToThrowMvncException(ret);
@@ -103,7 +103,7 @@ Device::LogLevel Device::getLogLevel()
   int level;
   unsigned int size_of_level = sizeof(level);
   int ret = mvncGetDeviceOption(handle_,
-                                MVNC_LOGLEVEL,
+                                MVNC_LOG_LEVEL,
                                 reinterpret_cast<void**>(&level),
                                 &size_of_level);
   ExceptionUtil::tryToThrowMvncException(ret);
@@ -132,7 +132,7 @@ void* Device::getHandle()
 void Device::find()
 {
   assert(handle_ == nullptr);
-  char name[MVNC_MAXNAMESIZE];
+  char name[MVNC_MAX_NAME_SIZE];
   int ret = mvncGetDeviceName(index_, name, sizeof(name));
   ExceptionUtil::tryToThrowMvncException(ret);
   name_ = name;
