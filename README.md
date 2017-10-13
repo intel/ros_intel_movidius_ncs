@@ -36,6 +36,7 @@ After that, make sure you can find graph data in ```/opt/NCS/ncapi/networks``` a
 ```Shell
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
+git checkout master
 cd ~/catkin_ws
 catkin_make
 catkin_make install
@@ -164,10 +165,12 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 ## 8 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on Realsense ZR300 camera and Microsoft HD-300 USB camera
+* Current v0.3.0 supporting NCSDK v1.07.06 is on master branch. devel branch is the development branch for the next release.
 
 ## 9 TODO
 *  Support multiple NCS devices
 *  Support more CNN models
+*  Support latest NCSDK
 
 
 ###### *For security issues, please send mail to xiaojun.huang@intel.com*
