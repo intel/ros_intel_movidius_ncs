@@ -18,6 +18,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+#if defined(__i386__) || defined(__x86_64__)
+#include <x86intrin.h>
+#endif
 #include <ros/console.h>
 #include "movidius_ncs_lib/exception.h"
 #include "movidius_ncs_lib/exception_util.h"
@@ -84,7 +87,11 @@ ItemsPtr Graph::getDetectedItems()
   for (size_t index = 0; index < length / 2; ++index)
   {
     float fp32;
+#if defined(__i386__) || defined(__x86_64__)
+    fp32 = _cvtsh_ss(probabilities[index]);
+#else
     Tensor::fp16tofp32(&fp32, probabilities[index]);
+#endif
     Item item;
     item.category = categories_[index];
     item.probability = fp32;

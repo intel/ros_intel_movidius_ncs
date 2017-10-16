@@ -16,6 +16,9 @@
 
 #include <utility>
 #include <vector>
+#if defined(__i386__) || defined(__x86_64__)
+#include <x86intrin.h>
+#endif
 #include <opencv2/core/mat.hpp>
 #include "movidius_ncs_lib/tensor.h"
 
@@ -48,15 +51,22 @@ Tensor::Tensor(const cv::Mat& original,
     uint16_t r16;
     uint16_t g16;
     uint16_t b16;
+#if defined(__i386__) || defined(__x86_64__)
+    r16 = _cvtss_sh(r32, 0);
+    g16 = _cvtss_sh(g32, 0);
+    b16 = _cvtss_sh(b32, 0);
+#else
     Tensor::fp32tofp16(&r16, r32);
     Tensor::fp32tofp16(&g16, g32);
     Tensor::fp32tofp16(&b16, b32);
+#endif
     tensor_.push_back(r16);
     tensor_.push_back(g16);
     tensor_.push_back(b16);
   }
 }
 
+#if !defined(__i386__) && !defined(__x86_64__)
 void Tensor::fp16tofp32(float* __restrict out, uint16_t in)
 {
   uint32_t t1;
@@ -91,4 +101,6 @@ void Tensor::fp32tofp16(uint16_t* __restrict out, float in)
   t1 |= t2;
   *(reinterpret_cast<uint16_t*>(out)) = t1;
 }
+#endif // !defined(__i386__) && !defined(__x86_64__)
+
 }   // namespace movidius_ncs_lib
