@@ -32,16 +32,18 @@ namespace movidius_ncs_lib
 {
 Ncs::Ncs(int device_index,
          Device::LogLevel log_level,
-         const std::string& network_conf_path)
+         const std::string& graph_file_path,
+         const std::string& category_file_path,
+         const int network_dimension,
+         const std::vector<float>& mean)
   : device_(nullptr)
   , graph_(nullptr)
   , device_index_(device_index)
   , log_level_(log_level)
-  , base_path_(appendPathSeparator(network_conf_path))
-  , graph_file_path_(base_path_ + "/graph")
-  , stat_file_path_(base_path_ + "/stat.txt")
-  , inputsize_file_path_(base_path_ + "/inputsize.txt")
-  , categories_file_path_(base_path_ + "/categories.txt")
+  , graph_file_path_(graph_file_path)
+  , category_file_path_(category_file_path)
+  , network_dimension_(network_dimension)
+  , mean_(mean)
 {
   init();
 }
@@ -59,8 +61,7 @@ ResultPtr Ncs::infer(cv::Mat image, uint32_t top_n)
     Tensor::Ptr tensor = std::make_shared<Tensor>(
                     image,
                     graph_->getMean(),
-                    graph_->getStddev(),
-                    std::pair<int, int>(graph_->getInputSize(), graph_->getInputSize()));
+                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()));
     Inference inference(top_n, tensor, graph_, device_);
     return inference.run();
   }
@@ -81,17 +82,17 @@ void Ncs::init()
 
 void Ncs::loadGraph()
 {
-  int inputsize = loadInputSize();
   std::vector<std::string> categories = loadCategories();
   std::string graph = getFileContent(graph_file_path_);
-  std::vector<float> mean;
-  std::vector<float> stddev;
-  loadStatistics(mean, stddev);
+  std::vector<float> scaled_mean;
+  for (auto &i : mean_)
+  {
+    scaled_mean.push_back(i * 255.0);
+  }
   graph_.reset(new Graph(device_,
                          graph,
-                         inputsize,
-                         mean,
-                         stddev,
+                         network_dimension_,
+                         scaled_mean,
                          categories));
 }
 
@@ -101,57 +102,11 @@ void Ncs::getDevice()
                            static_cast<Device::LogLevel>(log_level_)));
 }
 
-void Ncs::loadStatistics(std::vector<float>& mean,
-                         std::vector<float>& stddev)
-{
-  std::ifstream fs(stat_file_path_);
-  std::vector<float> vec;
-
-  if (!fs.is_open())
-  {
-    throw(errno);
-  }
-
-  float value;
-
-  while (!fs.eof())
-  {
-    fs >> value;
-    vec.push_back(value);
-  }
-
-  fs.close();
-
-  for (int i = 0; i < 3; i++)
-  {
-    mean.push_back(vec[i] * 255.0);
-    stddev.push_back(1.0 / (vec[i + 3] * 255.0));
-  }
-}
-
-int Ncs::loadInputSize()
-{
-  try
-  {
-    std::string content = getFileContent(inputsize_file_path_);
-    boost::trim_right(content);
-    return boost::lexical_cast<int>(content);
-  }
-  catch (int& e)
-  {
-    throw NcsInputSizeFileError();
-  }
-  catch (boost::bad_lexical_cast const&)
-  {
-    throw NcsInputSizeError();
-  }
-}
-
 std::vector<std::string> Ncs::loadCategories()
 {
   try
   {
-    std::string content = getFileContent(categories_file_path_);
+    std::string content = getFileContent(category_file_path_);
     std::vector<std::string> lines;
     splitIntoLines(content, lines);
     std::string first = lines[0];

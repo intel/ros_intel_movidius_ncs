@@ -32,15 +32,13 @@ namespace movidius_ncs_lib
 
 Graph::Graph(const std::shared_ptr<Device>& device,
              const std::string& graph_buf,
-             int input_size,
+             int network_dimension,
              const std::vector<float>& mean,
-             const std::vector<float>& stddev,
              const std::vector<std::string> categories)
   : device_(device)
   , graph_buf_(graph_buf)
-  , input_size_(input_size)
+  , network_dimension_(network_dimension)
   , mean_(mean)
-  , stddev_(stddev)
   , categories_(categories)
   , handle_(nullptr)
   , user_param_(nullptr)
@@ -112,7 +110,7 @@ std::string Graph::getDebugInfo()
   char* debug_info;
   unsigned int length;
   int ret = mvncGetGraphOption(handle_,
-                               MVNC_DEBUGINFO,
+                               MVNC_DEBUG_INFO,
                                reinterpret_cast<void**>(&debug_info),
                                &length);
   ExceptionUtil::tryToThrowMvncException(ret);
@@ -126,7 +124,7 @@ float Graph::getTimeTaken()
   float* time_taken;
   unsigned int length;
   int ret = mvncGetGraphOption(handle_,
-                               MVNC_TIMETAKEN,
+                               MVNC_TIME_TAKEN,
                                reinterpret_cast<void**>(&time_taken),
                                &length);
   ExceptionUtil::tryToThrowMvncException(ret);

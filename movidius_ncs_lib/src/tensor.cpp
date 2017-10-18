@@ -26,7 +26,6 @@ namespace movidius_ncs_lib
 {
 Tensor::Tensor(const cv::Mat& original,
                const std::vector<float>& mean,
-               const std::vector<float>& stddev,
                const std::pair<int, int>& size)
   : width_(size.first)
   , height_(size.second)
@@ -45,9 +44,9 @@ Tensor::Tensor(const cv::Mat& original,
 
   for (TensorIt it = converted.begin<cv::Vec3i>(); it != converted.end<cv::Vec3i>(); ++it)
   {
-    float r32 = ((*it)[0] - mean[0]) * stddev[0];
-    float g32 = ((*it)[1] - mean[1]) * stddev[1];
-    float b32 = ((*it)[2] - mean[2]) * stddev[2];
+    float r32 = ((*it)[0] - mean[0]);
+    float g32 = ((*it)[1] - mean[1]);
+    float b32 = ((*it)[2] - mean[2]);
     uint16_t r16;
     uint16_t g16;
     uint16_t b16;
@@ -101,6 +100,6 @@ void Tensor::fp32tofp16(uint16_t* __restrict out, float in)
   t1 |= t2;
   *(reinterpret_cast<uint16_t*>(out)) = t1;
 }
-#endif // !defined(__i386__) && !defined(__x86_64__)
+#endif  // !defined(__i386__) && !defined(__x86_64__)
 
 }   // namespace movidius_ncs_lib

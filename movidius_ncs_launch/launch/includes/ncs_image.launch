@@ -17,7 +17,12 @@ limitations under the License.
 <launch> 
   <arg name="device_index"                default="0" />
   <arg name="log_level"                   default="0" />
-  <arg name="network_conf_path"           default="/opt/NCS/ncapi/networks/GoogLeNet" />
+  <arg name="graph_file_path"             default="/opt/movidius/examples/caffe/GoogLeNet/graph" />
+  <arg name="category_file_path"          default="/opt/movidius/examples/data/ilsvrc12/categories.txt" />
+  <arg name="network_dimension"           default="224" />
+  <arg name="channel1_mean"               default="0.40787054" />
+  <arg name="channel2_mean"               default="0.45752458" />
+  <arg name="channel3_mean"               default="0.48109378" />
   <arg name="top_n"                       default="3" />
 
   <node pkg="movidius_ncs_image"
@@ -26,7 +31,12 @@ limitations under the License.
         output="screen">
       <param name="device_index"            value="$(arg device_index)" />
       <param name="log_level"               value="$(arg log_level)" />
-      <param name="network_conf_path"       value="$(arg network_conf_path)" />
+      <param name="graph_file_path"         value="$(arg graph_file_path)" />
+      <param name="category_file_path"      value="$(arg category_file_path)" />
+      <param name="network_dimension"       value="$(arg network_dimension)" />
+      <param name="channel1_mean"           value="$(arg channel1_mean)" />
+      <param name="channel2_mean"           value="$(arg channel2_mean)" />
+      <param name="channel3_mean"           value="$(arg channel3_mean)" />
       <param name="top_n"                   value="$(arg top_n)" />
   </node>
 </launch>

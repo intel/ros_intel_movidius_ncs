@@ -56,12 +56,12 @@ std::map<int, std::string> CODE2STR =
   }
   ,
   {
-    MVNC_MVCMDNOTFOUND,
+    MVNC_MVCMD_NOT_FOUND,
     "the file named MvNCAPI.mvcmd should be installed in the mvnc direcotry"
   }
   ,
   {
-    MVNC_NODATA,
+    MVNC_NO_DATA,
     "no data to return"
   }
   ,
@@ -71,19 +71,19 @@ std::map<int, std::string> CODE2STR =
   }
   ,
   {
-    MVNC_UNSUPPORTEDGRAPHFILE,
+    MVNC_UNSUPPORTED_GRAPH_FILE,
     "the graph file may have been created with an incompatible prior version of the Toolkit"
   }
   ,
   {
-    MVNC_MYRIADERROR,
+    MVNC_MYRIAD_ERROR,
     "an error has been reported by Movidius VPU"
   }
 };
 
 void ExceptionUtil::tryToThrowMvncException(int code)
 {
-  assert(MVNC_OK >= code && code >= MVNC_MYRIADERROR);
+  assert(MVNC_OK >= code && code >= MVNC_MYRIAD_ERROR);
 
   try
   {
@@ -114,12 +114,12 @@ void ExceptionUtil::tryToThrowMvncException(int code)
       throw MvncTimeout(msg);
     }
 
-    if (code == MVNC_MVCMDNOTFOUND)
+    if (code == MVNC_MVCMD_NOT_FOUND)
     {
       throw MvncMvCmdNotFound(msg);
     }
 
-    if (code == MVNC_NODATA)
+    if (code == MVNC_NO_DATA)
     {
       throw MvncNoData(msg);
     }
@@ -129,12 +129,12 @@ void ExceptionUtil::tryToThrowMvncException(int code)
       throw MvncGone(msg);
     }
 
-    if (code == MVNC_UNSUPPORTEDGRAPHFILE)
+    if (code == MVNC_UNSUPPORTED_GRAPH_FILE)
     {
       throw MvncUnsupportedGraphFile(msg);
     }
 
-    if (code == MVNC_MYRIADERROR)
+    if (code == MVNC_MYRIAD_ERROR)
     {
       throw MvncMyriadError(msg);
     }

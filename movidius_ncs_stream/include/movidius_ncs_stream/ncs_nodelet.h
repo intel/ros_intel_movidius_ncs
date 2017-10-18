@@ -18,12 +18,13 @@
 #define MOVIDIUS_NCS_STREAM_NCS_NODELET_H
 
 #include <string>
+#include <vector>
 
 #include <nodelet/nodelet.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 
-#include <movidius_ncs_lib/ncs.h>
+#include "movidius_ncs_lib/ncs.h"
 
 namespace movidius_ncs_stream
 {
@@ -48,7 +49,10 @@ private:
 
   int device_index_;
   int log_level_;
-  std::string network_conf_path_;
+  std::string graph_file_path_;
+  std::string category_file_path_;
+  int network_dimension_;
+  std::vector<float> mean_;
   int top_n_;
 };
 

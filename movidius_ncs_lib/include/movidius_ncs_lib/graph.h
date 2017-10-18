@@ -36,9 +36,8 @@ public:
 
   Graph(const Device::Ptr& device,
         const std::string& graph_file,
-        int input_size,
+        int network_dimension,
         const std::vector<float>& mean,
-        const std::vector<float>& stddev,
         const std::vector<std::string> categories_);
   ~Graph();
 
@@ -50,25 +49,20 @@ public:
   std::string getDebugInfo();
   void* getHandle();
 
-  int getInputSize() const
+  int getNetworkDim() const
   {
-    return input_size_;
+    return network_dimension_;
   }
   std::vector<float> getMean() const
   {
     return mean_;
   }
-  std::vector<float> getStddev() const
-  {
-    return stddev_;
-  }
 
 private:
   std::shared_ptr<Device> device_;
   std::string graph_buf_;
-  const int input_size_;
+  const int network_dimension_;
   const std::vector<float> mean_;
-  const std::vector<float> stddev_;
   const std::vector<std::string> categories_;
   void* handle_;
   void* user_param_;

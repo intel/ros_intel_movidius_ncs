@@ -21,7 +21,12 @@ limitations under the License.
   <arg name="output_topic" default="classified_object" />
   <arg name="device_index" default="0" />
   <arg name="log_level" default="1" />
-  <arg name="network_conf_path" default="/opt/NCS/ncapi/networks/GoogLeNet" />
+  <arg name="graph_file_path" default="/opt/movidius/examples/caffe/GoogLeNet/graph" />
+  <arg name="category_file_path" default="/opt/movidius/examples/data/ilsvrc12/categories.txt" />
+  <arg name="network_dimension" default="224" />
+  <arg name="channel1_mean" default="0.40787054" />
+  <arg name="channel2_mean" default="0.45752458" />
+  <arg name="channel3_mean" default="0.48109378" />
   <arg name="top_n" default="3" />
   <arg name="image_width" default="640" />
   <arg name="image_height" default="480" />
@@ -36,7 +41,12 @@ limitations under the License.
       <arg name="output_topic" value="$(arg output_topic)" />
       <arg name="device_index" value="$(arg device_index)" />
       <arg name="log_level" value="$(arg log_level)" />
-      <arg name="network_conf_path" value="$(arg network_conf_path)" />
+      <arg name="graph_file_path" value="$(arg graph_file_path)" />
+      <arg name="category_file_path" value="$(arg category_file_path)" />
+      <arg name="network_dimension" value="$(arg network_dimension)" />
+      <arg name="channel1_mean" value="$(arg channel1_mean)" />
+      <arg name="channel2_mean" value="$(arg channel2_mean)" />
+      <arg name="channel3_mean" value="$(arg channel3_mean)" />
       <arg name="top_n" value="$(arg top_n)" />
     </include>
   </group>
