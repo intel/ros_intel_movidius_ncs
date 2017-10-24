@@ -8,6 +8,12 @@ This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.
 * Demo applications to show the capbilities of ROS service and publisher
 * Support multiple [CNN models](#table2)
 
+There are 2 active branches in this project:
+* master - *stable branch*  
+  The latest version on it is v0.3.0 which supports NCSDK v1.07.06. master branch is only updated when every milestone release ready.
+* devel - *defualt branch*  
+  This branch is updated from time to time and maintain the latest code on it. Each pull request should be submitted based on devel branch. We will merge patches to master branch on every milestone release.  
+  
 ## 2 Prerequisite
 * An x86_64 computer running Ubuntu 16.04
 * ROS Kinetic
