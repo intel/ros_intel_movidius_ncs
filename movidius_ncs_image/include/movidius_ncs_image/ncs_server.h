@@ -18,10 +18,10 @@
 #define MOVIDIUS_NCS_IMAGE_NCS_SERVER_H
 
 #include <string>
+#include <vector>
 #include <ros/ros.h>
-
 #include <movidius_ncs_msgs/ClassifyObject.h>
-#include <movidius_ncs_lib/ncs.h>
+#include "movidius_ncs_lib/ncs.h"
 
 namespace movidius_ncs_image
 {
@@ -44,7 +44,10 @@ private:
 
   int device_index_;
   int log_level_;
-  std::string network_conf_path_;
+  std::string graph_file_path_;
+  std::string category_file_path_;
+  int network_dimension_;
+  std::vector<float> mean_;
   int top_n_;
 };
 }  // namespace movidius_ncs_image

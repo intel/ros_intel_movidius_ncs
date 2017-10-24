@@ -34,7 +34,6 @@ public:
 
   Tensor(const cv::Mat& image,
          const std::vector<float>& mean,
-         const std::vector<float>& stddev,
          const std::pair<int, int>& size);
 
   inline const uint16_t* raw() const

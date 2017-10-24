@@ -18,12 +18,12 @@ This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
 * Create a catkin workspace ([guide](http://wiki.ros.org/catkin/Tutorials/create_a_workspace))
-* Install NCS SDK [v1.07.06](https://ncsforum.movidius.com/discussion/94/movidius-nc-sdk-1-07-06) ([guide](https://ncsforum.movidius.com/uploads/editor/0j/ln0nd3psmp6q.pdf))
-* Create a symbol link in ```/opt``` to the installation path of NCS SDK ```<ncs-sdk-installation-path>```
+* Install NCSDK [v1.09.00](https://github.com/movidius/ncsdk/releases) ([github](https://github.com/movidius/ncsdk))
+* NCSDK should be installed in ```/opt/movidius``` by default. Create a symbol link in ```/opt/movidius``` to the supported CNN network from NCSDK release package.
 ```Shell
-sudo ln -s <ncs-sdk-installation-path> /opt/NCS
+sudo ln -s ncsdk/examples /opt/movidius/examples
 ```  
-After that, make sure you can find graph data in ```/opt/NCS/ncapi/networks``` and image data in ```/opt/NCS/ncapi/images```
+After that, make sure you can find graph data in ```/opt/movidius/examples/caffe``` or ```/opt/movidius/examples/tensorflow``` and image data in ```/opt/movidius/examples/data/images```
 * Install ROS package for different cameras as needed. e.g.
   1. Standard USB camera
   ```Shell
@@ -36,11 +36,15 @@ After that, make sure you can find graph data in ```/opt/NCS/ncapi/networks``` a
 ```Shell
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
-git checkout master
+git checkout devel
 cd ~/catkin_ws
 catkin_make
 catkin_make install
 source devel/setup.bash
+```
+Copy ```categories.txt``` from this project to NCSDK installation location.
+```Shell
+cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/categories.txt /opt/movidius/examples/data/ilsvrc12/
 ```
 
 ## 5 Running the Demo
@@ -83,7 +87,9 @@ rosrun <your-camera-pkg> <your-camera-node>
 ```
 e.g.
 ```Shell
+#launch ROS master
 roscore
+#launch camera node in another console
 rosrun usb_cam usb_cam_node
 ```
 Launch NCS nodelet and assign ```input_topic``` with the topic url of your rgb camera.
@@ -113,21 +119,21 @@ rosrun movidius_ncs_example movidius_ncs_example_image <image_path_to_be_inferre
 ```
 e.g.
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image /opt/NCS/ncapi/images/cat.jpg
+rosrun movidius_ncs_example movidius_ncs_example_image /opt/movidius/examples/data/images/cat.jpg
 ```
 ### 5.3 Choose Different CNN Models
 You can choose different CNN Models for inference through the argument of ```network_conf_path```. e.g.  
 Using Realsense camera
 ```Shell
 #one console
-roslaunch movidius_ncs_launch ncs_realsense.launch network_conf_path:="/opt/NCS/ncapi/networks/SqueezeNet/"
+roslaunch movidius_ncs_launch ncs_realsense.launch graph_file_path:="/opt/movidius/examples/caffe/SqueezeNet/graph"
 #another console
 roslaunch movidius_ncs_launch ncs_stream_example.launch
 ```
 Using standard USB camera
 ```Shell
 #one console
-roslaunch movidius_ncs_launch ncs_usbcam.launch network_conf_path:="/opt/NCS/ncapi/networks/AlexNet/"
+roslaunch movidius_ncs_launch ncs_usbcam.launch graph_file_path:="/opt/movidius/examples/caffe/AlexNet/graph"
 #another console
 roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/image_raw"
 ```
@@ -145,7 +151,12 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 |ncs|output_topic|/movidius_ncs_nodelet/classified_object|published topic of inference results|
 |ncs|device_index|0|ncs device index|
 |ncs|log_level|1|ncs log level|
-|ncs|network_conf_path|/opt/NCS/ncapi/networks/GoogLeNet|CNN model for inference|
+|ncs|graph_file_path|/opt/movidius/examples/caffe/GoogLeNet/graph|the path of CNN model graph file|
+|ncs|category_file_path|/opt/movidius/examples/data/ilsvrc12/categories.txt|object category list|
+|ncs|network_dimension|224|network dimension for input data|
+|ncs|channel1_mean|0.40787054|mean value of the first channel of image, defualt value is for ImageNet dataset|
+|ncs|channel2_mean|0.45752458|mean value of the second channel of image, defualt value is for ImageNet dataset|
+|ncs|channel3_mean|0.48109378|mean value of the third channel of image, defualt value is for ImageNet dataset|
 |ncs|top_n|3|the number of results to be shown|
 |realsense|color_width|1920|frame width|
 |realsense|color_height|1080|frame height|
