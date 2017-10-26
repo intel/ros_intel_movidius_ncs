@@ -2,16 +2,16 @@
 
 ## 1 Introduction
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.  
-This project is a ROS wrapper for NC API of [NCS SDK](https://ncsforum.movidius.com/discussion/98/latest-version-movidius-neural-compute-sdk), providing the following features in the latest release(v0.3.0):
+This project is a ROS wrapper for NC API of [NCSDK](https://ncsforum.movidius.com/discussion/98/latest-version-movidius-neural-compute-sdk), providing the following features in the latest release(v0.3.0):
 * A ROS service for classifying objects in a static image file
 * A ROS publisher for classifying objects in a video stream from a USB camera
-* Demo applications to show the capbilities of ROS service and publisher
+* Demo applications to show the capabilities of ROS service and publisher
 * Support multiple [CNN models](#table2)
 
 There are 2 active branches in this project:
 * master - *stable branch*  
   The latest version on it is v0.3.0 which supports NCSDK v1.07.06. master branch is only updated when every milestone release ready.
-* devel - *defualt branch*  
+* devel - *default branch*  
   This branch is updated from time to time and maintain the latest code on it. Each pull request should be submitted based on devel branch. We will merge patches to master branch on every milestone release.  
   
 ## 2 Prerequisite
@@ -19,7 +19,7 @@ There are 2 active branches in this project:
 * ROS Kinetic
 * Movidius Neural Compute Stick (NCS)
 * Movidius Neural Compute (MvNC) SDK
-* USB Camera, e.g. Realsense ZR300 camera or standard USB camera
+* RGB Camera, e.g. RealSense ZR300, RealSense D400 Series or standard USB camera
 
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
@@ -35,13 +35,25 @@ After that, make sure you can find graph data in ```/opt/movidius/examples/caffe
   ```Shell
   sudo apt-get install ros-kinetic-usb-cam
   ```
-  2. Realsense ZR300 camera  
-  Install Realsense camera package ([guide](https://github.com/IntelRealSense/realsense_samples_ros)). Refer to [Realsense ROS WiKi](http://wiki.ros.org/RealSense) for more information.
-  
+  2. RealSense ZR300 camera  
+  - Install RealSense camera package ([guide](https://github.com/IntelRealSense/realsense_samples_ros)). Refer to [Realsense ROS WiKi](http://wiki.ros.org/RealSense) for more information.
+      
+  3. RealSense D400 series camera  
+  - Install Intel® RealSense™ SDK 2.0 ([guide](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)). Refer [here](https://github.com/IntelRealSense/librealsense) for more details about Intel® RealSense™ SDK 2.0.  
+  - Install Intel® RealSense™ ROS ([guide](https://github.com/intel-ros/realsense))  
+  ```Shell
+  cd ~/catkin_ws/src
+  git clone https://github.com/intel-ros/realsense.git
+  cd  realsense
+  git checkout 2.0.0
+  cd ~/catkin_ws
+  catkin_make
+  ```  
 ## 4 Building and Installation
 ```Shell
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
+cd ros_intel_movidius_ncs
 git checkout devel
 cd ~/catkin_ws
 catkin_make
@@ -68,10 +80,10 @@ Launch image viewer to show the inference result.
 ```Shell
 roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/image_raw"
 ```
-#### 5.1.2 NCS and Realsense ZR300 Camera
+#### 5.1.2 NCS and RealSense ZR300 Camera
 Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_realsense.launch
+roslaunch movidius_ncs_launch ncs_realsense_zr300.launch
 ```
 Make sure you can get result from the topic of object classification.
 ```Shell
@@ -83,7 +95,22 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/camera/c
 #or
 roslaunch movidius_ncs_launch ncs_stream_example.launch
 ```
-#### 5.1.3 NCS and Other ROS Supported Camera
+#### 5.1.3 NCS and RealSense D400 Series Camera
+Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
+```Shell
+roslaunch movidius_ncs_launch ncs_realsense_d400.launch
+```
+Make sure you can get result from the topic of object classification.
+```Shell
+rostopic echo /movidius_ncs_nodelet/classified_object
+```
+Launch image viewer to show the inference result. You can launch it directly without setting ```camera_topic```, as its default value is ```/camera/color/image_raw```
+```Shell
+roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/camera/color/image_raw"
+#or
+roslaunch movidius_ncs_launch ncs_stream_example.launch
+```
+#### 5.1.4 NCS and Other ROS Supported Camera
 Launch your preferred camera node.
 ```Shell
 #launch ROS master
@@ -129,10 +156,10 @@ rosrun movidius_ncs_example movidius_ncs_example_image /opt/movidius/examples/da
 ```
 ### 5.3 Choose Different CNN Models
 You can choose different CNN Models for inference through the argument of ```network_conf_path```. e.g.  
-Using Realsense camera
+Using RealSense camera
 ```Shell
 #one console
-roslaunch movidius_ncs_launch ncs_realsense.launch graph_file_path:="/opt/movidius/examples/caffe/SqueezeNet/graph"
+roslaunch movidius_ncs_launch ncs_realsense_d400.launch graph_file_path:="/opt/movidius/examples/caffe/SqueezeNet/graph"
 #another console
 roslaunch movidius_ncs_launch ncs_stream_example.launch
 ```
@@ -181,7 +208,7 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 
 ## 8 Known Issues
 * Only absolute path of image file supported in image inference demo
-* Only test on Realsense ZR300 camera and Microsoft HD-300 USB camera
+* Only test on RealSense ZR300 camera, RealSense D400 series camera and Microsoft HD-300 USB camera
 * Current v0.3.0 supporting NCSDK v1.07.06 is on master branch. devel branch is the development branch for the next release.
 
 ## 9 TODO
