@@ -19,8 +19,8 @@ limitations under the License.
   <arg name="namespace" default="movidius_ncs_nodelet" />
   <arg name="input_topic" default="/camera/color/image_raw" />
   <arg name="output_topic" default="classified_object" />
-  <arg name="color_width" default="1920" />
-  <arg name="color_height" default="1080" />
+  <arg name="color_width" default="640" />
+  <arg name="color_height" default="480" />
   <arg name="device_index" default="0" />
   <arg name="log_level" default="1" />
   <arg name="graph_file_path" default="/opt/movidius/examples/caffe/GoogLeNet/graph" />
