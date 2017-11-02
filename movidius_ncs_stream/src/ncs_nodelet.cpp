@@ -80,18 +80,58 @@ void NcsImpl::getParameters()
 
   ROS_INFO_STREAM("use log_level = " << log_level_);
 
-  if (!pnh_.getParam("network_conf_path", network_conf_path_))
+  if (!pnh_.getParam("graph_file_path", graph_file_path_))
   {
-    ROS_WARN("param network_conf_path not set");
+    ROS_WARN("param graph_file_path not set, use default");
   }
 
-  if (!boost::filesystem::exists(network_conf_path_))
+  if (!boost::filesystem::exists(graph_file_path_))
   {
-    ROS_ERROR_STREAM("network_conf_path = " << network_conf_path_ << " not exists");
+    ROS_ERROR_STREAM("graph_file_path = " << graph_file_path_ << " not exists");
     throw std::exception();
   }
 
-  ROS_INFO_STREAM("use network_conf_path = " << network_conf_path_);
+  ROS_INFO_STREAM("use graph_file_path = " << graph_file_path_);
+
+  if (!pnh_.getParam("category_file_path", category_file_path_))
+  {
+    ROS_WARN("param category_file_path not set, use default");
+  }
+
+  if (!boost::filesystem::exists(category_file_path_))
+  {
+    ROS_ERROR_STREAM("category_file_path = " << category_file_path_ << " not exists");
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use category_file_path = " << category_file_path_);
+
+  if (!pnh_.getParam("network_dimension", network_dimension_))
+  {
+    ROS_WARN("param network_dimension not set, use default");
+  }
+
+  if (network_dimension_ < 0)
+  {
+    ROS_WARN_STREAM("invalid network_dimension=" << network_dimension_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use network_dimension = " << network_dimension_);
+
+  for (int i = 0; i < 3; i++)
+  {
+    std::ostringstream oss;
+    oss << "channel" << (i + 1) << "_mean";
+    std::string mean_param_name = oss.str();
+    float mean_val;
+    if (!pnh_.getParam(mean_param_name, mean_val))
+    {
+      ROS_WARN_STREAM("param " << mean_param_name << "not set, use default");
+    }
+    ROS_INFO_STREAM("use " << mean_param_name << "= " << mean_val);
+    mean_.push_back(mean_val);
+  }
 
   if (!pnh_.getParam("top_n", top_n_))
   {
@@ -111,7 +151,8 @@ void NcsImpl::init()
 {
   ROS_DEBUG("NcsImpl onInit");
   ncs_handle_ = std::make_shared<movidius_ncs_lib::Ncs>(device_index_, static_cast<Device::LogLevel>(log_level_),
-                                                        network_conf_path_);
+                                                        graph_file_path_, category_file_path_, network_dimension_,
+                                                        mean_);  
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
   sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NcsImpl::cbInfer, this);
   pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_object", 1);
@@ -119,6 +160,12 @@ void NcsImpl::init()
 
 void NcsImpl::cbInfer(const sensor_msgs::ImageConstPtr& image_msg)
 {
+  if (pub_.getNumSubscribers() == 0)
+  {
+    ROS_DEBUG_STREAM("skip inferring for no subscriber");
+    return;
+  }
+
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
   ResultPtr result = ncs_handle_->infer(cameraData, top_n_);

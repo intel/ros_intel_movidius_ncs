@@ -17,8 +17,10 @@ limitations under the License.
 <launch>
   <arg name="manager" default="movidius_manager" />
   <arg name="namespace" default="movidius_ncs_nodelet" />
-  <arg name="input_topic" default="/usb_cam/image_raw" />
+  <arg name="input_topic" default="/camera/color/image_raw" />
   <arg name="output_topic" default="classified_object" />
+  <arg name="color_width" default="1920" />
+  <arg name="color_height" default="1080" />
   <arg name="device_index" default="0" />
   <arg name="log_level" default="1" />
   <arg name="graph_file_path" default="/opt/movidius/examples/caffe/GoogLeNet/graph" />
@@ -28,9 +30,6 @@ limitations under the License.
   <arg name="channel2_mean" default="0.45752458" />
   <arg name="channel3_mean" default="0.48109378" />
   <arg name="top_n" default="3" />
-  <arg name="image_width" default="640" />
-  <arg name="image_height" default="480" />
-  <arg name="video_device" default="/dev/video0" />
 
   <group ns="$(arg namespace)">
     <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen" />
@@ -51,12 +50,8 @@ limitations under the License.
     </include>
   </group>
 
-  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
-    <param name="video_device" value="$(arg video_device)" />
-    <param name="image_width" value="$(arg image_width)" />
-    <param name="image_height" value="$(arg image_height)" />
-    <param name="pixel_format" value="yuyv" />
-    <param name="camera_frame_id" value="usb_cam" />
-    <param name="io_method" value="mmap"/>
-  </node>
+  <include file="$(find realsense_ros_camera)/launch/camera.launch">
+      <arg name="color_width" value="$(arg color_width)" />
+      <arg name="color_height" value="$(arg color_height)" />
+  </include>
 </launch>

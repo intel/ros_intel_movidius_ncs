@@ -34,7 +34,6 @@ public:
 
   Tensor(const cv::Mat& image,
          const std::vector<float>& mean,
-         const std::vector<float>& stddev,
          const std::pair<int, int>& size);
 
   inline const uint16_t* raw() const
@@ -46,8 +45,10 @@ public:
     return 3 * height_ * width_ * sizeof(uint16_t);
   }
 
+#if !defined(__i386__) && !defined(__x86_64__)
   static void fp32tofp16(uint16_t* __restrict out, float in);
   static void fp16tofp32(float* __restrict out, uint16_t in);
+#endif
 
 private:
   std::vector<uint16_t> tensor_;
