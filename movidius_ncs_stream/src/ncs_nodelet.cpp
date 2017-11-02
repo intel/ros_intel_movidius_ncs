@@ -164,6 +164,12 @@ void NcsImpl::init()
 
 void NcsImpl::cbInfer(const sensor_msgs::ImageConstPtr& image_msg)
 {
+  if (pub_.getNumSubscribers() == 0)
+  {
+    ROS_DEBUG_STREAM("skip inferring for no subscriber");
+    return;
+  }
+
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
   ResultPtr result = ncs_handle_->infer(cameraData, top_n_);
