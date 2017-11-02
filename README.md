@@ -54,7 +54,7 @@ After that, make sure you can find graph data in ```/opt/movidius/examples/caffe
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
 cd ros_intel_movidius_ncs
-git checkout devel
+git checkout master
 cd ~/catkin_ws
 catkin_make
 catkin_make install
