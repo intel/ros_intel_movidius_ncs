@@ -2,7 +2,7 @@
 
 ## 1 Introduction
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.  
-This project is a ROS wrapper for NC API of [NCSDK](https://ncsforum.movidius.com/discussion/98/latest-version-movidius-neural-compute-sdk), providing the following features in the latest release(v0.3.0):
+This project is a ROS wrapper for NC API of [NCSDK](https://ncsforum.movidius.com/discussion/98/latest-version-movidius-neural-compute-sdk), providing the following features:
 * A ROS service for classifying objects in a static image file
 * A ROS publisher for classifying objects in a video stream from a USB camera
 * Demo applications to show the capabilities of ROS service and publisher
@@ -10,7 +10,7 @@ This project is a ROS wrapper for NC API of [NCSDK](https://ncsforum.movidius.co
 
 There are 2 active branches in this project:
 * master - *stable branch*  
-  The latest version on it is v0.3.0 which supports NCSDK v1.07.06. master branch is only updated when every milestone release ready.
+  The latest version on it is v0.4.0 which supports NCSDK v1.09.00. master branch is only updated when every milestone release ready.
 * devel - *default branch*  
   This branch is updated from time to time and maintain the latest code on it. Each pull request should be submitted based on devel branch. We will merge patches to master branch on every milestone release.  
   
@@ -155,7 +155,7 @@ e.g.
 rosrun movidius_ncs_example movidius_ncs_example_image /opt/movidius/examples/data/images/cat.jpg
 ```
 ### 5.3 Choose Different CNN Models
-You can choose different CNN Models for inference through the argument of ```network_conf_path```. e.g.  
+You can choose different CNN Models for inference through the argument of ```graph_file_path```. e.g.  
 Using RealSense camera
 ```Shell
 #one console
@@ -191,8 +191,8 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 |ncs|channel2_mean|0.45752458|mean value of the second channel of image, defualt value is for ImageNet dataset|
 |ncs|channel3_mean|0.48109378|mean value of the third channel of image, defualt value is for ImageNet dataset|
 |ncs|top_n|3|the number of results to be shown|
-|realsense|color_width|1920|frame width|
-|realsense|color_height|1080|frame height|
+|realsense|color_width|640|frame width|
+|realsense|color_height|480|frame height|
 |usb cam|image_width|640|frame width|
 |usb cam|image_height|480|frame height|
 |usb cam|video_device|/dev/video0|use camera device node|
@@ -206,12 +206,20 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 |Gender|[weights](https://dl.dropboxusercontent.com/u/38822310/gender_net.caffemodel)|Supported|
 |Age|[weights](https://dl.dropboxusercontent.com/u/38822310/age_net.caffemodel)|Not supported|
 
-## 8 Known Issues
+## 8 ChangeLog
+#### 0.3.0 (2017-09-30)
+* Support NCSDK v1.07.06
+* Support USB camera and RealSense ZR300
+#### 0.4.0 (2017-11-03)
+* Support NCSDK [v1.09.00](https://github.com/movidius/ncsdk/releases) and above ([#12](https://github.com/intel/ros_intel_movidius_ncs/pull/12))
+* Add the support for RealSense D400 series camera ([#13](https://github.com/intel/ros_intel_movidius_ncs/pull/13))
+
+## 9 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on RealSense ZR300 camera, RealSense D400 series camera and Microsoft HD-300 USB camera
-* Current v0.3.0 supporting NCSDK v1.07.06 is on master branch. devel branch is the development branch for the next release.
+* Current v0.4.0 supporting NCSDK v1.09.00 is on master branch. devel branch is the development branch for the next release.
 
-## 9 TODO
+## 10 TODO
 *  Support multiple NCS devices
 *  Support more CNN models
 *  Support latest NCSDK
