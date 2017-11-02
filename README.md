@@ -58,7 +58,7 @@ git checkout devel
 cd ~/catkin_ws
 catkin_make
 catkin_make install
-source devel/setup.bash
+source install/setup.bash
 ```
 Copy ```categories.txt``` from this project to NCSDK installation location.
 ```Shell
