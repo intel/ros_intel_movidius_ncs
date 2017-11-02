@@ -39,7 +39,10 @@ NcsImpl::NcsImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
   , pnh_(pnh)
   , device_index_(0)
   , log_level_(Device::Errors)
-  , network_conf_path_("")
+  , graph_file_path_("")
+  , category_file_path_("")
+  , network_dimension_(0)
+  , mean_({0, 0, 0})
   , top_n_(3)
 {
   getParameters();
@@ -152,7 +155,7 @@ void NcsImpl::init()
   ROS_DEBUG("NcsImpl onInit");
   ncs_handle_ = std::make_shared<movidius_ncs_lib::Ncs>(device_index_, static_cast<Device::LogLevel>(log_level_),
                                                         graph_file_path_, category_file_path_, network_dimension_,
-                                                        mean_);  
+                                                        mean_);
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
   sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NcsImpl::cbInfer, this);
   pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_object", 1);
