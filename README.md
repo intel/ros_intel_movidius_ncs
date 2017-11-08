@@ -206,20 +206,12 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 |Gender|[weights](https://dl.dropboxusercontent.com/u/38822310/gender_net.caffemodel)|Supported|
 |Age|[weights](https://dl.dropboxusercontent.com/u/38822310/age_net.caffemodel)|Not supported|
 
-## 8 ChangeLog
-#### 0.3.0 (2017-09-30)
-* Support NCSDK v1.07.06
-* Support USB camera and RealSense ZR300
-#### 0.4.0 (2017-11-03)
-* Support NCSDK [v1.09.00](https://github.com/movidius/ncsdk/releases) and above ([#12](https://github.com/intel/ros_intel_movidius_ncs/pull/12))
-* Add the support for RealSense D400 series camera ([#13](https://github.com/intel/ros_intel_movidius_ncs/pull/13))
-
-## 9 Known Issues
+## 8 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on RealSense ZR300 camera, RealSense D400 series camera and Microsoft HD-300 USB camera
 * Current v0.4.0 supporting NCSDK v1.09.00 is on master branch. devel branch is the development branch for the next release.
 
-## 10 TODO
+## 9 TODO
 *  Support multiple NCS devices
 *  Support more CNN models
 *  Support latest NCSDK
