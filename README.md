@@ -2,6 +2,7 @@
 
 ## 1 Introduction
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.  
+
 This project is a ROS wrapper for NC API of [NCSDK](https://movidius.github.io/ncsdk/), providing the following features:
 * A ROS service for classifying objects in a static image file
 * A ROS publisher for classifying objects in a video stream from a RGB camera
@@ -206,20 +207,12 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 |Gender|[weights](https://dl.dropboxusercontent.com/u/38822310/gender_net.caffemodel)|Supported|
 |Age|[weights](https://dl.dropboxusercontent.com/u/38822310/age_net.caffemodel)|Not supported|
 
-## 8 ChangeLog
-#### 0.3.0 (2017-09-30)
-* Support NCSDK v1.07.06
-* Support USB camera and RealSense ZR300
-#### 0.4.0 (2017-11-03)
-* Support NCSDK [v1.10.00](https://github.com/movidius/ncsdk/releases) and above ([#12](https://github.com/intel/ros_intel_movidius_ncs/pull/12))
-* Add the support for RealSense D400 series camera ([#13](https://github.com/intel/ros_intel_movidius_ncs/pull/13))
-
-## 9 Known Issues
+## 8 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on RealSense ZR300 camera, RealSense D400 series camera and Microsoft HD-300 USB camera
 * Current v0.4.0 supporting NCSDK v1.10.00 is on master branch. devel branch is the development branch for the next release.
 
-## 10 TODO
+## 9 TODO
 *  Support multiple NCS devices
 *  Support more CNN models
 *  Support latest NCSDK
