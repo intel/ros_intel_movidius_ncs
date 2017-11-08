@@ -2,15 +2,16 @@
 
 ## 1 Introduction
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.  
-This project is a ROS wrapper for NC API of [NCSDK](https://ncsforum.movidius.com/discussion/98/latest-version-movidius-neural-compute-sdk), providing the following features:
+
+This project is a ROS wrapper for NC API of [NCSDK](https://movidius.github.io/ncsdk/), providing the following features:
 * A ROS service for classifying objects in a static image file
-* A ROS publisher for classifying objects in a video stream from a USB camera
+* A ROS publisher for classifying objects in a video stream from a RGB camera
 * Demo applications to show the capabilities of ROS service and publisher
 * Support multiple [CNN models](#table2)
 
 There are 2 active branches in this project:
 * master - *stable branch*  
-  The latest version on it is v0.4.0 which supports NCSDK v1.09.00. master branch is only updated when every milestone release ready.
+  The latest version on it is v0.4.0 which supports NCSDK v1.10.00. master branch is only updated when every milestone release ready.
 * devel - *default branch*  
   This branch is updated from time to time and maintain the latest code on it. Each pull request should be submitted based on devel branch. We will merge patches to master branch on every milestone release.  
   
@@ -24,10 +25,10 @@ There are 2 active branches in this project:
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
 * Create a catkin workspace ([guide](http://wiki.ros.org/catkin/Tutorials/create_a_workspace))
-* Install NCSDK [v1.09.00](https://github.com/movidius/ncsdk/releases) ([github](https://github.com/movidius/ncsdk))
+* Install NCSDK [v1.10.00](https://github.com/movidius/ncsdk/releases) ([github](https://github.com/movidius/ncsdk))
 * NCSDK should be installed in ```/opt/movidius``` by default. Create a symbol link in ```/opt/movidius``` to the supported CNN network from NCSDK release package.
 ```Shell
-sudo ln -s ncsdk/examples /opt/movidius/examples
+sudo ln -s <your-workspace>/ncsdk/examples /opt/movidius/examples
 ```  
 After that, make sure you can find graph data in ```/opt/movidius/examples/caffe``` or ```/opt/movidius/examples/tensorflow``` and image data in ```/opt/movidius/examples/data/images```
 * Install ROS package for different cameras as needed. e.g.
@@ -54,7 +55,7 @@ After that, make sure you can find graph data in ```/opt/movidius/examples/caffe
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
 cd ros_intel_movidius_ncs
-git checkout master
+git checkout v0.4.0
 cd ~/catkin_ws
 catkin_make
 catkin_make install
@@ -209,7 +210,7 @@ roslaunch movidius_ncs_launch ncs_stream_example.launch camera_topic:="/usb_cam/
 ## 8 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on RealSense ZR300 camera, RealSense D400 series camera and Microsoft HD-300 USB camera
-* Current v0.4.0 supporting NCSDK v1.09.00 is on master branch. devel branch is the development branch for the next release.
+* Current v0.4.0 supporting NCSDK v1.10.00 is on master branch. devel branch is the development branch for the next release.
 
 ## 9 TODO
 *  Support multiple NCS devices
