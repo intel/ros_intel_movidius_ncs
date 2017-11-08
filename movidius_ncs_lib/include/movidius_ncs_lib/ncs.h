@@ -33,7 +33,10 @@ class Ncs
 public:
   Ncs(int device_index,
       Device::LogLevel log_level,
-      const std::string& network_conf_path);
+      const std::string& graph_file_path,
+      const std::string& category_file_path,
+      const int network_dimension,
+      const std::vector<float>& mean);
   ~Ncs();
 
   ResultPtr infer(cv::Mat image, uint32_t top_n);
@@ -59,11 +62,10 @@ private:
 
   const int device_index_;
   const Device::LogLevel log_level_;
-  const std::string base_path_;
   const std::string graph_file_path_;
-  const std::string stat_file_path_;
-  const std::string inputsize_file_path_;
-  const std::string categories_file_path_;
+  const std::string category_file_path_;
+  const int network_dimension_;
+  const std::vector<float> mean_;
 };
 }  // namespace movidius_ncs_lib
 #endif  // MOVIDIUS_NCS_LIB_NCS_H
