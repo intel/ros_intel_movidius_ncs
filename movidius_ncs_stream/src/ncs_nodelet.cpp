@@ -36,11 +36,17 @@ using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_stream
 {
-NcsImpl::NcsImpl(ros::NodeHandle& nh,
-                 ros::NodeHandle& pnh)
+NcsImpl::NcsImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
   : ncs_handle_(nullptr)
   , nh_(nh)
   , pnh_(pnh)
+  , device_index_(0)
+  , log_level_(Device::Errors)
+  , graph_file_path_("")
+  , category_file_path_("")
+  , network_dimension_(0)
+  , mean_({0, 0, 0})
+  , top_n_(3)
 {
   getParameters();
   init();
@@ -196,6 +202,12 @@ void NcsImpl::init()
 
 void NcsImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
 {
+  if (pub_.getNumSubscribers() == 0)
+  {
+    ROS_DEBUG_STREAM("skip inferring for no subscriber");
+    return;
+  }
+
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
   ClassificationResultPtr result = ncs_handle_->classify(cameraData, top_n_);

@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
   for (unsigned int i = 0; i < srv.response.objects.objects_vector.size(); i++)
   {
-    ROS_INFO("%d: object: %s  probability: %lf%%", i,
+    ROS_INFO("%d: object: %s\nprobability: %lf%%", i,
              srv.response.objects.objects_vector[i].object_name.c_str(),
              srv.response.objects.objects_vector[i].probability * 100);
   }
