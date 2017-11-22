@@ -21,6 +21,7 @@
 #include <vector>
 #include <ros/ros.h>
 #include <movidius_ncs_msgs/ClassifyObject.h>
+#include <movidius_ncs_msgs/DetectObject.h>
 #include "movidius_ncs_lib/ncs.h"
 
 namespace movidius_ncs_image
@@ -36,7 +37,8 @@ private:
 
   bool cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& request,
                         movidius_ncs_msgs::ClassifyObject::Response& response);
-
+  bool cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request,
+                      movidius_ncs_msgs::DetectObject::Response& response);
   ros::ServiceServer service_;
 
   std::shared_ptr<movidius_ncs_lib::Ncs> ncs_handle_;
@@ -44,6 +46,7 @@ private:
 
   int device_index_;
   int log_level_;
+  std::string cnn_type_;
   std::string graph_file_path_;
   std::string category_file_path_;
   int network_dimension_;

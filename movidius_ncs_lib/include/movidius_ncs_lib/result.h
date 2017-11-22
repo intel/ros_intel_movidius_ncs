@@ -29,16 +29,39 @@ struct Item
   float probability;
 };
 
+struct BBox
+{
+  int x;
+  int y;
+  int width;
+  int height;
+};
+
+struct ItemInBBox
+{
+  Item item;
+  BBox bbox;
+};
+
 using Items = std::vector<Item>;
 using ItemsPtr = std::shared_ptr<Items>;
+using ItemInBBoxArray = std::vector<ItemInBBox>;
+using ItemInBBoxArrayPtr = std::shared_ptr<ItemInBBoxArray>;
 
-struct Result
+struct ClassificationResult
 {
   Items items;
   float time_taken;
 };
 
-using ResultPtr = std::shared_ptr<Result>;
+struct DetectionResult
+{
+  ItemInBBoxArray items_in_boxes;
+  float time_taken;
+};
+
+using ClassificationResultPtr = std::shared_ptr<ClassificationResult>;
+using DetectionResultPtr = std::shared_ptr<DetectionResult>;
 }  // namespace movidius_ncs_lib
 
 #endif  // MOVIDIUS_NCS_LIB_RESULT_H

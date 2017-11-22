@@ -36,7 +36,8 @@ public:
   ~NcsImpl();
 
 private:
-  void cbInfer(const sensor_msgs::ImageConstPtr& image);
+  void cbClassify(const sensor_msgs::ImageConstPtr& image);
+  void cbDetect(const sensor_msgs::ImageConstPtr& image);
   void getParameters();
   void init();
 
@@ -52,6 +53,7 @@ private:
   std::string graph_file_path_;
   std::string category_file_path_;
   int network_dimension_;
+  std::string cnn_type_;
   std::vector<float> mean_;
   int top_n_;
 };

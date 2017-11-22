@@ -22,13 +22,16 @@
 #include <boost/filesystem/operations.hpp>
 
 #include <image_transport/image_transport.h>
+#include <sensor_msgs/RegionOfInterest.h>
 #include <pluginlib/class_list_macros.h>
 
 #include <movidius_ncs_msgs/Objects.h>
+#include <movidius_ncs_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_stream/ncs_nodelet.h"
 
 using image_transport::ImageTransport;
-using movidius_ncs_lib::ResultPtr;
+using movidius_ncs_lib::ClassificationResultPtr;
+using movidius_ncs_lib::DetectionResultPtr;
 using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_stream
@@ -103,6 +106,20 @@ void NcsImpl::getParameters()
 
   ROS_INFO_STREAM("use category_file_path = " << category_file_path_);
 
+  if (!pnh_.getParam("cnn_type", cnn_type_))
+  {
+    ROS_WARN("param cnn_type not set, use default");
+  }
+
+  if (cnn_type_.compare("googlenet") && cnn_type_.compare("alexnet")
+      && cnn_type_.compare("squezzenet") && cnn_type_.compare("tiny_yolo"))
+  {
+    ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use cnn_type_ = " << cnn_type_);
+
   if (!pnh_.getParam("network_dimension", network_dimension_))
   {
     ROS_WARN("param network_dimension not set, use default");
@@ -110,38 +127,46 @@ void NcsImpl::getParameters()
 
   if (network_dimension_ < 0)
   {
-    ROS_WARN_STREAM("invalid network_dimension=" << network_dimension_);
+    ROS_WARN_STREAM("invalid network_dimension = " << network_dimension_);
     throw std::exception();
   }
 
   ROS_INFO_STREAM("use network_dimension = " << network_dimension_);
 
-  for (int i = 0; i < 3; i++)
+  if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
   {
-    std::ostringstream oss;
-    oss << "channel" << (i + 1) << "_mean";
-    std::string mean_param_name = oss.str();
-    float mean_val;
-    if (!pnh_.getParam(mean_param_name, mean_val))
+    for (int i = 0; i < 3; i++)
     {
-      ROS_WARN_STREAM("param " << mean_param_name << "not set, use default");
+      std::ostringstream oss;
+      oss << "channel" << (i + 1) << "_mean";
+      std::string mean_param_name = oss.str();
+      float mean_val;
+      if (!pnh_.getParam(mean_param_name, mean_val))
+      {
+        ROS_WARN_STREAM("param " << mean_param_name << "not set, use default");
+      }
+      ROS_INFO_STREAM("use " << mean_param_name << " = " << mean_val);
+      mean_.push_back(mean_val);
     }
-    ROS_INFO_STREAM("use " << mean_param_name << "= " << mean_val);
-    mean_.push_back(mean_val);
-  }
 
-  if (!pnh_.getParam("top_n", top_n_))
+    if (!pnh_.getParam("top_n", top_n_))
+    {
+      ROS_WARN("param top_n not set, use default");
+    }
+
+    if (top_n_ < 1)
+    {
+      ROS_WARN_STREAM("invalid top_n = " << top_n_);
+      throw std::exception();
+    }
+
+    ROS_INFO_STREAM("use top_n = " << top_n_);
+  }
+  else
   {
-    ROS_WARN("param top_n not set, use default");
+    mean_ = {0, 0, 0};
+    top_n_ = 0;
   }
-
-  if (top_n_ < 1)
-  {
-    ROS_WARN_STREAM("invalid top_n=" << top_n_);
-    throw std::exception();
-  }
-
-  ROS_INFO_STREAM("use top_n = " << top_n_);
 }
 
 void NcsImpl::init()
@@ -150,23 +175,30 @@ void NcsImpl::init()
   ncs_handle_ = std::make_shared<movidius_ncs_lib::Ncs>(
                   device_index_,
                   static_cast<Device::LogLevel>(log_level_),
+                  cnn_type_,
                   graph_file_path_,
                   category_file_path_,
                   network_dimension_,
                   mean_);
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
-  sub_ = it->subscribe("/camera/rgb/image_raw",
-                       1,
-                       &NcsImpl::cbInfer,
-                       this);
-  pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_object", 1);
+
+  if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
+  {
+    sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NcsImpl::cbClassify, this);
+    pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_objects", 1);
+  }
+  else
+  {
+    sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NcsImpl::cbDetect, this);
+    pub_ = nh_.advertise<movidius_ncs_msgs::ObjectsInBoxes>("detected_objects", 1);
+  }
 }
 
-void NcsImpl::cbInfer(const sensor_msgs::ImageConstPtr& image_msg)
+void NcsImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
 {
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
-  ResultPtr result = ncs_handle_->infer(cameraData, top_n_);
+  ClassificationResultPtr result = ncs_handle_->classify(cameraData, top_n_);
   boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = end - start;
   movidius_ncs_msgs::Objects objs;
@@ -185,6 +217,35 @@ void NcsImpl::cbInfer(const sensor_msgs::ImageConstPtr& image_msg)
   ROS_DEBUG_STREAM("Total time: " << msdiff.total_milliseconds() << "ms");
   ROS_DEBUG_STREAM("Inference time: " << objs.inference_time_ms << "ms");
   pub_.publish(objs);
+}
+
+void NcsImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
+{
+  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
+  boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
+  DetectionResultPtr result = ncs_handle_->detect(cameraData);
+  boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration msdiff = end -start;
+  movidius_ncs_msgs::ObjectsInBoxes objs_in_boxes;
+
+  for (auto item : result->items_in_boxes)
+  {
+    movidius_ncs_msgs::ObjectInBox obj;
+    obj.object.object_name = item.item.category;
+    obj.object.probability = item.item.probability;
+    obj.roi.x_offset = item.bbox.x;
+    obj.roi.y_offset = item.bbox.y;
+    obj.roi.width = item.bbox.width;
+    obj.roi.height = item.bbox.height;
+    objs_in_boxes.objects_vector.push_back(obj);
+  }
+
+  objs_in_boxes.header = image_msg->header;
+  objs_in_boxes.inference_time_ms = result->time_taken;
+  objs_in_boxes.fps = 1000.0 / msdiff.total_milliseconds();
+  ROS_DEBUG_STREAM("Total time: " << msdiff.total_milliseconds() << "ms");
+  ROS_DEBUG_STREAM("Inference time: " << objs_in_boxes.inference_time_ms << "ms");
+  pub_.publish(objs_in_boxes);
 }
 
 NcsNodelet::~NcsNodelet()

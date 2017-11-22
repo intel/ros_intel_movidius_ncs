@@ -32,6 +32,7 @@ namespace movidius_ncs_lib
 {
 Ncs::Ncs(int device_index,
          Device::LogLevel log_level,
+         const std::string& cnn_type,
          const std::string& graph_file_path,
          const std::string& category_file_path,
          const int network_dimension,
@@ -40,6 +41,7 @@ Ncs::Ncs(int device_index,
   , graph_(nullptr)
   , device_index_(device_index)
   , log_level_(log_level)
+  , cnn_type_(cnn_type)
   , graph_file_path_(graph_file_path)
   , category_file_path_(category_file_path)
   , network_dimension_(network_dimension)
@@ -52,18 +54,41 @@ Ncs::~Ncs()
 {
 }
 
-ResultPtr Ncs::infer(cv::Mat image, uint32_t top_n)
+ClassificationResultPtr Ncs::classify(cv::Mat image, uint32_t top_n)
 {
-  ROS_DEBUG("Ncs::infer");
+  ROS_DEBUG("Ncs::classify");
 
   try
   {
     Tensor::Ptr tensor = std::make_shared<Tensor>(
                     image,
                     graph_->getMean(),
-                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()));
+                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()),
+                    cnn_type_);
     Inference inference(top_n, tensor, graph_, device_);
-    return inference.run();
+    return inference.classify();
+  }
+  catch (std::exception& e)
+  {
+    ROS_ERROR_STREAM("inference error: " << e.what());
+  }
+
+  return nullptr;
+}
+
+DetectionResultPtr Ncs::detect(cv::Mat image)
+{
+  ROS_DEBUG("Ncs::detect");
+
+  try
+  {
+    Tensor::Ptr tensor = std::make_shared<Tensor>(
+                    image,
+                    graph_->getMean(),
+                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()),
+                    cnn_type_);
+    Inference inference(0, tensor, graph_, device_);
+    return inference.detect();
   }
   catch (std::exception& e)
   {
@@ -90,6 +115,7 @@ void Ncs::loadGraph()
     scaled_mean.push_back(i * 255.0);
   }
   graph_.reset(new Graph(device_,
+                         cnn_type_,
                          graph,
                          network_dimension_,
                          scaled_mean,
@@ -135,16 +161,6 @@ void Ncs::splitIntoLines(const std::string& content,
   {
     lines.push_back(line);
   }
-}
-
-std::string Ncs::appendPathSeparator(const std::string& path)
-{
-  if (path[path.length()] == '/')
-  {
-    return path;
-  }
-
-  return path + "/";
 }
 
 std::string Ncs::getFileContent(const std::string& filename)

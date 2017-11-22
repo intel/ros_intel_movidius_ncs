@@ -33,14 +33,14 @@ Inference::Inference(unsigned int top_n,
 {
 }
 
-ResultPtr Inference::run()
+ClassificationResultPtr Inference::classify()
 {
-  ResultPtr result = std::make_shared<Result>();
+  ClassificationResultPtr result = std::make_shared<ClassificationResult>();
 
   try
   {
     graph_->loadTensor(tensor_);
-    ItemsPtr items = graph_->getDetectedItems();
+    ItemsPtr items = graph_->classifyObjects();
     float time_taken = graph_->getTimeTaken();
 
     for (auto i : *items)
@@ -51,6 +51,38 @@ ResultPtr Inference::run()
       {
         break;
       }
+    }
+
+    result->time_taken = time_taken;
+    device_->monitorThermal();
+  }
+  catch (MvncMyriadError& e)
+  {
+    ROS_ERROR_STREAM(e.what());
+    std::string debug_info = graph_->getDebugInfo();
+    ROS_ERROR_STREAM("myriad debug info: " << debug_info);
+  }
+  catch (NcsException& e)
+  {
+    ROS_ERROR_STREAM(e.what());
+  }
+
+  return result;
+}
+
+DetectionResultPtr Inference::detect()
+{
+  DetectionResultPtr result = std::make_shared<DetectionResult>();
+
+  try
+  {
+    graph_->loadTensor(tensor_);
+    ItemInBBoxArrayPtr items = graph_->detectObjects(tensor_->getImageWidth(), tensor_->getImageHeight());
+    float time_taken = graph_->getTimeTaken();
+
+    for (auto i : *items)
+    {
+      result->items_in_boxes.push_back(i);
     }
 
     result->time_taken = time_taken;

@@ -66,7 +66,7 @@ int main(int argc, char** argv)
           1);
   message_filters::Subscriber<movidius_ncs_msgs::Objects> objSub(
           nh,
-          "/movidius_ncs_nodelet/classified_object",
+          "/movidius_ncs_nodelet/classified_objects",
           1);
   message_filters::TimeSynchronizer<sensor_msgs::Image, movidius_ncs_msgs::Objects> sync(
           camSub,

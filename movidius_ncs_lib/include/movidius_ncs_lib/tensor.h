@@ -34,7 +34,8 @@ public:
 
   Tensor(const cv::Mat& image,
          const std::vector<float>& mean,
-         const std::pair<int, int>& size);
+         const std::pair<int, int>& size,
+         const std::string& cnn_type);
 
   inline const uint16_t* raw() const
   {
@@ -42,9 +43,16 @@ public:
   }
   inline const size_t size() const
   {
-    return 3 * height_ * width_ * sizeof(uint16_t);
+    return 3 * net_height_ * net_width_ * sizeof(uint16_t);
   }
-
+  inline int getImageWidth()
+  {
+    return image_width_;
+  }
+  inline int getImageHeight()
+  {
+    return image_height_;
+  }
 #if !defined(__i386__) && !defined(__x86_64__)
   static void fp32tofp16(uint16_t* __restrict out, float in);
   static void fp16tofp32(float* __restrict out, uint16_t in);
@@ -52,8 +60,10 @@ public:
 
 private:
   std::vector<uint16_t> tensor_;
-  const int width_;
-  const int height_;
+  const int net_width_;
+  const int net_height_;
+  const int image_width_;
+  const int image_height_;
 };
 }   // namespace movidius_ncs_lib
 
