@@ -17,7 +17,7 @@ limitations under the License.
 <launch>
   <arg name="camera_topic" default="/camera/color/image_raw" />
 
-  <node name="movidius_ncs_example" pkg="movidius_ncs_example" type="movidius_ncs_example_stream" output="screen" >
+  <node name="movidius_ncs_example_stream_classification" pkg="movidius_ncs_example" type="movidius_ncs_example_stream_classification" output="screen" >
     <remap from="/camera/color/image_raw" to="$(arg camera_topic)" />
   </node>
 </launch>

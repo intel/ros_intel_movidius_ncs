@@ -21,8 +21,8 @@ limitations under the License.
   <arg name="device_index"                default="0" />
   <arg name="log_level"                   default="0" />
   <arg name="cnn_type"                    default="googlenet" />
-  <arg name="graph_file_path"             default="/opt/movidius/examples/caffe/GoogLeNet/graph" />
-  <arg name="category_file_path"          default="/opt/movidius/examples/data/ilsvrc12/imagenet.txt" />
+  <arg name="graph_file_path"             default="/opt/movidius/ncappzoo/caffe/GoogLeNet/graph" />
+  <arg name="category_file_path"          default="/opt/movidius/ncappzoo/data/ilsvrc12/imagenet.txt" />
   <arg name="network_dimension"           default="224" />
   <arg name="channel1_mean"               default="0.40787054" />
   <arg name="channel2_mean"               default="0.45752458" />

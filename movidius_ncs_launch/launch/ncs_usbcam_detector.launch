@@ -22,8 +22,8 @@ limitations under the License.
   <arg name="device_index" default="0" />
   <arg name="log_level" default="1" />
   <arg name="cnn_type" default="tiny_yolo" />
-  <arg name="graph_file_path" default="/opt/movidius/examples/caffe/YoloTiny/graph" />
-  <arg name="category_file_path" default="/opt/movidius/examples/data/ilsvrc12/voc.txt" />
+  <arg name="graph_file_path" default="/opt/movidius/ncappzoo/caffe/TinyYolo/graph" />
+  <arg name="category_file_path" default="/opt/movidius/ncappzoo/data/ilsvrc12/voc.txt" />
   <arg name="network_dimension" default="448" />
   <arg name="image_width" default="640" />
   <arg name="image_height" default="480" />
