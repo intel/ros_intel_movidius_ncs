@@ -1,3 +1,3 @@
 Object object
-sensor_msgs/RegionOfInterest ROI
+sensor_msgs/RegionOfInterest roi
 

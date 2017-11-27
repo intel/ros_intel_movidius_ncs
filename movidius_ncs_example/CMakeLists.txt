@@ -32,25 +32,42 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_image src/image_sample.cpp)
-add_executable(${PROJECT_NAME}_stream src/stream_sample.cpp)
+add_executable(${PROJECT_NAME}_image_classification src/image_classification.cpp)
+add_executable(${PROJECT_NAME}_image_detection src/image_detection.cpp)
+add_executable(${PROJECT_NAME}_stream_classification src/stream_classification.cpp)
+add_executable(${PROJECT_NAME}_stream_detection src/stream_detection.cpp)
 
-add_dependencies(${PROJECT_NAME}_image 
-                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
-                 ${catkin_EXPORTED_TARGETS})
-                 
-add_dependencies(${PROJECT_NAME}_stream 
+add_dependencies(${PROJECT_NAME}_image_classification
                  ${${PROJECT_NAME}_EXPORTED_TARGETS} 
                  ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(${PROJECT_NAME}_image
+add_dependencies(${PROJECT_NAME}_image_detection
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+                 ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${PROJECT_NAME}_stream_classification
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
+                 ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${PROJECT_NAME}_stream_detection
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
+                 ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(${PROJECT_NAME}_image_classification
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(${PROJECT_NAME}_stream
+target_link_libraries(${PROJECT_NAME}_image_detection
   ${catkin_LIBRARIES}
 )
 
+target_link_libraries(${PROJECT_NAME}_stream_classification
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_stream_detection
+  ${catkin_LIBRARIES}
+)
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.
@@ -91,7 +108,8 @@ if(UNIX OR APPLE)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
 endif()
 
-install(TARGETS ${PROJECT_NAME}_image ${PROJECT_NAME}_stream
+install(TARGETS ${PROJECT_NAME}_image_classification ${PROJECT_NAME}_image_detection
+  ${PROJECT_NAME}_stream_classification ${PROJECT_NAME}_stream_detection
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

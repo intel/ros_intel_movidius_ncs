@@ -35,6 +35,7 @@ public:
   using ConstPtr = std::shared_ptr<Graph const>;
 
   Graph(const Device::Ptr& device,
+        std::string cnn_type,
         const std::string& graph_file,
         int network_dimension,
         const std::vector<float>& mean,
@@ -44,7 +45,8 @@ public:
   void allocate();
   void deallocate();
   float getTimeTaken();
-  ItemsPtr getDetectedItems();
+  ItemsPtr classifyObjects();
+  ItemInBBoxArrayPtr detectObjects(int img_width, int img_height);
   void loadTensor(const Tensor::ConstPtr& tensor);
   std::string getDebugInfo();
   void* getHandle();
@@ -60,12 +62,16 @@ public:
 
 private:
   std::shared_ptr<Device> device_;
+  std::string cnn_type_;
   std::string graph_buf_;
   const int network_dimension_;
   const std::vector<float> mean_;
   const std::vector<std::string> categories_;
   void* handle_;
   void* user_param_;
+
+  float iou(ItemInBBox box1, ItemInBBox box2);
+  ItemInBBoxArrayPtr parseYoloResult(const std::vector<float>& result, int img_width, int img_height);
 };
 }   // namespace movidius_ncs_lib
 

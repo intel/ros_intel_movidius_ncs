@@ -23,8 +23,9 @@ limitations under the License.
   <arg name="color_height" default="480" />
   <arg name="device_index" default="0" />
   <arg name="log_level" default="1" />
+  <arg name="cnn_type" default="googlenet" />
   <arg name="graph_file_path" default="/opt/movidius/ncappzoo/caffe/GoogLeNet/graph" />
-  <arg name="category_file_path" default="/opt/movidius/ncappzoo/data/ilsvrc12/categories.txt" />
+  <arg name="category_file_path" default="/opt/movidius/ncappzoo/data/ilsvrc12/imagenet.txt" />
   <arg name="network_dimension" default="224" />
   <arg name="channel1_mean" default="0.40787054" />
   <arg name="channel2_mean" default="0.45752458" />
@@ -40,6 +41,7 @@ limitations under the License.
       <arg name="output_topic" value="$(arg output_topic)" />
       <arg name="device_index" value="$(arg device_index)" />
       <arg name="log_level" value="$(arg log_level)" />
+      <arg name="cnn_type" value="$(arg cnn_type)"  />
       <arg name="graph_file_path" value="$(arg graph_file_path)" />
       <arg name="category_file_path" value="$(arg category_file_path)" />
       <arg name="network_dimension" value="$(arg network_dimension)" />

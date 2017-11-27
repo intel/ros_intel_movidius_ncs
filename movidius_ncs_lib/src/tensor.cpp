@@ -16,6 +16,7 @@
 
 #include <utility>
 #include <vector>
+#include <string>
 #if defined(__i386__) || defined(__x86_64__)
 #include <x86intrin.h>
 #endif
@@ -24,25 +25,36 @@
 
 namespace movidius_ncs_lib
 {
-Tensor::Tensor(const cv::Mat& original,
+Tensor::Tensor(const cv::Mat& image,
                const std::vector<float>& mean,
-               const std::pair<int, int>& size)
-  : width_(size.first)
-  , height_(size.second)
+               const std::pair<int, int>& size,
+               const std::string& cnn_type)
+  : net_width_(size.first)
+  , net_height_(size.second)
+  , image_width_(image.cols)
+  , image_height_(image.rows)
 {
   cv::Mat resized;
-  cv::resize(original,
+  cv::resize(image,
              resized,
-             cv::Size(width_, height_),
+             cv::Size(net_width_, net_height_),
              0,
              0);
+
   cv::Mat colored;
   cv::cvtColor(resized, colored, CV_BGR2RGB);
-  cv::Mat converted;
-  colored.convertTo(converted, CV_32SC3);
-  using TensorIt = cv::MatConstIterator_<cv::Vec3i>;
 
-  for (TensorIt it = converted.begin<cv::Vec3i>(); it != converted.end<cv::Vec3i>(); ++it)
+  cv::Mat converted;
+  colored.convertTo(converted, CV_32FC3);
+
+  if (!cnn_type.compare("tiny_yolo"))
+  {
+    cv::divide(converted, 255.0, converted);
+  }
+
+  using TensorIt = cv::MatConstIterator_<cv::Vec3f>;
+
+  for (TensorIt it = converted.begin<cv::Vec3f>(); it != converted.end<cv::Vec3f>(); ++it)
   {
     float r32 = ((*it)[0] - mean[0]);
     float g32 = ((*it)[1] - mean[1]);

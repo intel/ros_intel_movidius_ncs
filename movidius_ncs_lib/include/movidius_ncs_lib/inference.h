@@ -35,7 +35,8 @@ public:
             Graph::Ptr& graph,
             Device::Ptr& device);
 
-  ResultPtr run();
+  ClassificationResultPtr classify();
+  DetectionResultPtr detect();
 
 private:
   const unsigned int top_n_;
