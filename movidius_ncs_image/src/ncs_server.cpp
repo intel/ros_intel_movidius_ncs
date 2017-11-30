@@ -25,24 +25,24 @@ using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_image
 {
-NcsServer::NcsServer(ros::NodeHandle&  nh)
-  : ncs_handle_(nullptr)
-  , nh_(nh)
-  , device_index_(0)
-  , log_level_(Device::Errors)
-  , cnn_type_("")
-  , graph_file_path_("")
-  , category_file_path_("")
-  , network_dimension_(0)
-  , top_n_(3)
+NCSServer::NCSServer(ros::NodeHandle& nh)
+    : ncs_handle_(nullptr),
+      nh_(nh),
+      device_index_(0),
+      log_level_(Device::Errors),
+      cnn_type_(""),
+      graph_file_path_(""),
+      category_file_path_(""),
+      network_dimension_(0),
+      top_n_(3)
 {
   getParameters();
   init();
 }
 
-void NcsServer::getParameters()
+void NCSServer::getParameters()
 {
-  ROS_DEBUG("NcsServer get parameters");
+  ROS_DEBUG("NCSServer get parameters");
 
   if (!nh_.getParam("device_index", device_index_))
   {
@@ -161,34 +161,31 @@ void NcsServer::getParameters()
 }
 
 
-void NcsServer::init()
+void NCSServer::init()
 {
-  ROS_DEBUG("NcsServer init");
-  ncs_handle_ = std::make_shared<movidius_ncs_lib::Ncs>(
-                  device_index_,
-                  static_cast<Device::LogLevel>(log_level_),
-                  cnn_type_,
-                  graph_file_path_,
-                  category_file_path_,
-                  network_dimension_,
-                  mean_);
+  ROS_DEBUG("NCSServer init");
+  ncs_handle_ = std::make_shared<movidius_ncs_lib::NCS>(device_index_,
+                                                        static_cast<Device::LogLevel>(log_level_),
+                                                        cnn_type_,
+                                                        graph_file_path_,
+                                                        category_file_path_,
+                                                        network_dimension_,
+                                                        mean_);
   if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
   {
-    service_ = nh_.advertiseService(
-                  "classify_object",
-                  &NcsServer::cbClassifyObject,
-                  this);
+    service_ = nh_.advertiseService("classify_object",
+                                    &NCSServer::cbClassifyObject,
+                                    this);
   }
   else
   {
-    service_ = nh_.advertiseService(
-                  "detect_object",
-                  &NcsServer::cbDetectObject,
-                  this);
+    service_ = nh_.advertiseService("detect_object",
+                                    &NCSServer::cbDetectObject,
+                                    this);
   }
 }
 
-bool NcsServer::cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& request,
+bool NCSServer::cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& request,
                                  movidius_ncs_msgs::ClassifyObject::Response&  response)
 {
   cv::Mat imageData = cv::imread(request.image_path);
@@ -211,7 +208,7 @@ bool NcsServer::cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& req
   return true;
 }
 
-bool NcsServer::cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request,
+bool NCSServer::cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request,
                                movidius_ncs_msgs::DetectObject::Response& response)
 {
   cv::Mat imageData = cv::imread(request.image_path);
@@ -246,7 +243,7 @@ int main(int argc, char** argv)
 
   try
   {
-    movidius_ncs_image::NcsServer node(nh);
+    movidius_ncs_image::NCSServer node(nh);
     ros::spin();
   }
   catch (...)

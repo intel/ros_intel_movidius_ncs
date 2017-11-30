@@ -28,17 +28,17 @@
 
 namespace movidius_ncs_lib
 {
-class Ncs
+class NCS
 {
 public:
-  Ncs(int device_index,
+  NCS(int device_index,
       Device::LogLevel log_level,
       const std::string& cnn_type,
       const std::string& graph_file_path,
       const std::string& category_file_path,
       const int network_dimension,
       const std::vector<float>& mean);
-  ~Ncs();
+  ~NCS();
 
   ClassificationResultPtr classify(cv::Mat image, uint32_t top_n);
   DetectionResultPtr detect(cv::Mat image);

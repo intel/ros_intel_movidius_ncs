@@ -21,6 +21,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+
 #include "movidius_ncs_lib/mvnc_cpp.h"
 #include "movidius_ncs_lib/result.h"
 #include "movidius_ncs_lib/tensor.h"

@@ -15,7 +15,9 @@
  */
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
 #include <ros/ros.h>
+
 #include <movidius_ncs_msgs/DetectObject.h>
 
 int main(int argc, char** argv)

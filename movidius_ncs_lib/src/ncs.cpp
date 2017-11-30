@@ -30,41 +30,41 @@
 
 namespace movidius_ncs_lib
 {
-Ncs::Ncs(int device_index,
+NCS::NCS(int device_index,
          Device::LogLevel log_level,
          const std::string& cnn_type,
          const std::string& graph_file_path,
          const std::string& category_file_path,
          const int network_dimension,
          const std::vector<float>& mean)
-  : device_(nullptr)
-  , graph_(nullptr)
-  , device_index_(device_index)
-  , log_level_(log_level)
-  , cnn_type_(cnn_type)
-  , graph_file_path_(graph_file_path)
-  , category_file_path_(category_file_path)
-  , network_dimension_(network_dimension)
-  , mean_(mean)
+    : device_(nullptr),
+      graph_(nullptr),
+      device_index_(device_index),
+      log_level_(log_level),
+      cnn_type_(cnn_type),
+      graph_file_path_(graph_file_path),
+      category_file_path_(category_file_path),
+      network_dimension_(network_dimension),
+      mean_(mean)
 {
   init();
 }
 
-Ncs::~Ncs()
+NCS::~NCS()
 {
 }
 
-ClassificationResultPtr Ncs::classify(cv::Mat image, uint32_t top_n)
+ClassificationResultPtr NCS::classify(cv::Mat image, uint32_t top_n)
 {
-  ROS_DEBUG("Ncs::classify");
+  ROS_DEBUG("NCS::classify");
 
   try
   {
     Tensor::Ptr tensor = std::make_shared<Tensor>(
-                    image,
-                    graph_->getMean(),
-                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()),
-                    cnn_type_);
+        image,
+        graph_->getMean(),
+        std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()),
+        cnn_type_);
     Inference inference(top_n, tensor, graph_, device_);
     return inference.classify();
   }
@@ -76,17 +76,17 @@ ClassificationResultPtr Ncs::classify(cv::Mat image, uint32_t top_n)
   return nullptr;
 }
 
-DetectionResultPtr Ncs::detect(cv::Mat image)
+DetectionResultPtr NCS::detect(cv::Mat image)
 {
-  ROS_DEBUG("Ncs::detect");
+  ROS_DEBUG("NCS::detect");
 
   try
   {
     Tensor::Ptr tensor = std::make_shared<Tensor>(
-                    image,
-                    graph_->getMean(),
-                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()),
-                    cnn_type_);
+        image,
+        graph_->getMean(),
+        std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()),
+        cnn_type_);
     Inference inference(0, tensor, graph_, device_);
     return inference.detect();
   }
@@ -98,14 +98,14 @@ DetectionResultPtr Ncs::detect(cv::Mat image)
   return nullptr;
 }
 
-void Ncs::init()
+void NCS::init()
 {
-  ROS_DEBUG("Ncs::init called");
+  ROS_DEBUG("NCS::init called");
   getDevice();
   loadGraph();
 }
 
-void Ncs::loadGraph()
+void NCS::loadGraph()
 {
   std::vector<std::string> categories = loadCategories();
   std::string graph = getFileContent(graph_file_path_);
@@ -122,13 +122,13 @@ void Ncs::loadGraph()
                          categories));
 }
 
-void Ncs::getDevice()
+void NCS::getDevice()
 {
   device_.reset(new Device(device_index_,
                            static_cast<Device::LogLevel>(log_level_)));
 }
 
-std::vector<std::string> Ncs::loadCategories()
+std::vector<std::string> NCS::loadCategories()
 {
   try
   {
@@ -147,11 +147,11 @@ std::vector<std::string> Ncs::loadCategories()
   }
   catch (int& e)
   {
-    throw NcsLoadCategoriesError();
+    throw NCSLoadCategoriesError();
   }
 }
 
-void Ncs::splitIntoLines(const std::string& content,
+void NCS::splitIntoLines(const std::string& content,
                          std::vector<std::string>& lines)
 {
   std::stringstream ss(content);
@@ -163,7 +163,7 @@ void Ncs::splitIntoLines(const std::string& content,
   }
 }
 
-std::string Ncs::getFileContent(const std::string& filename)
+std::string NCS::getFileContent(const std::string& filename)
 {
   std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
 

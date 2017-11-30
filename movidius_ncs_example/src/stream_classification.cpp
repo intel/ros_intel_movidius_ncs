@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#include <ros/ros.h>
-#include <message_filters/subscriber.h>
-#include <message_filters/time_synchronizer.h>
-#include <cv_bridge/cv_bridge.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+#include <cv_bridge/cv_bridge.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+#include <ros/ros.h>
+
 #include <movidius_ncs_msgs/Object.h>
 #include <movidius_ncs_msgs/Objects.h>
 
@@ -60,18 +62,13 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_stream");
   ros::NodeHandle nh;
-  message_filters::Subscriber<sensor_msgs::Image> camSub(
-          nh,
-          "/camera/color/image_raw",
-          1);
-  message_filters::Subscriber<movidius_ncs_msgs::Objects> objSub(
-          nh,
-          "/movidius_ncs_nodelet/classified_objects",
-          1);
-  message_filters::TimeSynchronizer<sensor_msgs::Image, movidius_ncs_msgs::Objects> sync(
-          camSub,
-          objSub,
-          60);
+  message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
+                                                         "/camera/color/image_raw",
+                                                         1);
+  message_filters::Subscriber<movidius_ncs_msgs::Objects> objSub(nh,
+                                                                 "/movidius_ncs_nodelet/classified_objects",
+                                                                 1);
+  message_filters::TimeSynchronizer<sensor_msgs::Image, movidius_ncs_msgs::Objects> sync(camSub, objSub, 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));
   ros::spin();
   return 0;

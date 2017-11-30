@@ -26,10 +26,10 @@ Inference::Inference(unsigned int top_n,
                      Tensor::Ptr& tensor,
                      Graph::Ptr& graph,
                      Device::Ptr& device)
-  : top_n_(top_n)
-  , tensor_(tensor)
-  , graph_(graph)
-  , device_(device)
+    : top_n_(top_n),
+      tensor_(tensor),
+      graph_(graph),
+      device_(device)
 {
 }
 
@@ -62,7 +62,7 @@ ClassificationResultPtr Inference::classify()
     std::string debug_info = graph_->getDebugInfo();
     ROS_ERROR_STREAM("myriad debug info: " << debug_info);
   }
-  catch (NcsException& e)
+  catch (NCSException& e)
   {
     ROS_ERROR_STREAM(e.what());
   }
@@ -94,7 +94,7 @@ DetectionResultPtr Inference::detect()
     std::string debug_info = graph_->getDebugInfo();
     ROS_ERROR_STREAM("myriad debug info: " << debug_info);
   }
-  catch (NcsException& e)
+  catch (NCSException& e)
   {
     ROS_ERROR_STREAM(e.what());
   }

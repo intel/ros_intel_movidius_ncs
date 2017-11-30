@@ -32,7 +32,7 @@ limitations under the License.
   <node pkg="nodelet"
         type="nodelet"
         name="movidius_ncs_stream"
-        args="load movidius_ncs_stream/NcsNodelet $(arg manager)"
+        args="load movidius_ncs_stream/NCSNodelet $(arg manager)"
         output="screen">
       <remap from="/camera/rgb/image_raw"   to="$(arg input_topic)" />
       <remap from="classified_object"       to="$(arg output_topic)" />
