@@ -29,10 +29,10 @@ Tensor::Tensor(const cv::Mat& image,
                const std::vector<float>& mean,
                const std::pair<int, int>& size,
                const std::string& cnn_type)
-  : net_width_(size.first)
-  , net_height_(size.second)
-  , image_width_(image.cols)
-  , image_height_(image.rows)
+  : net_width_(size.first),
+    net_height_(size.second),
+    image_width_(image.cols),
+    image_height_(image.rows)
 {
   cv::Mat resized;
   cv::resize(image,

@@ -36,14 +36,14 @@ Graph::Graph(const std::shared_ptr<Device>& device,
              int network_dimension,
              const std::vector<float>& mean,
              const std::vector<std::string> categories)
-  : device_(device)
-  , cnn_type_(cnn_type)
-  , graph_buf_(graph_buf)
-  , network_dimension_(network_dimension)
-  , mean_(mean)
-  , categories_(categories)
-  , handle_(nullptr)
-  , user_param_(nullptr)
+    : device_(device),
+      cnn_type_(cnn_type),
+      graph_buf_(graph_buf),
+      network_dimension_(network_dimension),
+      mean_(mean),
+      categories_(categories),
+      handle_(nullptr),
+      user_param_(nullptr)
 {
   allocate();
 }

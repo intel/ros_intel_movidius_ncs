@@ -36,29 +36,29 @@ using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_stream
 {
-NcsImpl::NcsImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
-  : ncs_handle_(nullptr)
-  , nh_(nh)
-  , pnh_(pnh)
-  , device_index_(0)
-  , log_level_(Device::Errors)
-  , graph_file_path_("")
-  , category_file_path_("")
-  , network_dimension_(0)
-  , mean_({0, 0, 0})
-  , top_n_(3)
+NCSImpl::NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
+    : ncs_handle_(nullptr),
+      nh_(nh),
+      pnh_(pnh),
+      device_index_(0),
+      log_level_(Device::Errors),
+      graph_file_path_(""),
+      category_file_path_(""),
+      network_dimension_(0),
+      mean_(0),
+      top_n_(3)
 {
   getParameters();
   init();
 }
 
-NcsImpl::~NcsImpl()
+NCSImpl::~NCSImpl()
 {
 }
 
-void NcsImpl::getParameters()
+void NCSImpl::getParameters()
 {
-  ROS_DEBUG("NcsImpl get parameters");
+  ROS_DEBUG("NCSImpl get parameters");
 
   if (!pnh_.getParam("device_index", device_index_))
   {
@@ -175,10 +175,10 @@ void NcsImpl::getParameters()
   }
 }
 
-void NcsImpl::init()
+void NCSImpl::init()
 {
-  ROS_DEBUG("NcsImpl onInit");
-  ncs_handle_ = std::make_shared<movidius_ncs_lib::Ncs>(
+  ROS_DEBUG("NCSImpl onInit");
+  ncs_handle_ = std::make_shared<movidius_ncs_lib::NCS>(
                   device_index_,
                   static_cast<Device::LogLevel>(log_level_),
                   cnn_type_,
@@ -190,17 +190,17 @@ void NcsImpl::init()
 
   if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
   {
-    sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NcsImpl::cbClassify, this);
+    sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbClassify, this);
     pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_objects", 1);
   }
   else
   {
-    sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NcsImpl::cbDetect, this);
+    sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbDetect, this);
     pub_ = nh_.advertise<movidius_ncs_msgs::ObjectsInBoxes>("detected_objects", 1);
   }
 }
 
-void NcsImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
+void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
 {
   if (pub_.getNumSubscribers() == 0)
   {
@@ -231,7 +231,7 @@ void NcsImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
   pub_.publish(objs);
 }
 
-void NcsImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
+void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
 {
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
@@ -260,26 +260,25 @@ void NcsImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
   pub_.publish(objs_in_boxes);
 }
 
-NcsNodelet::~NcsNodelet()
+NCSNodelet::~NCSNodelet()
 {
 }
 
-void NcsNodelet::onInit()
+void NCSNodelet::onInit()
 {
   ros::NodeHandle nh = getNodeHandle();
   ros::NodeHandle pnh = getPrivateNodeHandle();
-
   try
   {
-    impl_.reset(new NcsImpl(nh, pnh));
+    impl_.reset(new NCSImpl(nh, pnh));
   }
   catch (...)
   {
-    ROS_ERROR("exception caught while starting NcsNodelet");
+    ROS_ERROR("exception caught while starting NCSNodelet");
     ros::shutdown();
   }
 }
 
 }  // namespace movidius_ncs_stream
 
-PLUGINLIB_EXPORT_CLASS(movidius_ncs_stream::NcsNodelet, nodelet::Nodelet);
+PLUGINLIB_EXPORT_CLASS(movidius_ncs_stream::NCSNodelet, nodelet::Nodelet);

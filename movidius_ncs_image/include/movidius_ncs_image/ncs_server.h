@@ -19,17 +19,19 @@
 
 #include <string>
 #include <vector>
+
 #include <ros/ros.h>
+
 #include <movidius_ncs_msgs/ClassifyObject.h>
 #include <movidius_ncs_msgs/DetectObject.h>
 #include "movidius_ncs_lib/ncs.h"
 
 namespace movidius_ncs_image
 {
-class NcsServer
+class NCSServer
 {
 public:
-  explicit NcsServer(ros::NodeHandle& nh);
+  explicit NCSServer(ros::NodeHandle& nh);
 
 private:
   void getParameters();
@@ -41,7 +43,7 @@ private:
                       movidius_ncs_msgs::DetectObject::Response& response);
   ros::ServiceServer service_;
 
-  std::shared_ptr<movidius_ncs_lib::Ncs> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
   ros::NodeHandle nh_;
 
   int device_index_;

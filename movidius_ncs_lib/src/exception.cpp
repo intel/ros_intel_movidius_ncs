@@ -29,27 +29,27 @@ const char* MvncAggressiveThermal::what() const noexcept
   return "upper guard temperature threshold is reached, long throtting is in action";
 }
 
-const char* NcsGraphFileError::what() const noexcept
+const char* NCSGraphFileError::what() const noexcept
 {
   return "cannot load graph";
 }
 
-const char* NcsMeanAndStddevError::what() const noexcept
+const char* NCSMeanAndStddevError::what() const noexcept
 {
   return "cannot load mean and stddev";
 }
 
-const char* NcsInputSizeFileError::what() const noexcept
+const char* NCSInputSizeFileError::what() const noexcept
 {
   return "cannot open inputsize file";
 }
 
-const char* NcsInputSizeError::what() const noexcept
+const char* NCSInputSizeError::what() const noexcept
 {
   return "cannot load inputsize";
 }
 
-const char* NcsLoadCategoriesError::what() const noexcept
+const char* NCSLoadCategoriesError::what() const noexcept
 {
   return "cannot load categories";
 }
