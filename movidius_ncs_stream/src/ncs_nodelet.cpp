@@ -42,11 +42,13 @@ NCSImpl::NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
       pnh_(pnh),
       device_index_(0),
       log_level_(Device::Errors),
+      cnn_type_(""),
       graph_file_path_(""),
       category_file_path_(""),
       network_dimension_(0),
       mean_(0),
-      top_n_(3)
+      scale_(1.0),
+      top_n_(1)
 {
   getParameters();
   init();
@@ -160,7 +162,7 @@ void NCSImpl::getParameters()
       ROS_WARN("param top_n not set, use default");
     }
 
-    if (top_n_ < 1)
+    if (top_n_ < 0)
     {
       ROS_WARN_STREAM("invalid top_n = " << top_n_);
       throw std::exception();
@@ -173,19 +175,32 @@ void NCSImpl::getParameters()
     mean_ = {0, 0, 0};
     top_n_ = 0;
   }
+
+  if (!pnh_.getParam("scale", scale_))
+  {
+    ROS_WARN("param scale not set, use default");
+  }
+  if (scale_ < 0)
+  {
+    ROS_WARN_STREAM("invalid param scale = " << scale_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use scale = " << scale_);
 }
 
 void NCSImpl::init()
 {
   ROS_DEBUG("NCSImpl onInit");
-  ncs_handle_ = std::make_shared<movidius_ncs_lib::NCS>(
-                  device_index_,
-                  static_cast<Device::LogLevel>(log_level_),
-                  cnn_type_,
-                  graph_file_path_,
-                  category_file_path_,
-                  network_dimension_,
-                  mean_);
+  ncs_handle_ = std::make_shared<movidius_ncs_lib::NCS>(device_index_,
+                                                        static_cast<Device::LogLevel>(log_level_),
+                                                        cnn_type_,
+                                                        graph_file_path_,
+                                                        category_file_path_,
+                                                        network_dimension_,
+                                                        mean_,
+                                                        scale_,
+                                                        top_n_);
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
 
   if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
@@ -210,7 +225,9 @@ void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
 
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
-  ClassificationResultPtr result = ncs_handle_->classify(cameraData, top_n_);
+  ncs_handle_->loadTensor(cameraData);
+  ncs_handle_->classify();
+  ClassificationResultPtr result = ncs_handle_->getClassificationResult();
   boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = end - start;
   movidius_ncs_msgs::Objects objs;
@@ -235,7 +252,9 @@ void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
 {
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
-  DetectionResultPtr result = ncs_handle_->detect(cameraData);
+  ncs_handle_->loadTensor(cameraData);
+  ncs_handle_->detect();
+  DetectionResultPtr result = ncs_handle_->getDetectionResult();
   boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = end -start;
   movidius_ncs_msgs::ObjectsInBoxes objs_in_boxes;

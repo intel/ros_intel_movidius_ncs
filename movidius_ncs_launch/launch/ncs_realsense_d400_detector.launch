@@ -27,6 +27,10 @@ limitations under the License.
   <arg name="graph_file_path" default="/opt/movidius/ncappzoo/caffe/TinyYolo/graph" />
   <arg name="category_file_path" default="/opt/movidius/ncappzoo/data/ilsvrc12/voc.txt" />
   <arg name="network_dimension" default="448" />
+  <arg name="channel1_mean" default="0" />
+  <arg name="channel2_mean" default="0" />
+  <arg name="channel3_mean" default="0" />
+  <arg name="scale" default="0.00392156" />
 
   <group ns="$(arg namespace)">
     <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen" />
@@ -41,6 +45,10 @@ limitations under the License.
       <arg name="graph_file_path" value="$(arg graph_file_path)" />
       <arg name="category_file_path" value="$(arg category_file_path)" />
       <arg name="network_dimension" value="$(arg network_dimension)" />
+      <arg name="channel1_mean" value="$(arg channel1_mean)" />
+      <arg name="channel2_mean" value="$(arg channel2_mean)" />
+      <arg name="channel3_mean" value="$(arg channel3_mean)" />
+      <arg name="scale" value="$(arg scale)" />
     </include>
   </group>
 

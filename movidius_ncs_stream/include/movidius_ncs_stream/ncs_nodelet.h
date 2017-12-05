@@ -49,11 +49,12 @@ private:
 
   int device_index_;
   int log_level_;
+  std::string cnn_type_;
   std::string graph_file_path_;
   std::string category_file_path_;
   int network_dimension_;
-  std::string cnn_type_;
   std::vector<float> mean_;
+  float scale_;
   int top_n_;
 };
 

@@ -34,7 +34,9 @@ NCSServer::NCSServer(ros::NodeHandle& nh)
       graph_file_path_(""),
       category_file_path_(""),
       network_dimension_(0),
-      top_n_(3)
+      mean_(0),
+      scale_(1.0),
+      top_n_(1)
 {
   getParameters();
   init();
@@ -145,7 +147,7 @@ void NCSServer::getParameters()
       ROS_WARN("param top_n not set, use default");
     }
 
-    if (top_n_ < 1)
+    if (top_n_ < 0)
     {
       ROS_WARN_STREAM("invalid top_n = " << top_n_);
       throw std::exception();
@@ -158,6 +160,19 @@ void NCSServer::getParameters()
     mean_ = {0, 0, 0};
     top_n_ = 0;
   }
+
+  if (!nh_.getParam("scale", scale_))
+  {
+    ROS_WARN("param scale not set, use default");
+  }
+
+  if (scale_ < 0)
+  {
+    ROS_WARN_STREAM("invalid param scale = " << scale_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use scale = " << scale_);
 }
 
 
@@ -170,7 +185,9 @@ void NCSServer::init()
                                                         graph_file_path_,
                                                         category_file_path_,
                                                         network_dimension_,
-                                                        mean_);
+                                                        mean_,
+                                                        scale_,
+                                                        top_n_);
   if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
   {
     service_ = nh_.advertiseService("classify_object",
@@ -186,10 +203,12 @@ void NCSServer::init()
 }
 
 bool NCSServer::cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& request,
-                                 movidius_ncs_msgs::ClassifyObject::Response&  response)
+                                 movidius_ncs_msgs::ClassifyObject::Response& response)
 {
   cv::Mat imageData = cv::imread(request.image_path);
-  ClassificationResultPtr result = ncs_handle_->classify(imageData, top_n_);
+  ncs_handle_->loadTensor(imageData);
+  ncs_handle_->classify();
+  ClassificationResultPtr result = ncs_handle_->getClassificationResult();
 
   if (result == nullptr)
   {
@@ -212,7 +231,9 @@ bool NCSServer::cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request
                                movidius_ncs_msgs::DetectObject::Response& response)
 {
   cv::Mat imageData = cv::imread(request.image_path);
-  DetectionResultPtr result = ncs_handle_->detect(imageData);
+  ncs_handle_->loadTensor(imageData);
+  ncs_handle_->detect();
+  DetectionResultPtr result = ncs_handle_->getDetectionResult();
 
   if (result == nullptr)
   {

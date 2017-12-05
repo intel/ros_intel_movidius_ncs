@@ -53,6 +53,7 @@ private:
   std::string category_file_path_;
   int network_dimension_;
   std::vector<float> mean_;
+  float scale_;
   int top_n_;
 };
 }  // namespace movidius_ncs_image

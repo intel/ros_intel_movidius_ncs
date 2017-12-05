@@ -50,7 +50,7 @@ add_library(${PROJECT_NAME}
   src/exception_util.cpp
   src/graph.cpp
   src/tensor.cpp
-  src/inference.cpp
+  src/result.cpp
 )
 
 add_dependencies(${PROJECT_NAME}

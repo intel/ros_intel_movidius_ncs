@@ -24,9 +24,10 @@ limitations under the License.
   <arg name="graph_file_path"             default="/opt/movidius/ncappzoo/caffe/GoogLeNet/graph" />
   <arg name="category_file_path"          default="/opt/movidius/ncappzoo/data/ilsvrc12/imagenet.txt" />
   <arg name="network_dimension"           default="224" />
-  <arg name="channel1_mean"               default="0.40787054" />
-  <arg name="channel2_mean"               default="0.45752458" />
-  <arg name="channel3_mean"               default="0.48109378" />
+  <arg name="channel1_mean"               default="104" />
+  <arg name="channel2_mean"               default="117" />
+  <arg name="channel3_mean"               default="123" />
+  <arg name="scale"                       default="1.0" />
   <arg name="top_n"                       default="3" />
 
   <node pkg="nodelet"
@@ -45,6 +46,7 @@ limitations under the License.
       <param name="channel1_mean"           value="$(arg channel1_mean)" />
       <param name="channel2_mean"           value="$(arg channel2_mean)" />
       <param name="channel3_mean"           value="$(arg channel3_mean)" />
+      <param name="scale"                   value="$(arg scale)" />
       <param name="top_n"                   value="$(arg top_n)" />
   </node>
 </launch>
