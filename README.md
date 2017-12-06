@@ -231,7 +231,7 @@ roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:=
 ### 5.2.2 Static Image
 Launch object detection service. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_image.launch graph_file_path:=/opt/movidius/ncappzoo/caffe/TinyYolo/graph category_file_path:=/opt/movidius/ncappzoo/data/ilsvrc12/voc.txt network_dimension:=448 cnn_type:=tiny_yolo
+roslaunch movidius_ncs_launch ncs_image_detection.launch
 ```
 Run the example application with an absolute path of an image 
 ```Shell
