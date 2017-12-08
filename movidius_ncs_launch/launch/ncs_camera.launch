@@ -1,0 +1,84 @@
+<!--
+Copyright (c) 2017 Intel Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<launch>
+  <arg name="manager" default="movidius_manager" />
+  <arg name="namespace" default="movidius_ncs_nodelet" />
+  
+  <!-- CNN model related parameter -->
+  <arg name="cnn_type" default="googlenet" />
+  <arg name="output_topic" value="classified_object" 
+       if="$(eval cnn_type == 'googlenet' or cnn_type == 'squeezenet' or cnn_type == 'alexnet')" />
+  <arg name="output_topic" value="detected_object" if="$(eval cnn_type == 'tinyyolo_v1')" />
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml" if="$(eval cnn_type == 'googlenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml" if="$(eval cnn_type == 'squeezenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml" if="$(eval cnn_type == 'alexnet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml" if="$(eval cnn_type == 'tinyyolo_v1')"/>
+  <arg name="top_n" default="3" />
+  
+  <!-- NCS related parameter -->
+  <arg name="device_index" default="0" />
+  <arg name="log_level" default="1" />
+  
+  <!-- camera related parameters -->
+  <arg name="camera" default="others" />
+  <arg name="input_topic" value="/usb_cam/image_raw" if="$(eval camera == 'usb')" />
+  <arg name="input_topic" value="/camera/color/image_raw" if="$(eval camera == 'realsense')" />
+  <arg name="input_topic" default="/camera/rgb/image_raw" if="$(eval camera == 'others')" />
+  
+  <!-- launch usb camera with the relevant parameters if any -->
+  <group if="$(eval camera == 'usb')">
+    <arg name="image_width" default="640" />
+    <arg name="image_height" default="480" />
+    <arg name="video_device" default="/dev/video0" />
+    
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+      <param name="video_device" value="$(arg video_device)" />
+      <param name="image_width" value="$(arg image_width)" />
+      <param name="image_height" value="$(arg image_height)" />
+      <param name="pixel_format" value="yuyv" />
+      <param name="camera_frame_id" value="usb_cam" />
+      <param name="io_method" value="mmap"/>
+    </node>
+  </group>
+  
+  <!-- launch realsense camera with the relevant parameters if any -->
+  <group if="$(eval camera == 'realsense')">
+    <arg name="color_width" default="640" />
+    <arg name="color_height" default="480" />
+    
+    <include file="$(find realsense_ros_camera)/launch/rs_camera.launch">
+        <arg name="color_width" value="$(arg color_width)" />
+        <arg name="color_height" value="$(arg color_height)" />
+    </include>
+  </group>
+  
+  <!-- launch NCS nodelet -->
+  <group ns="$(arg namespace)">
+    <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen" />
+
+    <include file="$(find movidius_ncs_launch)/launch/includes/ncs_stream.launch">
+      <arg name="manager" value="$(arg manager)" />
+      <arg name="input_topic" value="$(arg input_topic)" />
+      <arg name="output_topic" value="$(arg output_topic)" />
+      <arg name="device_index" value="$(arg device_index)" />
+      <arg name="log_level" value="$(arg log_level)" />
+      <arg name="top_n" value="$(arg top_n)" />
+      <arg name="cnn_type" value="$(arg cnn_type)"  />
+      <arg name="param_file" value="$(arg param_file)" />      
+    </include>
+  </group>
+</launch>

@@ -69,33 +69,20 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/voc.txt /opt/movidius/ncappzoo/da
 ## 5 Running the Demo
 ### 5.1 Classification
 #### 5.1.1 Video Streaming
+You can choose different CNN models and camera types by launch arguments. Refer [here](#table1) for all the supported CNN models, cameras and other parameter configurations.
 ##### 5.1.1.1 NCS and Standard USB Camera
-Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_usbcam_classifier.launch
-```
-Make sure you can get result from the topic of object classification.
-```Shell
-rostopic echo /movidius_ncs_nodelet/classified_objects
-```
-Launch image viewer to show the inference result.
-```Shell
+# launch video streaming nodelet
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=usb
+# launch image viewer to show the classification result in another console
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ##### 5.1.1.2 NCS and RealSense D400 Series Camera
-Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_realsense_d400_classifier.launch
-```
-Make sure you can get result from the topic of object classification.
-```Shell
-rostopic echo /movidius_ncs_nodelet/classified_objects
-```
-Launch image viewer to show the inference result. You can launch it directly without setting ```camera_topic```, as its default value is ```/camera/color/image_raw```
-```Shell
+# launch video streaming nodelet
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=realsense
+# launch image viewer to show the classification result in another console
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
-#or
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch
 ```
 ##### 5.1.1.3 NCS and Other ROS Supported Camera
 Launch your preferred camera node.
@@ -105,33 +92,17 @@ roscore
 #launch camera node in another console
 rosrun <your-camera-pkg> <your-camera-node>
 ```
-e.g.
+Launch video streaming nodelet and assign ```input_topic``` with the topic url of your rgb camera.
 ```Shell
-#launch ROS master
-roscore
-#launch camera node in another console
-rosrun usb_cam usb_cam_node
-```
-Launch NCS nodelet and assign ```input_topic``` with the topic url of your rgb camera.
-```Shell
-roslaunch movidius_ncs_launch ncs_nocam_classifier.launch input_topic:=<your_rgb_camera_topic>
-```
-e.g.
-```Shell
-roslaunch movidius_ncs_launch ncs_nocam_classifier.launch input_topic:="/usb_cam/image_raw"
-```
-Launch image viewer to show the inference result.
-```Shell
+# launch video streaming nodelet
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=others input_topic:=<your_rgb_camera_topic>
+# launch image viewer to show the classification result in another console
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:=<your_rgb_camera_topic>
 ```
-e.g.
-```Shell
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
-```
 #### 5.1.2 Static Image
-Launch object classification service. Refer [here](#table1) for more parameter configurations.
+Launch object classification service. You can choose different CNN models by launch arguments. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_image.launch
+roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=googlenet
 ```
 Run the example application with an absolute path of an image 
 ```Shell
@@ -142,42 +113,30 @@ e.g.
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
 #### 5.1.3 Choose Different CNN Models
-You can choose different CNN Models for inference through the argument of ```graph_file_path```. e.g.  
-Using RealSense camera
+You can choose different CNN Models for classification through the argument of ```cnn_type```.     
+Take usb camera as an example
 ```Shell
 #one console
-roslaunch movidius_ncs_launch ncs_realsense_d400_classifier.launch graph_file_path:="/opt/movidius/ncappzoo/caffe/SqueezeNet/graph"
-#another console
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch
-```
-Using standard USB camera
-```Shell
-#one console
-roslaunch movidius_ncs_launch ncs_usbcam_classifier.launch graph_file_path:="/opt/movidius/ncappzoo/caffe/AlexNet/graph"
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=squeezenet camera:=usb
 #another console
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ### 5.2 Detection
 #### 5.2.1 Video Streaming
+You can choose different CNN models and camera types by launch arguments. Refer [here](#table1) for all the supported CNN models, cameras and other parameter configurations.
 ##### 5.2.1.1 NCS and Standard USB Camera
-Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_usbcam_detector.launch
-```
-Launch image viewer to show the inference result.
-```Shell
+# launch video streaming nodelet
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=usb
+# launch image viewer to show the detection result
 roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ##### 5.2.1.2 NCS and RealSense D400 Series Camera
-Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_realsense_d400_detector.launch
-```
-Launch image viewer to show the inference result. You can launch it directly without setting ```camera_topic```, as its default value is ```/camera/color/image_raw```
-```Shell
+# launch video streaming nodelet
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=realsense
+# launch image viewer to show the detection result
 roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/camera/color/image_raw"
-#or
-roslaunch movidius_ncs_launch ncs_stream_detection_example.launch
 ```
 ##### 5.2.1.3 NCS and Other ROS Supported Camera
 Launch your preferred camera node.
@@ -187,33 +146,17 @@ roscore
 #launch camera node in another console
 rosrun <your-camera-pkg> <your-camera-node>
 ```
-e.g.
+Launch video streaming nodelet and assign ```input_topic``` with the topic url of your rgb camera.
 ```Shell
-#launch ROS master
-roscore
-#launch camera node in another console
-rosrun usb_cam usb_cam_node
-```
-Launch NCS nodelet and assign ```input_topic``` with the topic url of your rgb camera.
-```Shell
-roslaunch movidius_ncs_launch ncs_nocam_detector.launch input_topic:=<your_rgb_camera_topic>
-```
-e.g.
-```Shell
-roslaunch movidius_ncs_launch ncs_nocam_detector.launch input_topic:="/usb_cam/image_raw"
-```
-Launch image viewer to show the inference result.
-```Shell
+# launch video streaming nodelet
+roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=others input_topic:=<your_rgb_camera_topic>
+# launch image viewer to show the classification result in another console
 roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:=<your_rgb_camera_topic>
 ```
-e.g.
-```Shell
-roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/usb_cam/image_raw"
-```
 ### 5.2.2 Static Image
-Launch object detection service. Refer [here](#table1) for more parameter configurations.
+Launch object detection service. You can choose different CNN models by launch arguments. Refer [here](#table1) for more parameter configurations.
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_detection.launch
+roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=tinyyolo_v1
 ```
 Run the example application with an absolute path of an image 
 ```Shell
@@ -251,13 +194,9 @@ Detection
 |ncs|device_index|0|ncs device index|
 |ncs|log_level|1|ncs log level|
 |ncs|cnn_type|googlenet|indicate different cnn types for classification or detection|
-|ncs|graph_file_path|/opt/movidius/examples/caffe/GoogLeNet/graph|the path of CNN model graph file|
-|ncs|category_file_path|/opt/movidius/examples/data/ilsvrc12/categories.txt|object category list|
-|ncs|network_dimension|224|network dimension for input data|
-|ncs|channel1_mean|0.40787054|mean value of the first channel of image, default value is for ImageNet dataset|
-|ncs|channel2_mean|0.45752458|mean value of the second channel of image, default value is for ImageNet dataset|
-|ncs|channel3_mean|0.48109378|mean value of the third channel of image, default value is for ImageNet dataset|
-|ncs|top_n|3|the number of results to be shown|
+|ncs|param_file|googlenet.yaml|configuration file of CNN models|
+|ncs|top_n|3|the number of results to be shown, only valid for classification|
+|camera|camera|others|value can be usb, realsense and others|
 |realsense|color_width|640|frame width|
 |realsense|color_height|480|frame height|
 |usb cam|image_width|640|frame width|

@@ -120,7 +120,7 @@ void NCSImpl::getParameters()
   }
 
   if (cnn_type_.compare("googlenet") && cnn_type_.compare("alexnet")
-      && cnn_type_.compare("squezzenet") && cnn_type_.compare("tiny_yolo"))
+      && cnn_type_.compare("squeezenet") && cnn_type_.compare("tinyyolo_v1"))
   {
     ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
     throw std::exception();
@@ -141,40 +141,33 @@ void NCSImpl::getParameters()
 
   ROS_INFO_STREAM("use network_dimension = " << network_dimension_);
 
-  if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
+
+  for (int i = 0; i < 3; i++)
   {
-    for (int i = 0; i < 3; i++)
+    std::ostringstream oss;
+    oss << "channel" << (i + 1) << "_mean";
+    std::string mean_param_name = oss.str();
+    float mean_val;
+    if (!pnh_.getParam(mean_param_name, mean_val))
     {
-      std::ostringstream oss;
-      oss << "channel" << (i + 1) << "_mean";
-      std::string mean_param_name = oss.str();
-      float mean_val;
-      if (!pnh_.getParam(mean_param_name, mean_val))
-      {
-        ROS_WARN_STREAM("param " << mean_param_name << "not set, use default");
-      }
-      ROS_INFO_STREAM("use " << mean_param_name << " = " << mean_val);
-      mean_.push_back(mean_val);
+      ROS_WARN_STREAM("param " << mean_param_name << "not set, use default");
     }
-
-    if (!pnh_.getParam("top_n", top_n_))
-    {
-      ROS_WARN("param top_n not set, use default");
-    }
-
-    if (top_n_ < 0)
-    {
-      ROS_WARN_STREAM("invalid top_n = " << top_n_);
-      throw std::exception();
-    }
-
-    ROS_INFO_STREAM("use top_n = " << top_n_);
+    ROS_INFO_STREAM("use " << mean_param_name << " = " << mean_val);
+    mean_.push_back(mean_val);
   }
-  else
+
+  if (!pnh_.getParam("top_n", top_n_))
   {
-    mean_ = {0, 0, 0};
-    top_n_ = 0;
+    ROS_WARN("param top_n not set, use default");
   }
+
+  if (top_n_ < 1)
+  {
+    ROS_WARN_STREAM("invalid top_n = " << top_n_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use top_n = " << top_n_);
 
   if (!pnh_.getParam("scale", scale_))
   {
@@ -203,7 +196,7 @@ void NCSImpl::init()
                                                         top_n_);
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
 
-  if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squezzenet"))
+  if (!cnn_type_.compare("googlenet") || !cnn_type_.compare("alexnet") || !cnn_type_.compare("squeezenet"))
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbClassify, this);
     pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_objects", 1);

@@ -15,33 +15,27 @@ limitations under the License.
 -->
 
 <launch> 
-  <arg name="device_index"                default="0" />
-  <arg name="log_level"                   default="0" />
-  <arg name="cnn_type"                    default="googlenet" />
-  <arg name="graph_file_path"             default="/opt/movidius/ncappzoo/caffe/GoogLeNet/graph" />
-  <arg name="category_file_path"          default="/opt/movidius/ncappzoo/data/ilsvrc12/imagenet.txt" />
-  <arg name="network_dimension"           default="224" />
-  <arg name="channel1_mean"               default="104" />
-  <arg name="channel2_mean"               default="117" />
-  <arg name="channel3_mean"               default="123" />
-  <arg name="scale"                       default="1.0" />
-  <arg name="top_n"                       default="3" />
+  <arg name="device_index" default="0" />
+  <arg name="log_level" default="0" />
+  <arg name="top_n" default="3" />
+  <arg name="cnn_type" default="googlenet" />
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml"
+       if="$(eval cnn_type == 'googlenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
+       if="$(eval cnn_type == 'squeezenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml"
+       if="$(eval cnn_type == 'alexnet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"
+       if="$(eval cnn_type == 'tinyyolo_v1')"/>
 
-  <node pkg="movidius_ncs_image"
-        type="movidius_ncs_image"
-        name="movidius_ncs_image"
-        output="screen">
-      <param name="device_index"            value="$(arg device_index)" />
-      <param name="log_level"               value="$(arg log_level)" />
-      <param name="cnn_type"                value="$(arg cnn_type)" />
-      <param name="graph_file_path"         value="$(arg graph_file_path)" />
-      <param name="category_file_path"      value="$(arg category_file_path)" />
-      <param name="network_dimension"       value="$(arg network_dimension)" />
-      <param name="channel1_mean"           value="$(arg channel1_mean)" />
-      <param name="channel2_mean"           value="$(arg channel2_mean)" />
-      <param name="channel3_mean"           value="$(arg channel3_mean)" />
-      <param name="scale"                   value="$(arg scale)" />
-      <param name="top_n"                   value="$(arg top_n)" />
+
+  <node pkg="movidius_ncs_image" type="movidius_ncs_image"
+        name="movidius_ncs_image" output="screen">
+      <param name="device_index" value="$(arg device_index)" />
+      <param name="log_level" value="$(arg log_level)" />
+      <param name="cnn_type" value="$(arg cnn_type)" />
+      <param name="top_n" value="$(arg top_n)" />
+      <rosparam command="load" file="$(arg param_file)" />
   </node>
 </launch>
 

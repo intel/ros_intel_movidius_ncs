@@ -153,7 +153,7 @@ void NCS::detect()
       result32_vector.push_back(fp32);
     }
 
-    if (!cnn_type_.compare("tiny_yolo"))
+    if (!cnn_type_.compare("tinyyolo_v1"))
     {
       result_->parseYoloResult(result32_vector, categories_, tensor_->getImageWidth(), tensor_->getImageHeight());
       result_->setDetectionResult(graph_->getTimeTaken());
