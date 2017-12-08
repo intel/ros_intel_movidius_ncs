@@ -21,7 +21,7 @@ There are 2 active branches in this project:
 * Movidius Neural Compute Stick (NCS)
 * Movidius Neural Compute (MvNC) SDK
 * Movidius Neural Compute Application Zoo
-* RGB Camera, e.g. RealSense ZR300, RealSense D400 Series or standard USB camera
+* RGB Camera, e.g. RealSense D400 Series or standard USB camera
 
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
@@ -37,11 +37,8 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   1. Standard USB camera
   ```Shell
   sudo apt-get install ros-kinetic-usb-cam
-  ```
-  2. RealSense ZR300 camera  
-  - Install RealSense camera package ([guide](https://github.com/IntelRealSense/realsense_samples_ros)). Refer to [Realsense ROS WiKi](http://wiki.ros.org/RealSense) for more information.
-      
-  3. RealSense D400 series camera  
+  ```    
+  2. RealSense D400 series camera  
   - Install Intel® RealSense™ SDK 2.0 ([guide](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)). Refer [here](https://github.com/IntelRealSense/librealsense) for more details about Intel® RealSense™ SDK 2.0.  
   - Install Intel® RealSense™ ROS ([guide](https://github.com/intel-ros/realsense))  
   ```Shell
@@ -101,21 +98,6 @@ Launch video streaming nodelet and assign ```input_topic``` with the topic url o
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=others input_topic:=<your_rgb_camera_topic>
 # launch image viewer to show the classification result in another console
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:=<your_rgb_camera_topic>
-```
-##### 5.1.1.2 NCS and RealSense ZR300 Camera
-Launch video streaming nodelet. Refer [here](#table1) for more parameter configurations.
-```Shell
-roslaunch movidius_ncs_launch ncs_realsense_zr300.launch
-```
-Make sure you can get result from the topic of object classification.
-```Shell
-rostopic echo /movidius_ncs_nodelet/classified_objects
-```
-Launch image viewer to show the inference result. You can launch it directly without setting ```camera_topic```, as its default value is ```/camera/color/image_raw```
-```Shell
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
-#or
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch
 ```
 #### 5.1.2 Static Image
 Launch object classification service. You can choose different CNN models by launch arguments. Refer [here](#table1) for more parameter configurations.
@@ -233,7 +215,7 @@ Detection
 
 ## 8 Known Issues
 * Only absolute path of image file supported in image inference demo
-* Only test on RealSense ZR300 camera, RealSense D400 series camera and Microsoft HD-300 USB camera
+* Only test on RealSense D400 series camera and Microsoft HD-300 USB camera
 * Current v0.4.0 supporting NCSDK v1.10.00 is on master branch. devel branch is the development branch for the next release.
 
 ## 9 TODO
