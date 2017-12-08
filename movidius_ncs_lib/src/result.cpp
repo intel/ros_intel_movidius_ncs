@@ -26,7 +26,7 @@ Result::Result(const std::string& cnn_type)
     : classification_result(nullptr),
       detection_result(nullptr)
 {
-  if (!cnn_type.compare("tiny_yolo"))
+  if (!cnn_type.compare("tinyyolo_v1"))
   {
     detection_result = std::make_shared<DetectionResult>();
   }
