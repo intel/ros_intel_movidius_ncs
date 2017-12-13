@@ -158,6 +158,11 @@ void NCS::detect()
       result_->parseYoloResult(result32_vector, categories_, tensor_->getImageWidth(), tensor_->getImageHeight());
       result_->setDetectionResult(graph_->getTimeTaken());
     }
+    else if (!cnn_type_.compare("mobilenetssd"))
+    {
+      result_->parseSSDResult(result32_vector, categories_, tensor_->getImageWidth(), tensor_->getImageHeight());
+      result_->setDetectionResult(graph_->getTimeTaken());
+    }
     else
     {
       ROS_ERROR("unsupported cnn model");
