@@ -28,6 +28,8 @@
 #include <movidius_ncs_msgs/Objects.h>
 #include <movidius_ncs_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_stream/ncs_nodelet.h"
+#include "movidius_ncs_lib/exception.h"
+#include "movidius_ncs_lib/exception_util.h"
 
 using image_transport::ImageTransport;
 using movidius_ncs_lib::ClassificationResultPtr;
@@ -283,6 +285,11 @@ void NCSNodelet::onInit()
   try
   {
     impl_.reset(new NCSImpl(nh, pnh));
+  }
+  catch (movidius_ncs_lib::MvncException& e)
+  {
+    ROS_ERROR_STREAM("Error: "<<e.what());
+    ros::shutdown();
   }
   catch (...)
   {
