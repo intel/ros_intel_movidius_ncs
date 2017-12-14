@@ -122,8 +122,9 @@ void NCSImpl::getParameters()
   }
 
   if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet")
-      && cnn_type_.compare("inception_v1") && cnn_type_.compare("squeezenet")
-      && cnn_type_.compare("tinyyolo_v1") && cnn_type_.compare("mobilenetssd"))
+      && cnn_type_.compare("inception_v1") && cnn_type_.compare("inception_v2")
+      && cnn_type_.compare("squeezenet") && cnn_type_.compare("tinyyolo_v1")
+      && cnn_type_.compare("mobilenetssd"))
   {
     ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
     throw std::exception();
@@ -200,7 +201,8 @@ void NCSImpl::init()
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
 
   if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
-      || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("squeezenet"))
+      || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("inception_v2")
+      || !cnn_type_.compare("squeezenet"))
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbClassify, this);
     pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_objects", 1);
