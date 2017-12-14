@@ -21,11 +21,13 @@ limitations under the License.
   <!-- CNN model related parameter -->
   <arg name="cnn_type" default="googlenet" />
   <arg name="output_topic" value="classified_object" 
-       if="$(eval cnn_type == 'googlenet' or cnn_type == 'squeezenet' or cnn_type == 'alexnet')" />
+       if="$(eval cnn_type == 'alexnet' or cnn_type == 'googlenet'
+       or cnn_type == 'inception_v1' or cnn_type == 'squeezenet')" />
   <arg name="output_topic" value="detected_object" if="$(eval cnn_type == 'tinyyolo_v1' or cnn_type == 'mobilenetssd')" />
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml" if="$(eval cnn_type == 'googlenet')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml" if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml" if="$(eval cnn_type == 'alexnet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml" if="$(eval cnn_type == 'googlenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v1.yaml" if="$(eval cnn_type == 'inception_v1')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml" if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml" if="$(eval cnn_type == 'tinyyolo_v1')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml" if="$(eval cnn_type == 'mobilenetssd')"/>
   <arg name="top_n" default="3" />

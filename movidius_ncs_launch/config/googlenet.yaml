@@ -1,5 +1,5 @@
 graph_file_path: "/opt/movidius/ncappzoo/caffe/GoogLeNet/graph"
-category_file_path: "/opt/movidius/ncappzoo/data/ilsvrc12/imagenet.txt"
+category_file_path: "/opt/movidius/ncappzoo/data/ilsvrc12/imagenet1000.txt"
 network_dimension: 224
 channel1_mean: 104.0069879317889
 channel2_mean: 116.66876761696767
