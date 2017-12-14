@@ -25,6 +25,8 @@ limitations under the License.
        if="$(eval cnn_type == 'googlenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v1.yaml"
        if="$(eval cnn_type == 'inception_v1')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v2.yaml"
+       if="$(eval cnn_type == 'inception_v2')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
        if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"
