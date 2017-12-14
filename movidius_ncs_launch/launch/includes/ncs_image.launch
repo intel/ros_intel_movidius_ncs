@@ -19,12 +19,14 @@ limitations under the License.
   <arg name="log_level" default="0" />
   <arg name="top_n" default="3" />
   <arg name="cnn_type" default="googlenet" />
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml"
-       if="$(eval cnn_type == 'googlenet')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
-       if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml"
        if="$(eval cnn_type == 'alexnet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml"
+       if="$(eval cnn_type == 'googlenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v1.yaml"
+       if="$(eval cnn_type == 'inception_v1')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
+       if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"
        if="$(eval cnn_type == 'tinyyolo_v1')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml"
