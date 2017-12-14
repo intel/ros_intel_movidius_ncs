@@ -79,9 +79,12 @@ public:
   void setDetectionResult(float time);
   void parseYoloResult(const std::vector<float>& result, const std::vector<std::string> categories,
                        int img_width, int img_height);
+  void parseSSDResult(const std::vector<float>& result, const std::vector<std::string> categories,
+                       int img_width, int img_height);
 
 private:
-  float iou(ItemInBBox box1, ItemInBBox box2);
+  void NMS(ItemInBBoxArrayPtr objs_in_bboxes);
+  float IOU(ItemInBBox box1, ItemInBBox box2);
 
   ClassificationResultPtr classification_result;
   DetectionResultPtr detection_result;

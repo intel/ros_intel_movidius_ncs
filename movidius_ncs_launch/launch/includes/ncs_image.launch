@@ -27,6 +27,8 @@ limitations under the License.
        if="$(eval cnn_type == 'alexnet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"
        if="$(eval cnn_type == 'tinyyolo_v1')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml"
+       if="$(eval cnn_type == 'mobilenetssd')"/>
 
 
   <node pkg="movidius_ncs_image" type="movidius_ncs_image"

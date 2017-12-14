@@ -204,14 +204,13 @@ Detection
 |usb cam|video_device|/dev/video0|use camera device node|
 ## 7 CNN Support Status
 ###### *Table2*
-|CNN Model|Weights|Status|
-|:-|:-|:-|
+|CNN Model|Weights|
+|:-|:-|
 |GoogleNet|[weights](http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel)|Supported|
 |AlexNet|[weights](http://dl.caffe.berkeleyvision.org/bvlc_alexnet.caffemodel)|Supported|
 |SqueezeNet|[weights](https://github.com/DeepScale/SqueezeNet/raw/master/SqueezeNet_v1.0/squeezenet_v1.0.caffemodel)|Supported|
-|TinyYolo|[weights](http://ncs-forum-uploads.s3.amazonaws.com/ncappzoo/tiny_yolo/yolo_tiny.graph)|Supported|
-|Gender|[weights](https://dl.dropboxusercontent.com/u/38822310/gender_net.caffemodel)|Supported|
-|Age|[weights](https://dl.dropboxusercontent.com/u/38822310/age_net.caffemodel)|Not supported|
+|TinyYolo_V1|[weights](http://ncs-forum-uploads.s3.amazonaws.com/ncappzoo/tiny_yolo/yolo_tiny.graph)|Supported|
+|MobileNetSSD|[weights](https://drive.google.com/file/d/0B3gersZ2cHIxRm5PMWRoTkdHdHc/view)|Supported|
 
 ## 8 Known Issues
 * Only absolute path of image file supported in image inference demo

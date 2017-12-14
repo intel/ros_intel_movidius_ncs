@@ -26,7 +26,7 @@ Result::Result(const std::string& cnn_type)
     : classification_result(nullptr),
       detection_result(nullptr)
 {
-  if (!cnn_type.compare("tinyyolo_v1"))
+  if (!cnn_type.compare("tinyyolo_v1") || !cnn_type.compare("mobilenetssd"))
   {
     detection_result = std::make_shared<DetectionResult>();
   }
@@ -53,7 +53,6 @@ void Result::parseYoloResult(const std::vector<float>& result, const std::vector
   constexpr int grid_height = 7;
   constexpr int bbox_num = 2;
   constexpr float prob_threshold = 0.2;
-  constexpr float iou_threshold = 0.5;
   constexpr int bbox_conf_num = grid_width * grid_height * bbox_num;
   int class_num = categories.size();
   int prob_num = grid_width * grid_height * class_num;
@@ -66,65 +65,83 @@ void Result::parseYoloResult(const std::vector<float>& result, const std::vector
       for (int k = 0; k < bbox_num; k++)
       {
         int index = i * grid_width * bbox_num + j * bbox_num + k;
-        ItemInBBox obj_in_box;
+        ItemInBBox obj_in_bbox;
 
         std::vector<float> probs(result.begin() + index / 2 * class_num,
                                  result.begin() + index / 2 * class_num + class_num);
         float scale = result[prob_num + index];
         std::vector<float>::iterator max_iter = std::max_element(std::begin(probs), std::end(probs));
-        obj_in_box.item.probability = *max_iter * scale;
+        obj_in_bbox.item.probability = *max_iter * scale;
 
-        if (obj_in_box.item.probability > prob_threshold)
+        if (obj_in_bbox.item.probability > prob_threshold)
         {
-          obj_in_box.item.category = categories[std::distance(std::begin(probs), max_iter)];
-          obj_in_box.bbox.x = ((result[prob_num + bbox_conf_num + index * 4] + j) / 7.0) * img_width;
-          obj_in_box.bbox.y = ((result[prob_num + bbox_conf_num + index * 4 + 1] + i) / 7.0) * img_height;
-          obj_in_box.bbox.width = (result[prob_num + bbox_conf_num + index * 4 + 2])
+          obj_in_bbox.item.category = categories[std::distance(std::begin(probs), max_iter)];
+          obj_in_bbox.bbox.x = ((result[prob_num + bbox_conf_num + index * 4] + j) / 7.0) * img_width;
+          obj_in_bbox.bbox.y = ((result[prob_num + bbox_conf_num + index * 4 + 1] + i) / 7.0) * img_height;
+          obj_in_bbox.bbox.width = (result[prob_num + bbox_conf_num + index * 4 + 2])
                                    * (result[prob_num + bbox_conf_num + index * 4 + 2]) * img_width;
-          obj_in_box.bbox.height = (result[prob_num + bbox_conf_num + index * 4 + 3])
+          obj_in_bbox.bbox.height = (result[prob_num + bbox_conf_num + index * 4 + 3])
                                     * (result[prob_num + bbox_conf_num + index * 4 + 3]) * img_height;
-          objs_in_bboxes->push_back(obj_in_box);
+          objs_in_bboxes->push_back(obj_in_bbox);
         }
       }
     }
   }
-  auto cmp = [](const ItemInBBox &a, const ItemInBBox &b)
-  {
-    return a.item.probability > b.item.probability;
-  };
-  std::sort(objs_in_bboxes->begin(), objs_in_bboxes->end(), cmp);
 
-  for (auto iter1 = objs_in_bboxes->begin(); iter1 != objs_in_bboxes->end(); iter1++)
+  NMS(objs_in_bboxes);
+
+  if (!detection_result->items_in_boxes.empty())
   {
-    if (iter1->item.probability == 0)
+    detection_result->items_in_boxes.clear();
+  }
+
+  for (auto item : *objs_in_bboxes)
+  {
+    detection_result->items_in_boxes.push_back(item);
+  }
+}
+
+void Result::parseSSDResult(const std::vector<float>& result, const std::vector<std::string> categories,
+                             int img_width, int img_height)
+{
+  constexpr int num_in_group = 7;
+  int num_detection = result.at(0);
+  ItemInBBoxArrayPtr objs_in_bboxes = std::make_shared<ItemInBBoxArray>();
+
+  for (int i = 0; i < num_detection; i++)
+  {
+    ItemInBBox obj_in_bbox;
+    if (std::isnan(result[(i + 1) * num_in_group + 1])
+        || std::isnan(result[(i + 1) * num_in_group + 2])
+        || std::isnan(result[(i + 1) * num_in_group + 3])
+        || std::isnan(result[(i + 1) * num_in_group + 4])
+        || std::isnan(result[(i + 1) * num_in_group + 5])
+        || std::isnan(result[(i + 1) * num_in_group + 6]))
     {
       continue;
     }
-    for (auto iter2 = iter1 + 1; iter2 != objs_in_bboxes->end(); iter2++)
-    {
-      if (iou(*iter1, *iter2) > iou_threshold)
-      {
-        iter2->item.probability = 0;
-      }
-    }
-  }
-
-  for (auto iter = objs_in_bboxes->begin(); iter != objs_in_bboxes->end(); )
-  {
-    if (iter->item.probability == 0)
-    {
-      iter = objs_in_bboxes->erase(iter);
-    }
     else
     {
-      iter++;
+      obj_in_bbox.item.category = categories.at(result[(i + 1) * num_in_group + 1]);
+      obj_in_bbox.item.probability = result[(i + 1) * num_in_group + 2];
+      obj_in_bbox.bbox.width = (result[(i + 1) * num_in_group + 5]) * img_width
+                              - (result[(i + 1) * num_in_group + 3]) * img_width;
+      obj_in_bbox.bbox.height = (result[(i + 1) * num_in_group + 6]) * img_height
+                               - (result[(i + 1) * num_in_group + 4]) * img_height;
+      obj_in_bbox.bbox.x = (result[(i + 1) * num_in_group + 3]) * img_width
+                           + 0.5 * obj_in_bbox.bbox.width;
+      obj_in_bbox.bbox.y = (result[(i + 1) * num_in_group + 4]) * img_height
+                           + 0.5 * obj_in_bbox.bbox.height;
+      objs_in_bboxes->push_back(obj_in_bbox);
     }
   }
 
-    if (!detection_result->items_in_boxes.empty())
-    {
-      detection_result->items_in_boxes.clear();
-    }
+  NMS(objs_in_bboxes);
+
+  if (!detection_result->items_in_boxes.empty())
+  {
+    detection_result->items_in_boxes.clear();
+  }
 
   for (auto item : *objs_in_bboxes)
   {
@@ -152,7 +169,45 @@ void Result::setDetectionResult(float time)
   detection_result->time_taken = time;
 }
 
-float Result::iou(ItemInBBox box1, ItemInBBox box2)
+void Result::NMS(ItemInBBoxArrayPtr objs_in_bboxes)
+{
+  constexpr float iou_threshold = 0.5;
+
+  auto cmp = [](const ItemInBBox &a, const ItemInBBox &b)
+  {
+    return a.item.probability > b.item.probability;
+  };
+  std::sort(objs_in_bboxes->begin(), objs_in_bboxes->end(), cmp);
+
+  for (auto iter1 = objs_in_bboxes->begin(); iter1 != objs_in_bboxes->end(); iter1++)
+  {
+    if (iter1->item.probability == 0)
+    {
+      continue;
+    }
+    for (auto iter2 = iter1 + 1; iter2 != objs_in_bboxes->end(); iter2++)
+    {
+      if (IOU(*iter1, *iter2) > iou_threshold)
+      {
+        iter2->item.probability = 0;
+      }
+    }
+  }
+
+  for (auto iter = objs_in_bboxes->begin(); iter != objs_in_bboxes->end(); )
+  {
+    if (iter->item.probability == 0)
+    {
+      iter = objs_in_bboxes->erase(iter);
+    }
+    else
+    {
+      iter++;
+    }
+  }
+}
+
+float Result::IOU(ItemInBBox box1, ItemInBBox box2)
 {
   int xmax = (box1.bbox.x + 0.5 * box1.bbox.width < box2.bbox.x + 0.5 * box2.bbox.width)?
              box1.bbox.x + 0.5 * box1.bbox.width : box2.bbox.x + 0.5 * box2.bbox.width;
@@ -171,5 +226,4 @@ float Result::iou(ItemInBBox box1, ItemInBBox box2)
   }
   return inter_area * 1.0 / (box1.bbox.width * box1.bbox.height + box2.bbox.width * box2.bbox.height - inter_area);
 }
-
 }   // namespace movidius_ncs_lib
