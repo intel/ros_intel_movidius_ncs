@@ -24,7 +24,7 @@ limitations under the License.
        if="$(eval cnn_type == 'alexnet' or cnn_type == 'googlenet'
        or cnn_type == 'inception_v1' or cnn_type == 'inception_v2'
        or cnn_type == 'inception_v3' or cnn_type == 'inception_v4'
-       or cnn_type == 'squeezenet')" />
+       or cnn_type == 'mobilenet' or cnn_type == 'squeezenet')" />
   <arg name="output_topic" value="detected_object" if="$(eval cnn_type == 'tinyyolo_v1' or cnn_type == 'mobilenetssd')" />
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml" if="$(eval cnn_type == 'alexnet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml" if="$(eval cnn_type == 'googlenet')"/>
@@ -32,6 +32,7 @@ limitations under the License.
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v2.yaml" if="$(eval cnn_type == 'inception_v2')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v3.yaml" if="$(eval cnn_type == 'inception_v3')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v4.yaml" if="$(eval cnn_type == 'inception_v4')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenet.yaml" if="$(eval cnn_type == 'mobilenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml" if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml" if="$(eval cnn_type == 'tinyyolo_v1')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml" if="$(eval cnn_type == 'mobilenetssd')"/>
