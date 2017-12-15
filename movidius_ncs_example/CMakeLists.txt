@@ -24,12 +24,18 @@ find_package(catkin REQUIRED COMPONENTS
   roslint
 )
 
+find_package(OpenCV REQUIRED COMPONENTS
+  core
+  highgui
+  imgproc)
+
 catkin_package(
   CATKIN_DEPENDS roscpp
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT_NAME}_image_classification src/image_classification.cpp)
@@ -55,18 +61,22 @@ add_dependencies(${PROJECT_NAME}_stream_detection
 
 target_link_libraries(${PROJECT_NAME}_image_classification
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_image_detection
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_stream_classification
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_stream_detection
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 # Flags
 if(UNIX OR APPLE)
