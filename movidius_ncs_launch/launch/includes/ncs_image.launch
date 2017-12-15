@@ -29,6 +29,8 @@ limitations under the License.
        if="$(eval cnn_type == 'inception_v2')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v3.yaml"
        if="$(eval cnn_type == 'inception_v3')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v4.yaml"
+       if="$(eval cnn_type == 'inception_v4')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
        if="$(eval cnn_type == 'squeezenet')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"

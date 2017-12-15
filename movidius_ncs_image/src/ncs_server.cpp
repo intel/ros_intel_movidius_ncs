@@ -79,8 +79,9 @@ void NCSServer::getParameters()
 
   if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet")
       && cnn_type_.compare("inception_v1") && cnn_type_.compare("inception_v2")
-      && cnn_type_.compare("inception_v3") && cnn_type_.compare("squeezenet")
-      && cnn_type_.compare("tinyyolo_v1") && cnn_type_.compare("mobilenetssd"))
+      && cnn_type_.compare("inception_v3") && cnn_type_.compare("inception_v4")
+      && cnn_type_.compare("squeezenet") && cnn_type_.compare("tinyyolo_v1")
+      && cnn_type_.compare("mobilenetssd"))
   {
     ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
     throw std::exception();
@@ -183,7 +184,8 @@ void NCSServer::init()
                                                         top_n_);
   if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
       || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("inception_v2")
-      || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("squeezenet"))
+      || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4")
+      || !cnn_type_.compare("squeezenet"))
   {
     service_ = nh_.advertiseService("classify_object",
                                     &NCSServer::cbClassifyObject,
