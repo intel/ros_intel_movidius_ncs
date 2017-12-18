@@ -110,28 +110,29 @@ void Result::parseSSDResult(const std::vector<float>& result, const std::vector<
 
   for (int i = 0; i < num_detection; i++)
   {
+    int category_id = result[(i + 1) * num_in_group + 1];
+    float probability = result[(i + 1) * num_in_group + 2];
+    int xmin = result[(i + 1) * num_in_group + 3] * img_width;
+    int ymin = result[(i + 1) * num_in_group + 4] * img_height;
+    int xmax = result[(i + 1) * num_in_group + 5] * img_width;
+    int ymax = result[(i + 1) * num_in_group + 6] * img_height;
+
     ItemInBBox obj_in_bbox;
-    if (std::isnan(result[(i + 1) * num_in_group + 1])
-        || std::isnan(result[(i + 1) * num_in_group + 2])
-        || std::isnan(result[(i + 1) * num_in_group + 3])
-        || std::isnan(result[(i + 1) * num_in_group + 4])
-        || std::isnan(result[(i + 1) * num_in_group + 5])
-        || std::isnan(result[(i + 1) * num_in_group + 6]))
+    if (std::isnan(category_id) || std::isnan(probability) || std::isnan(xmin)
+        || xmin < 0 || xmin > img_width || std::isnan(ymin) || ymin < 0 || ymin > img_height
+        || std::isnan(xmax) || xmax < 0 || xmax > img_width || std::isnan(ymax)
+        || ymax < 0 || ymax > img_height)
     {
       continue;
     }
     else
     {
-      obj_in_bbox.item.category = categories.at(result[(i + 1) * num_in_group + 1]);
-      obj_in_bbox.item.probability = result[(i + 1) * num_in_group + 2];
-      obj_in_bbox.bbox.width = (result[(i + 1) * num_in_group + 5]) * img_width
-                              - (result[(i + 1) * num_in_group + 3]) * img_width;
-      obj_in_bbox.bbox.height = (result[(i + 1) * num_in_group + 6]) * img_height
-                               - (result[(i + 1) * num_in_group + 4]) * img_height;
-      obj_in_bbox.bbox.x = (result[(i + 1) * num_in_group + 3]) * img_width
-                           + 0.5 * obj_in_bbox.bbox.width;
-      obj_in_bbox.bbox.y = (result[(i + 1) * num_in_group + 4]) * img_height
-                           + 0.5 * obj_in_bbox.bbox.height;
+      obj_in_bbox.item.category = categories.at(category_id);
+      obj_in_bbox.item.probability = probability;
+      obj_in_bbox.bbox.width = xmax - xmin;
+      obj_in_bbox.bbox.height = ymax - ymin;
+      obj_in_bbox.bbox.x = xmin + 0.5 * obj_in_bbox.bbox.width;
+      obj_in_bbox.bbox.y = ymin + 0.5 * obj_in_bbox.bbox.height;
       objs_in_bboxes->push_back(obj_in_bbox);
     }
   }
