@@ -12,8 +12,8 @@ This project supports multiple CNN models for classification. Please make sure y
 #### [2 Other Arguments](#2-other-arguments-1)
 ----------------------------------
 
-## 1 CNN Models
-### AlexNet
+### 1 CNN Models
+* #### AlexNet
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/caffe/AlexNet
@@ -27,7 +27,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### GoogleNet
+* #### GoogleNet
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/caffe/GoogleNet
@@ -41,7 +41,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### SqueezeNet
+* #### SqueezeNet
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/caffe/SqueezeNet
@@ -55,7 +55,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### Inception_V1
+* #### Inception_V1
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/tensorflow/inception_v1
@@ -69,7 +69,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### Inception_V2
+* #### Inception_V2
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/tensorflow/inception_v2
@@ -83,7 +83,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### Inception_V3
+* #### Inception_V3
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/tensorflow/inception_v3
@@ -97,7 +97,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### Inception_V4
+* #### Inception_V4
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/tensorflow/inception_v4
@@ -111,7 +111,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-### MobileNet
+* #### MobileNet
 Compile NCS graph.
 ```Shell
 cd /opt/movidius/ncappzoo/tensorflow/mobilenets
@@ -125,7 +125,7 @@ Run the example application with an absolute path of an image on another console
 ```Shell
 rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
 ```
-## 2 Other Arguments
+### 2 Other Arguments
 |Arguments|Description|Default Value|Valid Values|
 |:-|:-|:-|:-|
 |device_index|ncs device index|0|0~N-1(N is the maximum number of inserted NCS devices)|
