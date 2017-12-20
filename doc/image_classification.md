@@ -1,15 +1,16 @@
 ## Content
 This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/reorg_readme#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/reorg_readme#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
-### 1 CNN Models
-* [AlexNet](#AlexNet)
-* [GoogleNet](#GoogleNet)
-* [SqueezeNet](#SqueezeNet)
-* [Inception_V1](#Inception_V1)
-* [Inception_V2](#Inception_V2)
-* [Inception_V3](#Inception_V3)
-* [Inception_V4](#Inception_V4)
-* [MobileNet](#MobileNet)
-### 2 Other Arguments
+#### [1 CNN Models](#1-cnn-models)
+* [AlexNet](#alexnet)
+* [GoogleNet](#googlenet)
+* [SqueezeNet](#squeezenet)
+* [Inception_V1](#inception_v1)
+* [Inception_V2](#inception_v2)
+* [Inception_V3](#inception_v3)
+* [Inception_V4](#inception_v4)
+* [MobileNet](#mobilenet)
+#### [2 Other Arguments](2-other-arguments)
+----------------------------------
 
 ## 1 CNN Models
 ### AlexNet
