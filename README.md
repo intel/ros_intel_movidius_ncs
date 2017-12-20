@@ -70,30 +70,30 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 ###### *Table1*
 |CNN Model|Framework|Usage|
 |:-|:-|:-|
-|AlexNet|Caffe|Link|
-|GoogleNet|Caffe|Link|
-|SqueezeNet|Caffe|Link|
-|Inception_v1|Tensorflow|Link|
-|Inception_v2|Tensorflow|Link|
-|Inception_v3|Tensorflow|Link|
-|Inception_v4|Tensorflow|Link|
-|MobileNet|Tensorflow|Link|
+|AlexNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#alexnet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#alexnet)|
+|GoogleNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#googlenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#googlenet)|
+|SqueezeNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#squeezenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#squeezenet)|
+|Inception_v1|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#inception_v1)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#inception_v1)|
+|Inception_v2|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#inception_v2)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#inception_v2)|
+|Inception_v3|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#inception_v3)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#inception_v3)|
+|Inception_v4|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#inception_v4)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#inception_v4)|
+|MobileNet|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md#mobilenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md#mobilenet)|
 #### 5.1.2 Classification Result with GoogleNet
-![classification with googlenet](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/googlenet_dog.png "classification with googlenet")
+![classification with googlenet](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/data/results/googlenet_dog.png "classification with googlenet")
 #### 5.1.3 Running the Demo
-* [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_classification.md)
-* [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_classification.md)
+* [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_classification.md)
+* [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_classification.md)
 ### 5.2 Detection
 #### 5.1.1 Supported CNN Models
 |CNN Model|Framework|Usage|
 |:-|:-|:-|
-|MobileNetSSD|Caffe|Link|
-|TinyYolo_v1|Caffe|Link|
+|MobileNetSSD|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_detection.md#mobilenet_ssd)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_detection.md#mobilenet_ssd)|
+|TinyYolo_v1|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_detection.md#tinyyolo_v1)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_detection.md#tinyyolo_v1)|
 #### 5.1.2 Detection Result with MobileNetSSD
-![detection with mobilenetssd](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/mobilenetssd_car_bicycle.png "detection with mobilenetssd")
+![detection with mobilenetssd](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/data/results/mobilenetssd_car_bicycle.png "detection with mobilenetssd")
 #### 5.1.3 Running the Demo
-* [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_detection.md)
-* [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_detection.md)
+* [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/image_detection.md)
+* [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/doc/video_detection.md)
 
 ## 6 Interfaces
 ### 6.1 Topic
