@@ -1,4 +1,4 @@
-## Content
+## Detection for Image
 This project supports multiple CNN models for detection. Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/reorg_readme#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/reorg_readme#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
 #### [1 CNN Models](#1-cnn-models-1)
 * [MobileNet_SSD](#mobilenet_ssd)
