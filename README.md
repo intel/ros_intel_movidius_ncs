@@ -81,8 +81,8 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 #### 5.1.2 Classification Result with GoogleNet
 ![classification with googlenet](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/googlenet_dog.png "classification with googlenet")
 #### 5.1.3 Running the Demo
-* [image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_classification.md)
-* [Video](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_classification.md)
+* [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_classification.md)
+* [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_classification.md)
 ### 5.2 Detection
 #### 5.1.1 Supported CNN Models
 |CNN Model|Framework|FPS|Usage|
@@ -92,45 +92,16 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 #### 5.1.2 Detection Result with MobileNetSSD
 ![detection with mobilenetssd](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/mobilenetssd_car_bicycle.png "detection with mobilenetssd")
 #### 5.1.3 Running the Demo
-* [Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_detection.md)
-* [Video](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_detection.md)
+* [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_detection.md)
+* [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_detection.md)
 
 ## 6 Interfaces and Arguments
 ### 6.1 Topic
-Classification
-```
-/movidius_ncs_nodelet/classified_objects
-```
-Detection
-```
-/movidius_ncs_nodelet/detected_objects
-```
+Classification: ```/movidius_ncs_nodelet/classified_objects```  
+Detection: ```/movidius_ncs_nodelet/detected_objects```
 ### 6.2 Service
-Classification
-```
-/movidius_ncs_image/classify_object
-```
-Detection
-```
-/movidius_ncs_image/detect_object
-```
-### 6.3 Arguments
-###### *Table3*
-|Node|Arguments|Default Value|Description|
-|:-|:-|:-|:-|
-|ncs|input_topic|/camera/color/image_raw|subscribed rgb camera topic|
-|ncs|output_topic|/movidius_ncs_nodelet/classified_object|published topic of inference results|
-|ncs|device_index|0|ncs device index|
-|ncs|log_level|1|ncs log level|
-|ncs|cnn_type|googlenet|indicate different cnn types for classification or detection|
-|ncs|param_file|googlenet.yaml|configuration file of CNN models|
-|ncs|top_n|3|the number of results to be shown, only valid for classification|
-|camera|camera|others|value can be usb, realsense and others|
-|realsense|color_width|640|frame width|
-|realsense|color_height|480|frame height|
-|usb cam|image_width|640|frame width|
-|usb cam|image_height|480|frame height|
-|usb cam|video_device|/dev/video0|use camera device node|
+Classification: ```/movidius_ncs_image/classify_object```  
+Detection: ```/movidius_ncs_image/detect_object```
 
 ## 7 Known Issues
 * Only absolute path of image file supported in image inference demo
