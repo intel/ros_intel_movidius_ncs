@@ -4,10 +4,10 @@
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.  
 
 This project is a ROS wrapper for NC API of [NCSDK](https://movidius.github.io/ncsdk/), providing the following features:
-* A ROS service for classifying and detecting objects in a static image file
-* A ROS publisher for classifying and detecting objects in a video stream from a RGB camera
+* A ROS service for object classification and detection of a static image file
+* A ROS publisher for object classification and detection of a video stream from a RGB camera
 * Demo applications to show the capabilities of ROS service and publisher
-* Support multiple [CNN models](#table2)
+* Support multiple CNN models of Caffe and Tensorflow
 
 There are 2 active branches in this project:
 * master - *stable branch*  
@@ -51,121 +51,50 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   ```  
 ## 4 Building and Installation
 ```Shell
+# Building
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
 cd ros_intel_movidius_ncs
 git checkout devel
 cd ~/catkin_ws
 catkin_make
+# Installation
 catkin_make install
 source install/setup.bash
+# Copy label files from this project to the installation location of NCSDK
+cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/data/ilsvrc12/
 ```
-Copy object label file from this project to NCSDK installation location.
-```Shell
-cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/imagenet.txt /opt/movidius/ncappzoo/data/ilsvrc12/
-cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/voc.txt /opt/movidius/ncappzoo/data/ilsvrc12/
-```
-
 ## 5 Running the Demo
 ### 5.1 Classification
-#### 5.1.1 Video Streaming
-You can choose different CNN models and camera types by launch arguments. Refer [here](#table1) for all the supported CNN models, cameras and other parameter configurations.
-##### 5.1.1.1 NCS and Standard USB Camera
-```Shell
-# launch video streaming nodelet
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=usb
-# launch image viewer to show the classification result in another console
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
-```
-##### 5.1.1.2 NCS and RealSense D400 Series Camera
-```Shell
-# launch video streaming nodelet
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=realsense
-# launch image viewer to show the classification result in another console
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
-```
-##### 5.1.1.3 NCS and Other ROS Supported Camera
-Launch your preferred camera node.
-```Shell
-#launch ROS master
-roscore
-#launch camera node in another console
-rosrun <your-camera-pkg> <your-camera-node>
-```
-Launch video streaming nodelet and assign ```input_topic``` with the topic url of your rgb camera.
-```Shell
-# launch video streaming nodelet
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=others input_topic:=<your_rgb_camera_topic>
-# launch image viewer to show the classification result in another console
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:=<your_rgb_camera_topic>
-```
-#### 5.1.2 Static Image
-Launch object classification service. You can choose different CNN models by launch arguments. Refer [here](#table1) for more parameter configurations.
-```Shell
-roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=googlenet
-```
-Run the example application with an absolute path of an image 
-```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification <image_path_to_be_inferred>
-```
-e.g.
-```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
-```
-#### 5.1.3 Choose Different CNN Models
-You can choose different CNN Models for classification through the argument of ```cnn_type```.     
-Take usb camera as an example
-```Shell
-#one console
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=squeezenet camera:=usb
-#another console
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
-```
+#### 5.1.1 Supported CNN Models
+###### *Table1*
+|CNN Model|Framework|FPS|Usage|
+|:-|:-|:-|:-|
+|AlexNet|Caffe||Link|
+|GoogleNet|Caffe||Link|
+|SqueezeNet|Caffe||Link|
+|Inception_v1|Tensorflow||Link|
+|Inception_v2|Tensorflow||Link|
+|Inception_v3|Tensorflow||Link|
+|Inception_v4|Tensorflow||Link|
+|MobileNet|Tensorflow||Link|
+#### 5.1.2 Classification Result with GoogleNet
+![classification with googlenet](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/googlenet_dog.png "classification with googlenet")
+#### 5.1.3 Running the Demo
+* [image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_classification.md)
+* [Video](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_classification.md)
 ### 5.2 Detection
-#### 5.2.1 Video Streaming
-You can choose different CNN models and camera types by launch arguments. Refer [here](#table1) for all the supported CNN models, cameras and other parameter configurations.
-##### 5.2.1.1 NCS and Standard USB Camera
-```Shell
-# launch video streaming nodelet
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=usb
-# launch image viewer to show the detection result
-roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/usb_cam/image_raw"
-```
-##### 5.2.1.2 NCS and RealSense D400 Series Camera
-```Shell
-# launch video streaming nodelet
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=realsense
-# launch image viewer to show the detection result
-roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/camera/color/image_raw"
-```
-##### 5.2.1.3 NCS and Other ROS Supported Camera
-Launch your preferred camera node.
-```Shell
-#launch ROS master
-roscore
-#launch camera node in another console
-rosrun <your-camera-pkg> <your-camera-node>
-```
-Launch video streaming nodelet and assign ```input_topic``` with the topic url of your rgb camera.
-```Shell
-# launch video streaming nodelet
-roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=others input_topic:=<your_rgb_camera_topic>
-# launch image viewer to show the classification result in another console
-roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:=<your_rgb_camera_topic>
-```
-### 5.2.2 Static Image
-Launch object detection service. You can choose different CNN models by launch arguments. Refer [here](#table1) for more parameter configurations.
-```Shell
-roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=tinyyolo_v1
-```
-Run the example application with an absolute path of an image 
-```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_detection <image_path_to_be_inferred>
-```
-e.g.
-```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_detection /opt/movidius/ncappzoo/data/images/cat.jpg
-```
+#### 5.1.1 Supported CNN Models
+|CNN Model|Framework|FPS|Usage|
+|:-|:-|:-|:-|
+|MobileNetSSD|Caffe||Link|
+|TinyYolo_v1|Caffe||Link|
+#### 5.1.2 Detection Result with MobileNetSSD
+![detection with mobilenetssd](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/mobilenetssd_car_bicycle.png "detection with mobilenetssd")
+#### 5.1.3 Running the Demo
+* [Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_detection.md)
+* [Video](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_detection.md)
+
 ## 6 Interfaces and Arguments
 ### 6.1 Topic
 Classification
@@ -186,7 +115,7 @@ Detection
 /movidius_ncs_image/detect_object
 ```
 ### 6.3 Arguments
-###### *Table1*
+###### *Table3*
 |Node|Arguments|Default Value|Description|
 |:-|:-|:-|:-|
 |ncs|input_topic|/camera/color/image_raw|subscribed rgb camera topic|
@@ -202,25 +131,16 @@ Detection
 |usb cam|image_width|640|frame width|
 |usb cam|image_height|480|frame height|
 |usb cam|video_device|/dev/video0|use camera device node|
-## 7 CNN Support Status
-###### *Table2*
-|CNN Model|Weights|
-|:-|:-|
-|GoogleNet|[weights](http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel)|Supported|
-|AlexNet|[weights](http://dl.caffe.berkeleyvision.org/bvlc_alexnet.caffemodel)|Supported|
-|SqueezeNet|[weights](https://github.com/DeepScale/SqueezeNet/raw/master/SqueezeNet_v1.0/squeezenet_v1.0.caffemodel)|Supported|
-|TinyYolo_V1|[weights](http://ncs-forum-uploads.s3.amazonaws.com/ncappzoo/tiny_yolo/yolo_tiny.graph)|Supported|
-|MobileNetSSD|[weights](https://drive.google.com/file/d/0B3gersZ2cHIxRm5PMWRoTkdHdHc/view)|Supported|
 
-## 8 Known Issues
+## 7 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on RealSense D400 series camera and Microsoft HD-300 USB camera
 * Current v0.4.0 supporting NCSDK v1.10.00 is on master branch. devel branch is the development branch for the next release.
 
-## 9 TODO
+## 8 TODO
 *  Support multiple NCS devices
 *  Support more CNN models
 *  Support latest NCSDK
 
 
-###### *For security issues, please send mail to xiaojun.huang@intel.com*
+###### *Any security issue should be reported using process at https://01.org/security*
