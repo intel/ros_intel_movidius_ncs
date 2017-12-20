@@ -68,16 +68,16 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 ### 5.1 Classification
 #### 5.1.1 Supported CNN Models
 ###### *Table1*
-|CNN Model|Framework|FPS|Usage|
-|:-|:-|:-|:-|
-|AlexNet|Caffe||Link|
-|GoogleNet|Caffe||Link|
-|SqueezeNet|Caffe||Link|
-|Inception_v1|Tensorflow||Link|
-|Inception_v2|Tensorflow||Link|
-|Inception_v3|Tensorflow||Link|
-|Inception_v4|Tensorflow||Link|
-|MobileNet|Tensorflow||Link|
+|CNN Model|Framework|Usage|
+|:-|:-|:-|
+|AlexNet|Caffe|Link|
+|GoogleNet|Caffe|Link|
+|SqueezeNet|Caffe|Link|
+|Inception_v1|Tensorflow|Link|
+|Inception_v2|Tensorflow|Link|
+|Inception_v3|Tensorflow|Link|
+|Inception_v4|Tensorflow|Link|
+|MobileNet|Tensorflow|Link|
 #### 5.1.2 Classification Result with GoogleNet
 ![classification with googlenet](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/googlenet_dog.png "classification with googlenet")
 #### 5.1.3 Running the Demo
@@ -85,17 +85,17 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 * [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_classification.md)
 ### 5.2 Detection
 #### 5.1.1 Supported CNN Models
-|CNN Model|Framework|FPS|Usage|
-|:-|:-|:-|:-|
-|MobileNetSSD|Caffe||Link|
-|TinyYolo_v1|Caffe||Link|
+|CNN Model|Framework|Usage|
+|:-|:-|:-|
+|MobileNetSSD|Caffe|Link|
+|TinyYolo_v1|Caffe|Link|
 #### 5.1.2 Detection Result with MobileNetSSD
 ![detection with mobilenetssd](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/data/results/mobilenetssd_car_bicycle.png "detection with mobilenetssd")
 #### 5.1.3 Running the Demo
 * [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/image_detection.md)
 * [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/reorg_readme/doc/video_detection.md)
 
-## 6 Interfaces and Arguments
+## 6 Interfaces
 ### 6.1 Topic
 Classification: ```/movidius_ncs_nodelet/classified_objects```  
 Detection: ```/movidius_ncs_nodelet/detected_objects```
