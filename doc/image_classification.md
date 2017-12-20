@@ -9,7 +9,7 @@ This project supports multiple CNN models for classification. Please make sure y
 * [Inception_V3](#inception_v3)
 * [Inception_V4](#inception_v4)
 * [MobileNet](#mobilenet)
-#### [2 Other Arguments](2-other-arguments)
+#### [2 Other Arguments](2-other-arguments-1)
 ----------------------------------
 
 ## 1 CNN Models
