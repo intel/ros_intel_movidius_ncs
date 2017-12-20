@@ -9,7 +9,7 @@ This project supports multiple CNN models for classification. Please make sure y
 * [Inception_V3](#inception_v3)
 * [Inception_V4](#inception_v4)
 * [MobileNet](#mobilenet)
-#### [2 Run with Other ROS Supported Cameras](#2-run-with-other-ros-supported-cameras-1])
+#### [2 Run with Other ROS Supported Cameras](#2-run-with-other-ros-supported-cameras-1)
 #### [3 Other Arguments](#3-other-arguments-1)
 ----------------------------------
 
