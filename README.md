@@ -11,7 +11,7 @@ This project is a ROS wrapper for NC API of [NCSDK](https://movidius.github.io/n
 
 There are 2 active branches in this project:
 * master - *stable branch*  
-  The latest version on it is v0.4.0 which supports NCSDK v1.10.00. master branch is only updated when every milestone release ready.
+  The latest version on it is v0.5.0 which supports NCSDK v1.11.00. master branch is only updated when every milestone release ready.
 * devel - *default branch*  
   This branch is updated from time to time and maintain the latest code on it. Each pull request should be submitted based on devel branch. We will merge patches to master branch on every milestone release.  
   
@@ -26,7 +26,7 @@ There are 2 active branches in this project:
 ## 3 Environment Setup
 * Install ROS Kinetic Desktop-Full ([guide](http://wiki.ros.org/kinetic/Installation/Ubuntu)) 
 * Create a catkin workspace ([guide](http://wiki.ros.org/catkin/Tutorials/create_a_workspace))
-* Install NCSDK [v1.10.00](https://github.com/movidius/ncsdk/releases) ([github](https://github.com/movidius/ncsdk))
+* Install NCSDK [v1.11.00](https://github.com/movidius/ncsdk/releases) ([github](https://github.com/movidius/ncsdk))
 * Install NC APP Zoo([github](https://github.com/movidius/ncappzoo))
 * NCSDK should be installed in ```/opt/movidius``` by default. Create a symbol link in ```/opt/movidius``` to NC APP Zoo.
 ```Shell
@@ -106,7 +106,7 @@ Detection: ```/movidius_ncs_image/detect_object```
 ## 7 Known Issues
 * Only absolute path of image file supported in image inference demo
 * Only test on RealSense D400 series camera and Microsoft HD-300 USB camera
-* Current v0.4.0 supporting NCSDK v1.10.00 is on master branch. devel branch is the development branch for the next release.
+* Current v0.5.0 supporting NCSDK v1.11.00 is on master branch. devel branch is the development branch for the next release.
 
 ## 8 TODO
 *  Support multiple NCS devices

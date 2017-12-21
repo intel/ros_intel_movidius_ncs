@@ -21,12 +21,12 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=mobilenetssd camera:=r
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=mobilenetssd camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
+roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/camera/color/image_raw"
 # Option 2: USB camera
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
+roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 * #### TinyYolo_V1
 Compile NCS graph.
@@ -41,12 +41,12 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=re
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=tinyyolo_v1 camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
+roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/camera/color/image_raw"
 # Option 2: USB camera
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
+roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ### 2 Run with Other ROS Supported Cameras
 Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:
@@ -62,16 +62,16 @@ Launch video streaming nodelet and assign ```input_topic``` with the topic url o
 # Launch video streaming nodelet
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=mobilenetssd camera:=others input_topic:=<your_rgb_camera_topic>
 # Launch image viewer to show the classification result on another console
-roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:=<your_rgb_camera_topic>
+roslaunch movidius_ncs_launch ncs_stream_detection_example.launch camera_topic:=<your_rgb_camera_topic>
 ```
 ### 3 Other Arguments
 |Arguments|Description|Default Value|Valid Values|
 |:-|:-|:-|:-|
 |device_index|ncs device index|0|0~N-1(N is the maximum number of inserted NCS devices)|
-|log_level|ncs log level|0|0:Noting / 1:Errors / 2:Verbose|
+|log_level|ncs log level|0|0:Nothing / 1:Errors / 2:Verbose|
 |cnn_type|indicate different cnn models|googlenet|mobilenetssd / tinyyolo_v1|
 |input_topic|RGB camera topic to be subscribed|/camera/color/image_raw|only valid when "camera:=others"|
-|output_topic|published topic of inference results|/movidius_ncs_nodelet/classified_objects|any valid topic name|
+|output_topic|published topic of inference results|/movidius_ncs_nodelet/detected_objects|any valid topic name|
 |camera|camera type|others|usb / realsense / others|
 |color_width|frame width of RealSense D400|640|any resolution that RealSense D400 supports|
 |color_height|frame height of RealSense D400|480|any resolution that RealSense D400 supports|
