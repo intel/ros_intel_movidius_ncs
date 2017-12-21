@@ -27,7 +27,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=alexnet camera:=realse
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=alexnet camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -47,7 +47,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=real
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -67,7 +67,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=squeezenet camera:=rea
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=squeezenet camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -87,7 +87,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v1 camera:=r
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v1 camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -107,7 +107,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v2 camera:=r
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v2 camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -127,7 +127,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v3 camera:=r
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v3 camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -147,7 +147,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v4 camera:=r
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=inception_v4 camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -167,7 +167,7 @@ roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=mobilenet camera:=real
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=mobilenet camera:=usb
 ```
-Launch image viewer to show the classification result on another console
+Launch image viewer to show the classification result on another console.
 ```Shell
 # Option 1: RealSense
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/camera/color/image_raw"
@@ -175,7 +175,7 @@ roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_to
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ### 2 Run with Other ROS Supported Cameras
-Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:
+Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:  
 Launch your preferred camera node.
 ```Shell
 #launch ROS master
@@ -183,7 +183,7 @@ roscore
 #launch camera node on another console
 rosrun <your-camera-pkg> <your-camera-node>
 ```
-Launch video streaming nodelet and assign ```input_topic``` with the topic url of your RGB camera.
+Launch video streaming nodelet and assign ```input_topic``` with the topic URL of your RGB camera.
 ```Shell
 # Launch video streaming nodelet
 roslaunch movidius_ncs_launch ncs_camera.launch cnn_type:=googlenet camera:=others input_topic:=<your_rgb_camera_topic>
@@ -194,7 +194,7 @@ roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_to
 |Arguments|Description|Default Value|Valid Values|
 |:-|:-|:-|:-|
 |device_index|ncs device index|0|0~N-1(N is the maximum number of inserted NCS devices)|
-|log_level|ncs log level|0|0:Noting / 1:Errors / 2:Verbose|
+|log_level|ncs log level|0|0:Nothing / 1:Errors / 2:Verbose|
 |cnn_type|indicate different cnn models|googlenet|alexnet / googlenet / squeezenet / inception_v1 / inception_v2 / inception_v3 / inception_v4 / mobilenet|
 |top_n|the number of results to be shown, only valid for classification|3|0~5|
 |input_topic|RGB camera topic to be subscribed|/camera/color/image_raw|only valid when "camera:=others"|
