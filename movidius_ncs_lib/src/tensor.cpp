@@ -16,6 +16,7 @@
 
 #include <utility>
 #include <vector>
+#include <string>
 #if defined(__i386__) || defined(__x86_64__)
 #include <x86intrin.h>
 #endif
@@ -24,29 +25,40 @@
 
 namespace movidius_ncs_lib
 {
-Tensor::Tensor(const cv::Mat& original,
+Tensor::Tensor(const std::pair<int, int>& net_dim,
                const std::vector<float>& mean,
-               const std::pair<int, int>& size)
-  : width_(size.first)
-  , height_(size.second)
+               const float& scale)
+  : tensor_(0),
+    net_width_(net_dim.first),
+    net_height_(net_dim.second),
+    image_width_(0),
+    image_height_(0),
+    mean_(mean),
+    scale_(scale)
 {
+}
+
+void Tensor::loadImageData(const cv::Mat& image)
+{
+  image_width_ = image.cols;
+  image_height_ = image.rows;
+
   cv::Mat resized;
-  cv::resize(original,
-             resized,
-             cv::Size(width_, height_),
-             0,
-             0);
+  cv::resize(image, resized, cv::Size(net_width_, net_height_), 0, 0);
+
   cv::Mat colored;
   cv::cvtColor(resized, colored, CV_BGR2RGB);
-  cv::Mat converted;
-  colored.convertTo(converted, CV_32SC3);
-  using TensorIt = cv::MatConstIterator_<cv::Vec3i>;
 
-  for (TensorIt it = converted.begin<cv::Vec3i>(); it != converted.end<cv::Vec3i>(); ++it)
+  cv::Mat converted;
+  colored.convertTo(converted, CV_32FC3);
+
+  using TensorIt = cv::MatConstIterator_<cv::Vec3f>;
+
+  for (TensorIt it = converted.begin<cv::Vec3f>(); it != converted.end<cv::Vec3f>(); ++it)
   {
-    float r32 = ((*it)[0] - mean[0]);
-    float g32 = ((*it)[1] - mean[1]);
-    float b32 = ((*it)[2] - mean[2]);
+    float r32 = ((*it)[0] - mean_[0]) * scale_;
+    float g32 = ((*it)[1] - mean_[1]) * scale_;
+    float b32 = ((*it)[2] - mean_[2]) * scale_;
     uint16_t r16;
     uint16_t g16;
     uint16_t b16;
@@ -62,6 +74,14 @@ Tensor::Tensor(const cv::Mat& original,
     tensor_.push_back(r16);
     tensor_.push_back(g16);
     tensor_.push_back(b16);
+  }
+}
+
+void Tensor::clearTensor()
+{
+  if (!tensor_.empty())
+  {
+    tensor_.clear();
   }
 }
 

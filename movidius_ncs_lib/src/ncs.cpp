@@ -21,111 +21,222 @@
 #include <fstream>
 #include <streambuf>
 #include <cerrno>
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "movidius_ncs_lib/exception.h"
-#include "movidius_ncs_lib/inference.h"
+#include "movidius_ncs_lib/exception_util.h"
 #include "movidius_ncs_lib/ncs.h"
+#include "movidius_ncs_lib/tensor.h"
 
 namespace movidius_ncs_lib
 {
-Ncs::Ncs(int device_index,
+NCS::NCS(int device_index,
          Device::LogLevel log_level,
+         const std::string& cnn_type,
          const std::string& graph_file_path,
          const std::string& category_file_path,
          const int network_dimension,
-         const std::vector<float>& mean)
-  : device_(nullptr)
-  , graph_(nullptr)
-  , device_index_(device_index)
-  , log_level_(log_level)
-  , graph_file_path_(graph_file_path)
-  , category_file_path_(category_file_path)
-  , network_dimension_(network_dimension)
-  , mean_(mean)
+         const std::vector<float>& mean,
+         const float& scale,
+         const int& top_n)
+    : device_(nullptr),
+      graph_(nullptr),
+      tensor_(nullptr),
+      device_index_(device_index),
+      log_level_(log_level),
+      cnn_type_(cnn_type),
+      network_dimension_(network_dimension),
+      mean_(mean),
+      scale_(scale),
+      top_n_(top_n),
+      user_param_(nullptr)
 {
-  init();
+  initDevice();
+  loadGraph(graph_file_path);
+  loadCategories(category_file_path);
+  tensor_ = std::make_shared<Tensor>(std::pair<int, int>(network_dimension_, network_dimension_),
+                                     mean_, scale_);
+  result_ = std::make_shared<Result>(cnn_type_);
 }
 
-Ncs::~Ncs()
+NCS::~NCS()
 {
 }
 
-ResultPtr Ncs::infer(cv::Mat image, uint32_t top_n)
+void NCS::classify()
 {
-  ROS_DEBUG("Ncs::infer");
-
+  assert(graph_->getHandle() != nullptr);
   try
   {
-    Tensor::Ptr tensor = std::make_shared<Tensor>(
-                    image,
-                    graph_->getMean(),
-                    std::pair<int, int>(graph_->getNetworkDim(), graph_->getNetworkDim()));
-    Inference inference(top_n, tensor, graph_, device_);
-    return inference.run();
+    uint16_t* probabilities;
+    unsigned int length;
+    int ret = mvncGetResult(graph_->getHandle(), reinterpret_cast<void**>(&probabilities),
+                            &length, &user_param_);
+    ExceptionUtil::tryToThrowMvncException(ret);
+    std::vector<uint16_t> result_vector(reinterpret_cast<uint16_t*>(probabilities),
+                                        reinterpret_cast<uint16_t*>(probabilities) + length);
+    ItemsPtr items = std::make_shared<Items>();
+    for (size_t index = 0; index < length / 2; ++index)
+    {
+      float fp32;
+#if defined(__i386__) || defined(__x86_64__)
+      fp32 = _cvtsh_ss(probabilities[index]);
+#else
+      Tensor::fp16tofp32(&fp32, probabilities[index]);
+#endif
+      Item item;
+      item.category = categories_[index];
+      item.probability = fp32;
+      items->push_back(item);
+    }
+
+    auto cmp = [](const Item & a, const Item & b)
+    {
+      return a.probability > b.probability;
+    };
+    std::sort(items->begin(), items->end(), cmp);
+
+    if (!result_->getClassificationResult()->items.empty())
+    {
+      result_->getClassificationResult()->items.clear();
+    }
+
+    for (auto i : *items)
+    {
+      result_->setClassificationResult(i);
+      if (static_cast<int>(result_->getClassificationResult()->items.size()) == top_n_)
+      {
+        break;
+      }
+    }
+    result_->setClassificationResult(graph_->getTimeTaken());
+    device_->monitorThermal();
+  }
+  catch (MvncMyriadError& e)
+  {
+    ROS_ERROR_STREAM(e.what());
+    std::string debug_info = graph_->getDebugInfo();
+    ROS_ERROR_STREAM("myriad debug info: " << debug_info);
+  }
+  catch (NCSException& e)
+  {
+    ROS_ERROR_STREAM(e.what());
+  }
+}
+
+void NCS::detect()
+{
+  assert(graph_->getHandle() != nullptr);
+  try
+  {
+    uint16_t* result;
+    unsigned int length;
+    int ret = mvncGetResult(graph_->getHandle(),
+                            reinterpret_cast<void**>(&result),
+                            &length,
+                            &user_param_);
+    ExceptionUtil::tryToThrowMvncException(ret);
+
+    std::vector<uint16_t> result16_vector(reinterpret_cast<uint16_t*>(result),
+                                          reinterpret_cast<uint16_t*>(result) + length / 2);
+    std::vector<float> result32_vector;
+
+    for (auto fp16 : result16_vector)
+    {
+      float fp32;
+#if defined(__i386__) || defined(__x86_64__)
+      fp32 = _cvtsh_ss(fp16);
+#else
+      Tensor::fp16tofp32(&fp32, fp16);
+#endif
+      result32_vector.push_back(fp32);
+    }
+
+    if (!cnn_type_.compare("tinyyolo_v1"))
+    {
+      result_->parseYoloResult(result32_vector, categories_, tensor_->getImageWidth(), tensor_->getImageHeight());
+      result_->setDetectionResult(graph_->getTimeTaken());
+    }
+    else if (!cnn_type_.compare("mobilenetssd"))
+    {
+      result_->parseSSDResult(result32_vector, categories_, tensor_->getImageWidth(), tensor_->getImageHeight());
+      result_->setDetectionResult(graph_->getTimeTaken());
+    }
+    else
+    {
+      ROS_ERROR("unsupported cnn model");
+    }
+    device_->monitorThermal();
+  }
+  catch (MvncMyriadError& e)
+  {
+    ROS_ERROR_STREAM(e.what());
+    std::string debug_info = graph_->getDebugInfo();
+    ROS_ERROR_STREAM("myriad debug info: " << debug_info);
   }
   catch (std::exception& e)
   {
-    ROS_ERROR_STREAM("inference error: " << e.what());
+    ROS_ERROR_STREAM(e.what());
   }
-
-  return nullptr;
 }
 
-void Ncs::init()
+void NCS::loadTensor(const cv::Mat& image)
 {
-  ROS_DEBUG("Ncs::init called");
-  getDevice();
-  loadGraph();
+  tensor_->clearTensor();
+  tensor_->loadImageData(image);
+
+  assert(graph_->getHandle() != nullptr);
+  int ret = mvncLoadTensor(graph_->getHandle(),
+                           tensor_->raw(),
+                           tensor_->size(),
+                           user_param_);
+  ExceptionUtil::tryToThrowMvncException(ret);
 }
 
-void Ncs::loadGraph()
+ClassificationResultPtr NCS::getClassificationResult()
 {
-  std::vector<std::string> categories = loadCategories();
-  std::string graph = getFileContent(graph_file_path_);
-  std::vector<float> scaled_mean;
-  for (auto &i : mean_)
-  {
-    scaled_mean.push_back(i * 255.0);
-  }
-  graph_.reset(new Graph(device_,
-                         graph,
-                         network_dimension_,
-                         scaled_mean,
-                         categories));
+  return result_->getClassificationResult();
 }
 
-void Ncs::getDevice()
+DetectionResultPtr NCS::getDetectionResult()
+{
+  return result_->getDetectionResult();
+}
+
+void NCS::initDevice()
 {
   device_.reset(new Device(device_index_,
                            static_cast<Device::LogLevel>(log_level_)));
 }
 
-std::vector<std::string> Ncs::loadCategories()
+void NCS::loadGraph(const std::string& graph_file_path)
+{
+  std::string graph = getFileContent(graph_file_path);
+  graph_.reset(new Graph(device_, graph, network_dimension_));
+}
+
+void NCS::loadCategories(const std::string& category_file_path)
 {
   try
   {
-    std::string content = getFileContent(category_file_path_);
-    std::vector<std::string> lines;
-    splitIntoLines(content, lines);
-    std::string first = lines[0];
+    std::string content = getFileContent(category_file_path);
+    splitIntoLines(content, categories_);
+    std::string first = categories_[0];
     boost::trim_right(first);
 
     if (boost::iequals(first, "classes"))
     {
-      lines.erase(lines.begin());
+      categories_.erase(categories_.begin());
     }
-
-    return lines;
   }
   catch (int& e)
   {
-    throw NcsLoadCategoriesError();
+    throw NCSLoadCategoriesError();
   }
 }
 
-void Ncs::splitIntoLines(const std::string& content,
+void NCS::splitIntoLines(const std::string& content,
                          std::vector<std::string>& lines)
 {
   std::stringstream ss(content);
@@ -137,17 +248,7 @@ void Ncs::splitIntoLines(const std::string& content,
   }
 }
 
-std::string Ncs::appendPathSeparator(const std::string& path)
-{
-  if (path[path.length()] == '/')
-  {
-    return path;
-  }
-
-  return path + "/";
-}
-
-std::string Ncs::getFileContent(const std::string& filename)
+std::string NCS::getFileContent(const std::string& filename)
 {
   std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
 

@@ -32,9 +32,12 @@ public:
   using Ptr = std::shared_ptr<Tensor>;
   using ConstPtr = std::shared_ptr<Tensor const>;
 
-  Tensor(const cv::Mat& image,
+  Tensor(const std::pair<int, int>& net_dim,
          const std::vector<float>& mean,
-         const std::pair<int, int>& size);
+         const float& scale);
+
+  void loadImageData(const cv::Mat& image);
+  void clearTensor();
 
   inline const uint16_t* raw() const
   {
@@ -42,9 +45,16 @@ public:
   }
   inline const size_t size() const
   {
-    return 3 * height_ * width_ * sizeof(uint16_t);
+    return 3 * net_height_ * net_width_ * sizeof(uint16_t);
   }
-
+  inline int getImageWidth()
+  {
+    return image_width_;
+  }
+  inline int getImageHeight()
+  {
+    return image_height_;
+  }
 #if !defined(__i386__) && !defined(__x86_64__)
   static void fp32tofp16(uint16_t* __restrict out, float in);
   static void fp16tofp32(float* __restrict out, uint16_t in);
@@ -52,8 +62,12 @@ public:
 
 private:
   std::vector<uint16_t> tensor_;
-  const int width_;
-  const int height_;
+  int net_width_;
+  int net_height_;
+  int image_width_;
+  int image_height_;
+  std::vector<float> mean_;
+  float scale_;
 };
 }   // namespace movidius_ncs_lib
 

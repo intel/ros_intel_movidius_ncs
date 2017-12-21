@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
   if (argc != 2)
   {
-    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_image <image_path>");
+    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_image_classification <image_path>");
     return -1;
   }
 
