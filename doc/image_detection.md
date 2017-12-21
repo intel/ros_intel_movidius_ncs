@@ -39,5 +39,5 @@ rosrun movidius_ncs_example movidius_ncs_example_image_detection /opt/movidius/n
 |Arguments|Description|Default Value|Valid Values|
 |:-|:-|:-|:-|
 |device_index|ncs device index|0|0~N-1(N is the maximum number of inserted NCS devices)|
-|log_level|ncs log level|0|0:Noting / 1:Errors / 2:Verbose|
+|log_level|ncs log level|0|0:Nothing / 1:Errors / 2:Verbose|
 |cnn_type|indicate different cnn models|tinyyolo_v1|tinyyolo_v1 / mobilenetssd|
