@@ -129,6 +129,6 @@ rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movid
 |Arguments|Description|Default Value|Valid Values|
 |:-|:-|:-|:-|
 |device_index|ncs device index|0|0~N-1(N is the maximum number of inserted NCS devices)|
-|log_level|ncs log level|0|0:Noting / 1:Errors / 2:Verbose|
+|log_level|ncs log level|0|0:Nothing / 1:Errors / 2:Verbose|
 |cnn_type|indicate different cnn models|googlenet|alexnet / googlenet / squeezenet / inception_v1 / inception_v2 / inception_v3 / inception_v4 / mobilenet|
 |top_n|the number of results to be shown, only valid for classification|3|0~5|
