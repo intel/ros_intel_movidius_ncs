@@ -46,6 +46,6 @@ int main(int argc, char** argv)
              srv.response.objects.objects_vector[i].probability * 100);
   }
 
-  ROS_INFO("inference time: %fms", srv.response.objects.inference_time_ms);
+//   ROS_INFO("inference time: %fms", srv.response.objects.inference_time_ms);
   return 0;
 }

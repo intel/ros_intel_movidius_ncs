@@ -18,15 +18,16 @@ project(movidius_ncs_msgs)
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
+  object_msgs
   message_generation
 )
 
-add_message_files(DIRECTORY msg FILES
-  Object.msg
-  Objects.msg
-  ObjectInBox.msg
-  ObjectsInBoxes.msg
-)
+#add_message_files(DIRECTORY msg FILES
+#  Object.msg
+#  Objects.msg
+#  ObjectInBox.msg
+#  ObjectsInBoxes.msg
+#)
 
 add_service_files(DIRECTORY srv FILES
   ClassifyObject.srv
@@ -36,10 +37,11 @@ add_service_files(DIRECTORY srv FILES
 generate_messages(DEPENDENCIES
   std_msgs
   sensor_msgs
+  object_msgs
 )
 
 catkin_package(
-  CATKIN_DEPENDS std_msgs sensor_msgs message_runtime
+  CATKIN_DEPENDS std_msgs sensor_msgs object_msgs message_runtime
 )
 
 # Flags

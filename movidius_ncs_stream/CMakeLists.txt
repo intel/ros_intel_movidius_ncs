@@ -23,13 +23,14 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   roslint
   movidius_ncs_msgs
+  object_msgs
   movidius_ncs_lib
 )
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS nodelet roscpp sensor_msgs cv_bridge movidius_ncs_lib movidius_ncs_msgs
+  CATKIN_DEPENDS nodelet roscpp sensor_msgs cv_bridge movidius_ncs_lib movidius_ncs_msgs object_msgs
 )
 
 include_directories(

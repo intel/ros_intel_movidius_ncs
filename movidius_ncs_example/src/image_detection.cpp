@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     cv::putText(image, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
                 1, cv::Scalar(0, 0, 255), 1);
   }
-    ROS_INFO("inference time: %fms", srv.response.objects.inference_time_ms);
+//     ROS_INFO("inference time: %fms", srv.response.objects.inference_time_ms);
     cv::imshow("image_detection", image);
     cv::waitKey(0);
     return 0;

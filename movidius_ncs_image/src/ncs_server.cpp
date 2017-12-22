@@ -17,6 +17,10 @@
 #include <string>
 #include <vector>
 #include <boost/filesystem/operations.hpp>
+#include <object_msgs/Object.h>
+#include <object_msgs/Objects.h>
+#include <object_msgs/ObjectInBox.h>
+#include <object_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_image/ncs_server.h"
 
 using movidius_ncs_lib::ClassificationResultPtr;
@@ -214,13 +218,13 @@ bool NCSServer::cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& req
 
   for (auto item : result->items)
   {
-    movidius_ncs_msgs::Object obj;
+    object_msgs::Object obj;
     obj.object_name = item.category;
     obj.probability = item.probability;
     response.objects.objects_vector.push_back(obj);
   }
 
-  response.objects.inference_time_ms = result->time_taken;
+//   response.objects.inference_time_ms = result->time_taken;
   return true;
 }
 
@@ -239,7 +243,7 @@ bool NCSServer::cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request
 
   for (auto item : result->items_in_boxes)
   {
-    movidius_ncs_msgs::ObjectInBox obj;
+    object_msgs::ObjectInBox obj;
     obj.object.object_name = item.item.category;
     obj.object.probability = item.item.probability;
     obj.roi.x_offset = item.bbox.x;
@@ -249,7 +253,7 @@ bool NCSServer::cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request
     response.objects.objects_vector.push_back(obj);
   }
 
-  response.objects.inference_time_ms = result->time_taken;
+//   response.objects.inference_time_ms = result->time_taken;
   return true;
 }
 }  // namespace movidius_ncs_image

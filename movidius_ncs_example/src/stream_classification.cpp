@@ -22,13 +22,13 @@
 #include <message_filters/time_synchronizer.h>
 #include <ros/ros.h>
 
-#include <movidius_ncs_msgs/Object.h>
-#include <movidius_ncs_msgs/Objects.h>
+#include <object_msgs/Object.h>
+#include <object_msgs/Objects.h>
 
 #define LINESPACING 50
 
 void syncCb(const sensor_msgs::ImageConstPtr& img,
-            const movidius_ncs_msgs::Objects::ConstPtr& objs)
+            const object_msgs::Objects::ConstPtr& objs)
 {
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int cnt = 0;
@@ -45,14 +45,14 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
                 cv::Scalar(0, 255, 0));
   }
 
-  std::stringstream ss;
-  ss << "FPS: " << objs->fps;
-  cv::putText(cvImage,
-              ss.str(),
-              cvPoint(LINESPACING, LINESPACING * (++cnt)),
-              cv::FONT_HERSHEY_SIMPLEX,
-              1,
-              cv::Scalar(0, 255, 0));
+//   std::stringstream ss;
+//   ss << "FPS: " << objs->fps;
+//   cv::putText(cvImage,
+//               ss.str(),
+//               cvPoint(LINESPACING, LINESPACING * (++cnt)),
+//               cv::FONT_HERSHEY_SIMPLEX,
+//               1,
+//               cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
   cv::waitKey(5);
 }
@@ -65,10 +65,10 @@ int main(int argc, char** argv)
   message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
                                                          "/camera/color/image_raw",
                                                          1);
-  message_filters::Subscriber<movidius_ncs_msgs::Objects> objSub(nh,
+  message_filters::Subscriber<object_msgs::Objects> objSub(nh,
                                                                  "/movidius_ncs_nodelet/classified_objects",
                                                                  1);
-  message_filters::TimeSynchronizer<sensor_msgs::Image, movidius_ncs_msgs::Objects> sync(camSub, objSub, 60);
+  message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::Objects> sync(camSub, objSub, 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));
   ros::spin();
   return 0;

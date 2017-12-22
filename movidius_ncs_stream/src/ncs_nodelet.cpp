@@ -25,8 +25,8 @@
 #include <sensor_msgs/RegionOfInterest.h>
 #include <pluginlib/class_list_macros.h>
 
-#include <movidius_ncs_msgs/Objects.h>
-#include <movidius_ncs_msgs/ObjectsInBoxes.h>
+#include <object_msgs/Objects.h>
+#include <object_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_stream/ncs_nodelet.h"
 #include "movidius_ncs_lib/exception.h"
 #include "movidius_ncs_lib/exception_util.h"
@@ -207,12 +207,12 @@ void NCSImpl::init()
       || !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbClassify, this);
-    pub_ = nh_.advertise<movidius_ncs_msgs::Objects>("classified_objects", 1);
+    pub_ = nh_.advertise<object_msgs::Objects>("classified_objects", 1);
   }
   else
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbDetect, this);
-    pub_ = nh_.advertise<movidius_ncs_msgs::ObjectsInBoxes>("detected_objects", 1);
+    pub_ = nh_.advertise<object_msgs::ObjectsInBoxes>("detected_objects", 1);
   }
 }
 
@@ -231,21 +231,21 @@ void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
   ClassificationResultPtr result = ncs_handle_->getClassificationResult();
   boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = end - start;
-  movidius_ncs_msgs::Objects objs;
+  object_msgs::Objects objs;
 
   for (auto item : result->items)
   {
-    movidius_ncs_msgs::Object obj;
+    object_msgs::Object obj;
     obj.object_name = item.category;
     obj.probability = item.probability;
     objs.objects_vector.push_back(obj);
   }
 
   objs.header = image_msg->header;
-  objs.inference_time_ms = result->time_taken;
-  objs.fps = 1000.0 / msdiff.total_milliseconds();
+//   objs.inference_time_ms = result->time_taken;
+//   objs.fps = 1000.0 / msdiff.total_milliseconds();
   ROS_DEBUG_STREAM("Total time: " << msdiff.total_milliseconds() << "ms");
-  ROS_DEBUG_STREAM("Inference time: " << objs.inference_time_ms << "ms");
+//   ROS_DEBUG_STREAM("Inference time: " << objs.inference_time_ms << "ms");
   pub_.publish(objs);
 }
 
@@ -258,11 +258,11 @@ void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
   DetectionResultPtr result = ncs_handle_->getDetectionResult();
   boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = end -start;
-  movidius_ncs_msgs::ObjectsInBoxes objs_in_boxes;
+  object_msgs::ObjectsInBoxes objs_in_boxes;
 
   for (auto item : result->items_in_boxes)
   {
-    movidius_ncs_msgs::ObjectInBox obj;
+    object_msgs::ObjectInBox obj;
     obj.object.object_name = item.item.category;
     obj.object.probability = item.item.probability;
     obj.roi.x_offset = item.bbox.x;
@@ -273,10 +273,10 @@ void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
   }
 
   objs_in_boxes.header = image_msg->header;
-  objs_in_boxes.inference_time_ms = result->time_taken;
-  objs_in_boxes.fps = 1000.0 / msdiff.total_milliseconds();
+//   objs_in_boxes.inference_time_ms = result->time_taken;
+//   objs_in_boxes.fps = 1000.0 / msdiff.total_milliseconds();
   ROS_DEBUG_STREAM("Total time: " << msdiff.total_milliseconds() << "ms");
-  ROS_DEBUG_STREAM("Inference time: " << objs_in_boxes.inference_time_ms << "ms");
+//   ROS_DEBUG_STREAM("Inference time: " << objs_in_boxes.inference_time_ms << "ms");
   pub_.publish(objs_in_boxes);
 }
 
