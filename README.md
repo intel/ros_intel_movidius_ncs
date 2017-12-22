@@ -55,7 +55,7 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
 cd ~/catkin_ws/src
 git clone https://github.com/intel/ros_intel_movidius_ncs.git
 cd ros_intel_movidius_ncs
-git checkout v0.5.0
+git checkout master
 cd ~/catkin_ws
 catkin_make
 # Installation
@@ -83,6 +83,7 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 #### 5.1.3 Running the Demo
 * [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md)
 * [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md)
+
 ### 5.2 Detection
 #### 5.1.1 Supported CNN Models
 |CNN Model|Framework|Usage|

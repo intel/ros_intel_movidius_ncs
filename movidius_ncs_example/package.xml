@@ -16,7 +16,7 @@ limitations under the License.
 -->
 <package>
   <name>movidius_ncs_example</name>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
   <description>The example package</description>
   <author email="xiaojun.huang@intel.com">Xiaojun Huang</author>
   <maintainer email="xiaojun.huang@intel.com">Xiaojun Huang</maintainer>
