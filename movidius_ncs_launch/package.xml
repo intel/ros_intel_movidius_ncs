@@ -17,7 +17,7 @@ limitations under the License.
 
 <package>
   <name>movidius_ncs_launch</name>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
   <description>This launch project for Movidius NCS</description>
   <author email="xiaojun.huang@intel.com">Xiaojun Huang</author>
   <maintainer email="xiaojun.huang@intel.com">Xiaojun Huang</maintainer>
