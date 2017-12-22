@@ -104,6 +104,11 @@ void ExceptionUtil::tryToThrowMvncException(int code)
       throw MvncOutOfMemory(msg);
     }
 
+    if (code == MVNC_DEVICE_NOT_FOUND)
+    {
+      throw MvncDeviceNotFound(msg);
+    }
+
     if (code == MVNC_INVALID_PARAMETERS)
     {
       throw MvncInvalidParameters(msg);

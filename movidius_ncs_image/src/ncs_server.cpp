@@ -19,28 +19,32 @@
 #include <boost/filesystem/operations.hpp>
 #include "movidius_ncs_image/ncs_server.h"
 
-using movidius_ncs_lib::ResultPtr;
+using movidius_ncs_lib::ClassificationResultPtr;
+using movidius_ncs_lib::DetectionResultPtr;
 using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_image
 {
-NcsServer::NcsServer(ros::NodeHandle&  nh)
-  : ncs_handle_(nullptr)
-  , nh_(nh)
-  , device_index_(0)
-  , log_level_(Device::Errors)
-  , graph_file_path_("")
-  , category_file_path_("")
-  , network_dimension_(0)
-  , top_n_(3)
+NCSServer::NCSServer(ros::NodeHandle& nh)
+    : ncs_handle_(nullptr),
+      nh_(nh),
+      device_index_(0),
+      log_level_(Device::Errors),
+      cnn_type_(""),
+      graph_file_path_(""),
+      category_file_path_(""),
+      network_dimension_(0),
+      mean_(0),
+      scale_(1.0),
+      top_n_(1)
 {
   getParameters();
   init();
 }
 
-void NcsServer::getParameters()
+void NCSServer::getParameters()
 {
-  ROS_DEBUG("NcsServer get parameters");
+  ROS_DEBUG("NCSServer get parameters");
 
   if (!nh_.getParam("device_index", device_index_))
   {
@@ -67,6 +71,23 @@ void NcsServer::getParameters()
   }
 
   ROS_INFO_STREAM("use log_level = " << log_level_);
+
+  if (!nh_.getParam("cnn_type", cnn_type_))
+  {
+    ROS_WARN("param cnn_type not set, use default");
+  }
+
+  if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet")
+      && cnn_type_.compare("inception_v1") && cnn_type_.compare("inception_v2")
+      && cnn_type_.compare("inception_v3") && cnn_type_.compare("inception_v4")
+      && cnn_type_.compare("mobilenet") && cnn_type_.compare("squeezenet")
+      && cnn_type_.compare("tinyyolo_v1") && cnn_type_.compare("mobilenetssd"))
+  {
+    ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use cnn_type_ = " << cnn_type_);
 
   if (!nh_.getParam("graph_file_path", graph_file_path_))
   {
@@ -101,7 +122,7 @@ void NcsServer::getParameters()
 
   if (network_dimension_ < 0)
   {
-    ROS_WARN_STREAM("invalid network_dimension=" << network_dimension_);
+    ROS_WARN_STREAM("invalid network_dimension = " << network_dimension_);
     throw std::exception();
   }
 
@@ -117,7 +138,7 @@ void NcsServer::getParameters()
     {
       ROS_WARN_STREAM("param " << mean_param_name << "not set, use default");
     }
-    ROS_INFO_STREAM("use " << mean_param_name << "= " << mean_val);
+    ROS_INFO_STREAM("use " << mean_param_name << " = " << mean_val);
     mean_.push_back(mean_val);
   }
 
@@ -128,36 +149,63 @@ void NcsServer::getParameters()
 
   if (top_n_ < 1)
   {
-    ROS_WARN_STREAM("invalid top_n=" << top_n_);
+    ROS_WARN_STREAM("invalid top_n = " << top_n_);
     throw std::exception();
   }
 
   ROS_INFO_STREAM("use top_n = " << top_n_);
+
+  if (!nh_.getParam("scale", scale_))
+  {
+    ROS_WARN("param scale not set, use default");
+  }
+
+  if (scale_ < 0)
+  {
+    ROS_WARN_STREAM("invalid param scale = " << scale_);
+    throw std::exception();
+  }
+
+  ROS_INFO_STREAM("use scale = " << scale_);
 }
 
 
-void NcsServer::init()
+void NCSServer::init()
 {
-  ROS_DEBUG("NcsServer init");
-  ncs_handle_ = std::make_shared<movidius_ncs_lib::Ncs>(
-                  device_index_,
-                  static_cast<Device::LogLevel>(log_level_),
-                  graph_file_path_,
-                  category_file_path_,
-                  network_dimension_,
-                  mean_);
-  service_ = nh_.advertiseService(
-                  "classify_object",
-                  &NcsServer::cbClassifyObject,
-                  this);
+  ROS_DEBUG("NCSServer init");
+  ncs_handle_ = std::make_shared<movidius_ncs_lib::NCS>(device_index_,
+                                                        static_cast<Device::LogLevel>(log_level_),
+                                                        cnn_type_,
+                                                        graph_file_path_,
+                                                        category_file_path_,
+                                                        network_dimension_,
+                                                        mean_,
+                                                        scale_,
+                                                        top_n_);
+  if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
+      || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("inception_v2")
+      || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4")
+      || !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
+  {
+    service_ = nh_.advertiseService("classify_object",
+                                    &NCSServer::cbClassifyObject,
+                                    this);
+  }
+  else
+  {
+    service_ = nh_.advertiseService("detect_object",
+                                    &NCSServer::cbDetectObject,
+                                    this);
+  }
 }
 
-bool NcsServer::cbClassifyObject(
-        movidius_ncs_msgs::ClassifyObject::Request&   request,
-        movidius_ncs_msgs::ClassifyObject::Response&  response)
+bool NCSServer::cbClassifyObject(movidius_ncs_msgs::ClassifyObject::Request& request,
+                                 movidius_ncs_msgs::ClassifyObject::Response& response)
 {
   cv::Mat imageData = cv::imread(request.image_path);
-  ResultPtr result = ncs_handle_->infer(imageData, top_n_);
+  ncs_handle_->loadTensor(imageData);
+  ncs_handle_->classify();
+  ClassificationResultPtr result = ncs_handle_->getClassificationResult();
 
   if (result == nullptr)
   {
@@ -175,6 +223,35 @@ bool NcsServer::cbClassifyObject(
   response.objects.inference_time_ms = result->time_taken;
   return true;
 }
+
+bool NCSServer::cbDetectObject(movidius_ncs_msgs::DetectObject::Request& request,
+                               movidius_ncs_msgs::DetectObject::Response& response)
+{
+  cv::Mat imageData = cv::imread(request.image_path);
+  ncs_handle_->loadTensor(imageData);
+  ncs_handle_->detect();
+  DetectionResultPtr result = ncs_handle_->getDetectionResult();
+
+  if (result == nullptr)
+  {
+    return false;
+  }
+
+  for (auto item : result->items_in_boxes)
+  {
+    movidius_ncs_msgs::ObjectInBox obj;
+    obj.object.object_name = item.item.category;
+    obj.object.probability = item.item.probability;
+    obj.roi.x_offset = item.bbox.x;
+    obj.roi.y_offset = item.bbox.y;
+    obj.roi.width = item.bbox.width;
+    obj.roi.height = item.bbox.height;
+    response.objects.objects_vector.push_back(obj);
+  }
+
+  response.objects.inference_time_ms = result->time_taken;
+  return true;
+}
 }  // namespace movidius_ncs_image
 
 int main(int argc, char** argv)
@@ -184,7 +261,7 @@ int main(int argc, char** argv)
 
   try
   {
-    movidius_ncs_image::NcsServer node(nh);
+    movidius_ncs_image::NCSServer node(nh);
     ros::spin();
   }
   catch (...)

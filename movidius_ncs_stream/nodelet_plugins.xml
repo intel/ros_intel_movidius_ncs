@@ -15,8 +15,8 @@ limitations under the License.
 -->
 
 <library path="lib/libmovidius_ncs_stream">
-  <class name="movidius_ncs_stream/NcsNodelet"
-         type="movidius_ncs_stream::NcsNodelet"
+  <class name="movidius_ncs_stream/NCSNodelet"
+         type="movidius_ncs_stream::NCSNodelet"
          base_class_type="nodelet::Nodelet">
     <description>
       Intel(R) Movidius NCS Nodelet.

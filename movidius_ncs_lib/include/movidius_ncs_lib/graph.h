@@ -21,6 +21,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+
 #include "movidius_ncs_lib/mvnc_cpp.h"
 #include "movidius_ncs_lib/result.h"
 #include "movidius_ncs_lib/tensor.h"
@@ -36,16 +37,12 @@ public:
 
   Graph(const Device::Ptr& device,
         const std::string& graph_file,
-        int network_dimension,
-        const std::vector<float>& mean,
-        const std::vector<std::string> categories_);
+        int network_dimension);
   ~Graph();
 
-  void allocate();
+  void allocate(void* device_handle);
   void deallocate();
   float getTimeTaken();
-  ItemsPtr getDetectedItems();
-  void loadTensor(const Tensor::ConstPtr& tensor);
   std::string getDebugInfo();
   void* getHandle();
 
@@ -53,19 +50,10 @@ public:
   {
     return network_dimension_;
   }
-  std::vector<float> getMean() const
-  {
-    return mean_;
-  }
-
 private:
-  std::shared_ptr<Device> device_;
   std::string graph_buf_;
   const int network_dimension_;
-  const std::vector<float> mean_;
-  const std::vector<std::string> categories_;
   void* handle_;
-  void* user_param_;
 };
 }   // namespace movidius_ncs_lib
 

@@ -28,19 +28,19 @@
 
 namespace movidius_ncs_stream
 {
-class NcsImpl
+class NCSImpl
 {
 public:
-  NcsImpl(ros::NodeHandle& nh,
-          ros::NodeHandle& pnh);
-  ~NcsImpl();
+  NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh);
+  ~NCSImpl();
 
 private:
-  void cbInfer(const sensor_msgs::ImageConstPtr& image);
+  void cbClassify(const sensor_msgs::ImageConstPtr& image);
+  void cbDetect(const sensor_msgs::ImageConstPtr& image);
   void getParameters();
   void init();
 
-  std::shared_ptr<movidius_ncs_lib::Ncs> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
 
   ros::Publisher pub_;
   image_transport::Subscriber sub_;
@@ -49,22 +49,24 @@ private:
 
   int device_index_;
   int log_level_;
+  std::string cnn_type_;
   std::string graph_file_path_;
   std::string category_file_path_;
   int network_dimension_;
   std::vector<float> mean_;
+  float scale_;
   int top_n_;
 };
 
-class NcsNodelet: public nodelet::Nodelet
+class NCSNodelet: public nodelet::Nodelet
 {
 public:
-  virtual ~NcsNodelet();
+  virtual ~NCSNodelet();
 
 private:
   virtual void onInit();
 
-  std::shared_ptr<NcsImpl> impl_;
+  std::shared_ptr<NCSImpl> impl_;
 };
 }  // namespace movidius_ncs_stream
 

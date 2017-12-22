@@ -22,12 +22,12 @@
 
 namespace movidius_ncs_lib
 {
-struct NcsException: public std::exception {};
+struct NCSException: public std::exception {};
 
-struct MvncException: public NcsException
+struct MvncException: public NCSException
 {
   explicit MvncException(const std::string& msg)
-    : msg_(msg)
+      : msg_(msg)
   {
   }
 
@@ -128,7 +128,7 @@ struct MvncMyriadError: public MvncException
   }
 };
 
-struct MvncThermalException: public NcsException
+struct MvncThermalException: public NCSException
 {
   virtual const char* what() const noexcept = 0;
 };
@@ -143,32 +143,32 @@ struct MvncAggressiveThermal: public MvncThermalException
   const char* what() const noexcept;
 };
 
-struct NcsGraphException: public NcsException
+struct NCSGraphException: public NCSException
 {
   virtual const char* what() const noexcept = 0;
 };
 
-struct NcsGraphFileError: public NcsGraphException
+struct NCSGraphFileError: public NCSGraphException
 {
   const char* what() const noexcept;
 };
 
-struct NcsMeanAndStddevError: public NcsGraphException
+struct NCSMeanAndStddevError: public NCSGraphException
 {
   const char* what() const noexcept;
 };
 
-struct NcsInputSizeFileError: public NcsGraphException
+struct NCSInputSizeFileError: public NCSGraphException
 {
   const char* what() const noexcept;
 };
 
-struct NcsInputSizeError: public NcsGraphException
+struct NCSInputSizeError: public NCSGraphException
 {
   const char* what() const noexcept;
 };
 
-struct NcsLoadCategoriesError: public NcsGraphException
+struct NCSLoadCategoriesError: public NCSGraphException
 {
   const char* what() const noexcept;
 };

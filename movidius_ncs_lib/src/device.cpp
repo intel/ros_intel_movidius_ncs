@@ -26,8 +26,7 @@
 namespace movidius_ncs_lib
 {
 Device::Device(int index, LogLevel log_level)
-  : index_(index)
-  , handle_(nullptr)
+    : index_(index), handle_(nullptr)
 {
   assert(index_ >= 0);
   setLogLevel(log_level);

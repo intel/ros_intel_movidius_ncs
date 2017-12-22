@@ -1,0 +1,7 @@
+graph_file_path: "/opt/movidius/ncappzoo/caffe/TinyYolo/graph"
+category_file_path: "/opt/movidius/ncappzoo/data/ilsvrc12/voc20.txt"
+network_dimension: 448
+channel1_mean: 0
+channel2_mean: 0
+channel3_mean: 0
+scale: 0.00392156

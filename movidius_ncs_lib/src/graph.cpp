@@ -32,18 +32,12 @@ namespace movidius_ncs_lib
 
 Graph::Graph(const std::shared_ptr<Device>& device,
              const std::string& graph_buf,
-             int network_dimension,
-             const std::vector<float>& mean,
-             const std::vector<std::string> categories)
-  : device_(device)
-  , graph_buf_(graph_buf)
-  , network_dimension_(network_dimension)
-  , mean_(mean)
-  , categories_(categories)
-  , handle_(nullptr)
-  , user_param_(nullptr)
+             int network_dimension)
+    : graph_buf_(graph_buf),
+      network_dimension_(network_dimension),
+      handle_(nullptr)
 {
-  allocate();
+  allocate(device->getHandle());
 }
 
 Graph::~Graph()
@@ -56,52 +50,6 @@ Graph::~Graph()
   {
     ROS_ERROR_STREAM(e.what());
   }
-}
-
-void Graph::loadTensor(const Tensor::ConstPtr& tensor)
-{
-  assert(handle_ != nullptr);
-  int ret = mvncLoadTensor(handle_,
-                           tensor->raw(),
-                           tensor->size(),
-                           user_param_);
-  ExceptionUtil::tryToThrowMvncException(ret);
-}
-
-ItemsPtr Graph::getDetectedItems()
-{
-  assert(handle_ != nullptr);
-  uint16_t* probabilities;
-  unsigned int length;
-  int ret = mvncGetResult(handle_,
-                          reinterpret_cast<void**>(&probabilities),
-                          &length,
-                          &user_param_);
-  ExceptionUtil::tryToThrowMvncException(ret);
-  std::vector<uint16_t> result_vector(reinterpret_cast<uint16_t*>(probabilities),
-                                      reinterpret_cast<uint16_t*>(probabilities) + length);
-  ItemsPtr items = std::make_shared<Items>();
-
-  for (size_t index = 0; index < length / 2; ++index)
-  {
-    float fp32;
-#if defined(__i386__) || defined(__x86_64__)
-    fp32 = _cvtsh_ss(probabilities[index]);
-#else
-    Tensor::fp16tofp32(&fp32, probabilities[index]);
-#endif
-    Item item;
-    item.category = categories_[index];
-    item.probability = fp32;
-    items->push_back(item);
-  }
-
-  auto cmp = [](const Item & a, const Item & b)
-  {
-    return a.probability > b.probability;
-  };
-  std::sort(items->begin(), items->end(), cmp);
-  return items;
 }
 
 std::string Graph::getDebugInfo()
@@ -145,9 +93,9 @@ void* Graph::getHandle()
   return handle_;
 }
 
-void Graph::allocate()
+void Graph::allocate(void* device_handle)
 {
-  int ret = mvncAllocateGraph(device_->getHandle(),
+  int ret = mvncAllocateGraph(device_handle,
                               &handle_,
                               graph_buf_.c_str(),
                               graph_buf_.size());

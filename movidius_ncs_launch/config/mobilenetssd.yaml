@@ -1,0 +1,7 @@
+graph_file_path: "/opt/movidius/ncappzoo/caffe/SSD_MobileNet/graph"
+category_file_path: "/opt/movidius/ncappzoo/data/ilsvrc12/voc21.txt"
+network_dimension: 300
+channel1_mean: 127.5
+channel2_mean: 127.5
+channel3_mean: 127.5
+scale: 0.007843

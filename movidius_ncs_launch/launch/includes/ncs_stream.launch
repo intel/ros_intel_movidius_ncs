@@ -16,34 +16,24 @@ limitations under the License.
 
 <launch> 
   <arg name="manager" />
-  <arg name="input_topic"                 default="/camera/rgb/image_raw" />
-  <arg name="output_topic"                default="/movidius_ncs_nodelet/classified_object" />
-  <arg name="device_index"                default="0" />
-  <arg name="log_level"                   default="0" />
-  <arg name="graph_file_path"             default="/opt/movidius/examples/caffe/GoogLeNet/graph" />
-  <arg name="category_file_path"          default="/opt/movidius/examples/data/ilsvrc12/categories.txt" />
-  <arg name="network_dimension"           default="224" />
-  <arg name="channel1_mean"               default="0.40787054" />
-  <arg name="channel2_mean"               default="0.45752458" />
-  <arg name="channel3_mean"               default="0.48109378" />
-  <arg name="top_n"                       default="3" />
+  <arg name="input_topic" default="/camera/rgb/image_raw" />
+  <arg name="output_topic" default="/movidius_ncs_nodelet/classified_object" />
+  <arg name="device_index" default="0" />
+  <arg name="log_level" default="0" />
+  <arg name="cnn_type" default="googlenet" />
+  <arg name="param_file" default="$(find movidius_ncs_launch)/config/googlenet.yaml" />
+  <arg name="top_n" default="3" />
 
-  <node pkg="nodelet"
-        type="nodelet"
-        name="movidius_ncs_stream"
-        args="load movidius_ncs_stream/NcsNodelet $(arg manager)"
+  <node pkg="nodelet" type="nodelet" name="movidius_ncs_stream"
+        args="load movidius_ncs_stream/NCSNodelet $(arg manager)"
         output="screen">
-      <remap from="/camera/rgb/image_raw"   to="$(arg input_topic)" />
-      <remap from="classified_object"       to="$(arg output_topic)" />
-      <param name="device_index"            value="$(arg device_index)" />
-      <param name="log_level"               value="$(arg log_level)" />
-      <param name="graph_file_path"         value="$(arg graph_file_path)" />
-      <param name="category_file_path"      value="$(arg category_file_path)" />
-      <param name="network_dimension"       value="$(arg network_dimension)" />
-      <param name="channel1_mean"           value="$(arg channel1_mean)" />
-      <param name="channel2_mean"           value="$(arg channel2_mean)" />
-      <param name="channel3_mean"           value="$(arg channel3_mean)" />
-      <param name="top_n"                   value="$(arg top_n)" />
+      <remap from="/camera/rgb/image_raw" to="$(arg input_topic)" />
+      <remap from="classified_object" to="$(arg output_topic)" />
+      <param name="device_index" value="$(arg device_index)" />
+      <param name="log_level" value="$(arg log_level)" />
+      <param name="cnn_type" value="$(arg cnn_type)"  />
+      <param name="top_n" value="$(arg top_n)" />
+      <rosparam command="load" file="$(arg param_file)" />    
   </node>
 </launch>
 
