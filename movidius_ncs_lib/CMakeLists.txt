@@ -32,7 +32,7 @@ include_directories(
 )
 
 # add opencv dependency
-find_package(OpenCV)
+find_package(OpenCV 3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_path(MVNC_HEADER_FILE
