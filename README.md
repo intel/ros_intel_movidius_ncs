@@ -45,7 +45,7 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   cd ~/catkin_ws/src
   git clone https://github.com/intel-ros/realsense.git
   cd  realsense
-  git checkout 2.0.0
+  git checkout 2.0.1
   cd ~/catkin_ws
   catkin_make
   ```  
