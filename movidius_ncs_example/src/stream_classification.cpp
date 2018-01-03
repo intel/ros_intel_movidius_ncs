@@ -54,7 +54,11 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
               1,
               cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
-  cv::waitKey(5);
+  int key = cv::waitKey(5);
+  if (key == 13 || key == 27 || key == 32 || key == 113)
+  {
+    ros::shutdown();
+  }
 }
 
 
