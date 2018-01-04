@@ -88,7 +88,7 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 #### 5.1.1 Supported CNN Models
 |CNN Model|Framework|Usage|
 |:-|:-|:-|
-|MobileNetSSD|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_detection.md#mobilenet_ssd)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_detection.md#mobilenet_ssd)|
+|MobileNetSSD(Recommended)|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_detection.md#mobilenet_ssd)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_detection.md#mobilenet_ssd)|
 |TinyYolo_v1|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_detection.md#tinyyolo_v1)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_detection.md#tinyyolo_v1)|
 #### 5.1.2 Detection Result with MobileNetSSD
 ![detection with mobilenetssd](https://github.com/intel/ros_intel_movidius_ncs/blob/master/data/results/mobilenetssd_car_bicycle.png "detection with mobilenetssd")
