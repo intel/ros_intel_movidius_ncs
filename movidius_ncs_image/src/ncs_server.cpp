@@ -22,6 +22,7 @@
 #include <object_msgs/ObjectInBox.h>
 #include <object_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_image/ncs_server.h"
+#include <cv_bridge/cv_bridge.h>
 
 using movidius_ncs_lib::ClassificationResultPtr;
 using movidius_ncs_lib::DetectionResultPtr;
@@ -206,7 +207,7 @@ void NCSServer::init()
 bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
                                  object_msgs::ClassifyObject::Response& response)
 {
-  cv::Mat imageData = cv::imread(request.image_path);
+  cv::Mat imageData = cv_bridge::toCvCopy(request.image, "bgr8")->image;
   ncs_handle_->loadTensor(imageData);
   ncs_handle_->classify();
   ClassificationResultPtr result = ncs_handle_->getClassificationResult();
@@ -231,7 +232,7 @@ bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
 bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
                                object_msgs::DetectObject::Response& response)
 {
-  cv::Mat imageData = cv::imread(request.image_path);
+  cv::Mat imageData = cv_bridge::toCvCopy(request.image, "bgr8")->image;
   ncs_handle_->loadTensor(imageData);
   ncs_handle_->detect();
   DetectionResultPtr result = ncs_handle_->getDetectionResult();
