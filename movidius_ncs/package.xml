@@ -29,7 +29,6 @@ limitations under the License.
   <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>movidius_ncs_lib</run_depend>
-  <run_depend>movidius_ncs_msgs</run_depend>
   <run_depend>movidius_ncs_image</run_depend>
   <run_depend>movidius_ncs_stream</run_depend>
   <run_depend>movidius_ncs_launch</run_depend>

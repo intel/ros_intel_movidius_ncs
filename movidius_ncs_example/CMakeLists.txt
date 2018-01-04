@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   cv_bridge
   sensor_msgs
-  movidius_ncs_msgs
+  object_msgs
   message_filters
   roslint
 )

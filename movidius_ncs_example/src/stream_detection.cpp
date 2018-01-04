@@ -22,13 +22,13 @@
 #include <message_filters/time_synchronizer.h>
 #include <ros/ros.h>
 
-#include <movidius_ncs_msgs/ObjectInBox.h>
-#include <movidius_ncs_msgs/ObjectsInBoxes.h>
+#include <object_msgs/ObjectInBox.h>
+#include <object_msgs/ObjectsInBoxes.h>
 
 #define LINESPACING 20
 
 void syncCb(const sensor_msgs::ImageConstPtr& img,
-            const movidius_ncs_msgs::ObjectsInBoxes::ConstPtr& objs_in_boxes)
+            const object_msgs::ObjectsInBoxes::ConstPtr& objs_in_boxes)
 {
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int width = img->width;
@@ -58,7 +58,7 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
   }
 
   std::stringstream ss;
-  ss << "FPS: " << objs_in_boxes->fps;
+  ss << "inference time: " << objs_in_boxes->inference_time_ms << " ms";
   cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING),
               cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
@@ -77,10 +77,10 @@ int main(int argc, char** argv)
   message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
                                                          "/camera/color/image_raw",
                                                          1);
-  message_filters::Subscriber<movidius_ncs_msgs::ObjectsInBoxes> objSub(nh,
+  message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh,
                                                                         "/movidius_ncs_nodelet/detected_objects",
                                                                         1);
-  message_filters::TimeSynchronizer<sensor_msgs::Image, movidius_ncs_msgs::ObjectsInBoxes> sync(camSub,
+  message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub,
                                                                                                 objSub,
                                                                                                 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));

@@ -18,7 +18,7 @@
 
 #include <ros/ros.h>
 
-#include <movidius_ncs_msgs/DetectObject.h>
+#include <object_msgs/DetectObject.h>
 
 int main(int argc, char** argv)
 {
@@ -32,8 +32,8 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
   ros::ServiceClient client;
-  client = n.serviceClient<movidius_ncs_msgs::DetectObject>("/movidius_ncs_image/detect_object");
-  movidius_ncs_msgs::DetectObject srv;
+  client = n.serviceClient<object_msgs::DetectObject>("/movidius_ncs_image/detect_object");
+  object_msgs::DetectObject srv;
   srv.request.image_path = argv[1];
 
   if (!client.call(srv))
