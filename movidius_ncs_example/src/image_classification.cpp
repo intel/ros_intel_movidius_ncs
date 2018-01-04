@@ -15,7 +15,7 @@
  */
 
 #include <ros/ros.h>
-#include <movidius_ncs_msgs/ClassifyObject.h>
+#include <object_msgs/ClassifyObject.h>
 
 int main(int argc, char** argv)
 {
@@ -29,8 +29,8 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
   ros::ServiceClient client;
-  client = n.serviceClient<movidius_ncs_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
-  movidius_ncs_msgs::ClassifyObject srv;
+  client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
+  object_msgs::ClassifyObject srv;
   srv.request.image_path = argv[1];
 
   if (!client.call(srv))

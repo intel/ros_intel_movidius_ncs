@@ -18,7 +18,7 @@ project(movidius_ncs_image)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
-  movidius_ncs_msgs
+  object_msgs
   movidius_ncs_lib 
   image_transport
   cv_bridge
@@ -28,7 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp sensor_msgs cv_bridge movidius_ncs_lib movidius_ncs_msgs
+  CATKIN_DEPENDS roscpp sensor_msgs cv_bridge movidius_ncs_lib object_msgs
 )
 
 include_directories(
