@@ -16,6 +16,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <cv_bridge/cv_bridge.h>
 #include <ros/ros.h>
 
 #include <object_msgs/DetectObject.h>
@@ -34,17 +35,22 @@ int main(int argc, char** argv)
   ros::ServiceClient client;
   client = n.serviceClient<object_msgs::DetectObject>("/movidius_ncs_image/detect_object");
   object_msgs::DetectObject srv;
-  srv.request.image_path = argv[1];
+
+  cv_bridge::CvImage cv_image;
+  sensor_msgs::Image ros_image;
+  cv_image.image = cv::imread(argv[1]);
+  cv_image.encoding = "bgr8";
+  cv_image.toImageMsg(ros_image);
+  int width = cv_image.image.cols;
+  int height = cv_image.image.rows;
+
+  srv.request.image = ros_image;
 
   if (!client.call(srv))
   {
     ROS_ERROR("failed to call service DetectObject");
     return 1;
   }
-
-  cv::Mat image = cv::imread(argv[1]);
-  int width = image.cols;
-  int height = image.rows;
 
   for (unsigned int i = 0; i < srv.response.objects.objects_vector.size(); i++)
   {
@@ -72,13 +78,13 @@ int main(int argc, char** argv)
 
     cv::Point left_top = cv::Point(xmin, ymin);
     cv::Point right_bottom = cv::Point(xmax, ymax);
-    cv::rectangle(image, left_top, right_bottom, cv::Scalar(0, 255, 0), 1, cv::LINE_8, 0);
-    cv::rectangle(image, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20), cv::Scalar(0, 255, 0), -1);
-    cv::putText(image, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
+    cv::rectangle(cv_image.image, left_top, right_bottom, cv::Scalar(0, 255, 0), 1, cv::LINE_8, 0);
+    cv::rectangle(cv_image.image, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20), cv::Scalar(0, 255, 0), -1);
+    cv::putText(cv_image.image, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
                 1, cv::Scalar(0, 0, 255), 1);
   }
     ROS_INFO("inference time: %fms", srv.response.objects.inference_time_ms);
-    cv::imshow("image_detection", image);
+    cv::imshow("image_detection", cv_image.image);
     cv::waitKey(0);
     return 0;
 }

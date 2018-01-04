@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <opencv2/highgui.hpp>
+#include <cv_bridge/cv_bridge.h>
 #include <ros/ros.h>
 #include <object_msgs/ClassifyObject.h>
 
@@ -31,7 +33,13 @@ int main(int argc, char** argv)
   ros::ServiceClient client;
   client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
   object_msgs::ClassifyObject srv;
-  srv.request.image_path = argv[1];
+
+  cv_bridge::CvImage cv_image;
+  sensor_msgs::Image ros_image;
+  cv_image.image = cv::imread(argv[1]);
+  cv_image.encoding = "bgr8";
+  cv_image.toImageMsg(ros_image);
+  srv.request.image = ros_image;
 
   if (!client.call(srv))
   {
