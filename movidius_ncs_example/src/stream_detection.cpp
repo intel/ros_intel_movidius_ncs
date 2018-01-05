@@ -39,15 +39,13 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
     std::stringstream ss;
     ss << obj.object.object_name << ": " << obj.object.probability * 100 << '%';
 
-    int x = obj.roi.x_offset;
-    int y = obj.roi.y_offset;
+    int xmin = obj.roi.x_offset;
+    int ymin = obj.roi.y_offset;
     int w = obj.roi.width;
     int h = obj.roi.height;
 
-    int xmin = ((x - w / 2) > 0)? (x - w / 2) : 0;
-    int xmax = ((x + w / 2) < width)? (x + w / 2) : width;
-    int ymin = ((y - h / 2) > 0)? (y - h / 2) : 0;
-    int ymax = ((y + h / 2) < height)? (y + h / 2) : height;
+    int xmax = ((xmin + w) < width)? (xmin + w) : width;
+    int ymax = ((ymin + h) < height)? (ymin + h) : height;
 
     cv::Point left_top = cv::Point(xmin, ymin);
     cv::Point right_bottom = cv::Point(xmax, ymax);
