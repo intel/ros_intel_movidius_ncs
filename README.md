@@ -39,7 +39,7 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   sudo apt-get install ros-kinetic-usb-cam
   ```    
   2. RealSense D400 series camera  
-  - Install Intel® RealSense™ SDK 2.0 ([guide](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)). Refer [here](https://github.com/IntelRealSense/librealsense) for more details about Intel® RealSense™ SDK 2.0.  
+  - Install Intel® RealSense™ SDK 2.0 ([tag v2.8.1](https://github.com/IntelRealSense/librealsense/tree/v2.8.1)). Highly recommend you install it from source code([guide](https://github.com/IntelRealSense/librealsense/blob/v2.8.1/doc/installation.md)). Refer [here](https://github.com/IntelRealSense/librealsense) for more details about Intel® RealSense™ SDK 2.0.  
   - Install Intel® RealSense™ ROS ([guide](https://github.com/intel-ros/realsense))  
   ```Shell
   cd ~/catkin_ws/src
