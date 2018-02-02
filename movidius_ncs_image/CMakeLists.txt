@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   cv_bridge
   roslint
+  rostest
 )
 
 catkin_package(
@@ -104,4 +105,15 @@ if(CATKIN_ENABLE_TESTING)
   find_package(roslint REQUIRED)
   roslint_cpp()
   roslint_add_test()
+
+  # rostest classification
+  add_executable(unittest_image_classification tests/unittest_image_classification.cpp)
+  target_link_libraries(unittest_image_classification ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  add_dependencies(unittest_image_classification ${catkin_EXPORTED_TARGETS})
+  # rostest detection
+  add_executable(unittest_image_detection tests/unittest_image_detection.cpp)
+  target_link_libraries(unittest_image_detection ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  add_dependencies(unittest_image_detection ${catkin_EXPORTED_TARGETS})
+
+  add_rostest(tests/test_unit.test)
 endif()
