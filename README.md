@@ -39,9 +39,9 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   sudo apt-get install ros-kinetic-usb-cam
   ```    
   2. RealSense D400 series camera  
-  - Install Intel® RealSense™ SDK 2.0 ([tag v2.8.1](https://github.com/IntelRealSense/librealsense/tree/v2.8.1))
-    - [Install from source code](https://github.com/IntelRealSense/librealsense/blob/v2.8.1/doc/installation.md)(Recommended) 
-    - [Install from package](https://github.com/IntelRealSense/librealsense/blob/v2.8.1/doc/distribution_linux.md)  
+  - Install Intel® RealSense™ SDK 2.0 ([tag v2.9.1](https://github.com/IntelRealSense/librealsense/tree/v2.9.1))
+    - [Install from source code](https://github.com/IntelRealSense/librealsense/blob/v2.9.1/doc/installation.md)(Recommended) 
+    - [Install from package](https://github.com/IntelRealSense/librealsense/blob/v2.9.1/doc/distribution_linux.md)  
     **Note**: Create a symbol link from libusb.a to libusb-1.0.a, otherwise "libusb.a" is probably not to be found by librealsense.  
     ```sudo ln -s /usr/lib/x86_64-linux-gnu/libusb-1.0.a /usr/lib/libusb.a```
   - Install Intel® RealSense™ ROS ([guide](https://github.com/intel-ros/realsense))  
@@ -49,7 +49,7 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   cd ~/catkin_ws/src
   git clone https://github.com/intel-ros/realsense.git
   cd  realsense
-  git checkout 2.0.1
+  git checkout 2.0.2
   cd ~/catkin_ws
   catkin_make
   ```  
