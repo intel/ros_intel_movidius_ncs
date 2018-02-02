@@ -30,12 +30,9 @@ static bool test_pass = false;
 void syncCb(const sensor_msgs::ImageConstPtr& img,
             const object_msgs::Objects::ConstPtr& objs)
 {
-//  if (objs->objects_vector.size())
-//  {
-    test_pass = true;
-    EXPECT_TRUE(true);
-    ros::shutdown();
-//  }
+  test_pass = true;
+  EXPECT_TRUE(true);
+  ros::shutdown();
 }
 
 TEST(UnitTestStreamClassification, testClassification)
