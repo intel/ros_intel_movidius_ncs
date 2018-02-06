@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <string>
+
 #include <gtest/gtest.h>
 #include <opencv2/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -38,6 +40,7 @@ TEST(UnitTestClassification, testImage)
   client.waitForExistence(ros::Duration(60));
   EXPECT_TRUE(client.call(srv));
   EXPECT_TRUE(srv.response.objects.objects_vector.size());
+  EXPECT_TRUE(srv.response.objects.objects_vector[0].object_name.find("cycle") != std::string::npos);
 }
 
 int main(int argc, char** argv)

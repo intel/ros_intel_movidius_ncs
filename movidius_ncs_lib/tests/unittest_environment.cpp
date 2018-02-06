@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -22,12 +23,22 @@
 
 TEST(UnitTestEnvironment, testSDK)
 {
-  EXPECT_TRUE(boost::filesystem::exists("/opt/movidius/version.txt"));
+  std::system("python2 /opt/movidius/NCSDK/tests/api-check/ncs-python2-check.py > /tmp/NCS_unittest.txt");
+  EXPECT_TRUE(boost::filesystem::exists("/tmp/NCS_unittest.txt"));
+  std::ifstream fin("/tmp/NCS_unittest.txt");
+  std::string ncs_check, tmp;
+  while (std::getline(fin, tmp))
+  {
+    ncs_check = tmp;
+  }
+  EXPECT_EQ(ncs_check, "NCS device working.");
+  std::system("rm -rf /tmp/NCS_unittest.txt > /dev/null 2>&1");
 }
 
 TEST(UnitTestEnvironment, testAppZoo)
 {
   EXPECT_TRUE(boost::filesystem::exists("/opt/movidius/ncappzoo"));
+  std::system("cd /opt/movidius/ncappzoo && make > /dev/null 2>&1");
   std::vector<std::string> caffe_dirs = { "AlexNet", "GoogLeNet", "SqueezeNet", "SSD_MobileNet", "TinyYolo" };
   std::vector<std::string> tf_dirs = { "inception_v1", "inception_v2", "inception_v3", "inception_v4", "mobilenets" };
   for (std::string caffe : caffe_dirs)

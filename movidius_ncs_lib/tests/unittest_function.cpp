@@ -98,6 +98,23 @@ TEST(UnitTestFunction, testLibraryFunctions)
   }
 }
 
+TEST(UnitTestFunction, testLibraryIncorrectInputs)
+{
+  try
+  {
+    std::vector<float> incorrect_mean = { 0, 0, 0 };
+    std::shared_ptr<movidius_ncs_lib::NCS> handle =
+      std::make_shared<movidius_ncs_lib::NCS>(0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), "Incorrect_type",
+                                              "graph_not_exist",
+                                              "categories_not_exist",
+                                              0, incorrect_mean, 0, 3);
+  }
+  catch(...)
+  {
+    EXPECT_TRUE(true);
+  }
+}
+
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);

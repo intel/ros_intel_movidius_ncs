@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#include <string>
+#include <vector>
+
 #include <gtest/gtest.h>
 #include <opencv2/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -29,15 +32,28 @@ TEST(UnitTestDetection, testImage)
 
   cv_bridge::CvImage cv_image;
   sensor_msgs::Image ros_image;
-  cv_image.image = cv::imread(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
-  cv_image.encoding = "bgr8";
-  cv_image.toImageMsg(ros_image);
+  std::vector<std::string> image_format = {".jpg", ".jpeg", ".png", ".bmp"};
+  for (std::string suffix : image_format)
+  {
+    cv_image.image = cv::imread(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle"+suffix);
+    cv_image.encoding = "bgr8";
+    cv_image.toImageMsg(ros_image);
 
-  srv.request.image = ros_image;
+    srv.request.image = ros_image;
 
-  client.waitForExistence(ros::Duration(60));
-  EXPECT_TRUE(client.call(srv));
-  EXPECT_TRUE(srv.response.objects.objects_vector.size());
+    client.waitForExistence(ros::Duration(60));
+    EXPECT_TRUE(client.call(srv));
+    EXPECT_TRUE(srv.response.objects.objects_vector.size());
+    EXPECT_EQ(srv.response.objects.objects_vector[0].object.object_name, "bicycle");
+    EXPECT_TRUE(srv.response.objects.objects_vector[0].roi.x_offset > 130 &&
+      srv.response.objects.objects_vector[0].roi.x_offset < 150 &&
+      srv.response.objects.objects_vector[0].roi.y_offset > 90 &&
+      srv.response.objects.objects_vector[0].roi.y_offset < 110 &&
+      srv.response.objects.objects_vector[0].roi.width > 410 &&
+      srv.response.objects.objects_vector[0].roi.width < 470 &&
+      srv.response.objects.objects_vector[0].roi.height > 340 &&
+      srv.response.objects.objects_vector[0].roi.height < 360);
+  }
 }
 
 int main(int argc, char** argv)
