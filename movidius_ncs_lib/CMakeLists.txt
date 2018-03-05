@@ -51,6 +51,7 @@ add_library(${PROJECT_NAME}
   src/graph.cpp
   src/tensor.cpp
   src/result.cpp
+  src/ncs_manager.cpp
 )
 
 add_dependencies(${PROJECT_NAME}
@@ -106,6 +107,8 @@ if(UNIX OR APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+  # Add OpenMP support
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 endif()
 
 # Install nodelet library

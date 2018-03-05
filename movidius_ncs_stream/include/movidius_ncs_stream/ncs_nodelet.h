@@ -25,24 +25,34 @@
 #include <sensor_msgs/Image.h>
 
 #include "movidius_ncs_lib/ncs.h"
+#include "movidius_ncs_lib/ncs_manager.h" 
 
 namespace movidius_ncs_stream
 {
+typedef void (*FUNP_C) (movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
+typedef void (*FUNP_D) (movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
+
 class NCSImpl
 {
 public:
   NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh);
   ~NCSImpl();
+  
+  static void cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
+  static void cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
 
 private:
   void cbClassify(const sensor_msgs::ImageConstPtr& image);
   void cbDetect(const sensor_msgs::ImageConstPtr& image);
   void getParameters();
   void init();
+  
+  //void cbStartNcsManager();
 
-  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  //std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
 
-  ros::Publisher pub_;
+  static ros::Publisher pub_;
   image_transport::Subscriber sub_;
   ros::NodeHandle nh_;
   ros::NodeHandle pnh_;
@@ -56,7 +66,12 @@ private:
   std::vector<float> mean_;
   float scale_;
   int top_n_;
+  //std::vector<std_msgs::Header> msgs_header_;
+  //int frame_id_;
+
+  //static NCSImpl *impl_;
 };
+
 
 class NCSNodelet: public nodelet::Nodelet
 {
