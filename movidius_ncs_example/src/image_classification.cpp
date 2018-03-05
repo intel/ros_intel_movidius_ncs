@@ -16,12 +16,52 @@
 
 #include <opencv2/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
+
 #include <ros/ros.h>
 #include <object_msgs/ClassifyObject.h>
 
+#include <vector>
+#include <dirent.h>
+#include <stdio.h>
+//#include <unistd.h>
+//#include <string.h>
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <chrono>
+
+std::vector<std::string> getImagePath(std::string image_dir)
+{
+  std::vector<std::string> files;
+
+  DIR *dir;
+  struct dirent *ptr;
+
+  if ((dir=opendir(image_dir.c_str())) == NULL)
+  {
+    perror("Open Dir error...");
+    exit(1);
+  }
+
+  while ((ptr=readdir(dir)) != NULL)
+  {
+    if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)
+      continue;
+    else if(ptr->d_type == 8)
+      files.push_back(image_dir + ptr->d_name);
+  }
+  closedir(dir);
+
+  return files;
+}
+
 int main(int argc, char** argv)
 {
+  //*****
+  ROS_INFO("main begin");
+
   ros::init(argc, argv, "movidius_ncs_example");
+
+  //char basePath[256] = "/opt/movidius/ncappzoo/data/images/";
 
   if (argc != 2)
   {
@@ -29,17 +69,30 @@ int main(int argc, char** argv)
     return -1;
   }
 
+  //char basePath[256];
+  //basePath = *argv;
+  std::vector<std::string> images_path=getImagePath(*(argv+1));
+
   ros::NodeHandle n;
   ros::ServiceClient client;
   client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
   object_msgs::ClassifyObject srv;
 
+  srv.request.images_path = images_path;
+
+  /*
   cv_bridge::CvImage cv_image;
   sensor_msgs::Image ros_image;
   cv_image.image = cv::imread(argv[1]);
   cv_image.encoding = "bgr8";
   cv_image.toImageMsg(ros_image);
   srv.request.image = ros_image;
+  */
+
+  //*****
+  ROS_INFO("before call");
+
+  boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
 
   if (!client.call(srv))
   {
@@ -47,6 +100,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  /*
   for (unsigned int i = 0; i < srv.response.objects.objects_vector.size(); i++)
   {
     ROS_INFO("%d: object: %s\nprobability: %lf%%", i,
@@ -55,5 +109,25 @@ int main(int argc, char** argv)
   }
 
   ROS_INFO("inference time: %fms", srv.response.objects.inference_time_ms);
+  */
+
+  //*****
+  ROS_INFO("after call, before display");
+
+  boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration msdiff = end - start;
+
+  for (unsigned int i = 0; i < srv.response.objects.size(); i++)
+  {
+    for (unsigned int j = 0; j < srv.response.objects[i].objects_vector.size(); j++)
+    {
+      ROS_INFO("%d: object: %s\nprobability: %lf%%", j,
+               srv.response.objects[i].objects_vector[j].object_name.c_str(),
+               srv.response.objects[i].objects_vector[j].probability * 100);
+    }
+  }
+
+  ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
+
   return 0;
 }

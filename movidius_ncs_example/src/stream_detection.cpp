@@ -25,14 +25,43 @@
 #include <object_msgs/ObjectInBox.h>
 #include <object_msgs/ObjectsInBoxes.h>
 
+#include <chrono>
+
 #define LINESPACING 20
+
+int getFPS()
+{
+  static int FPS = 0;
+  static boost::posix_time::ptime lastTime = boost::posix_time::microsec_clock::local_time();
+  static int frameCount = 0;
+
+  frameCount++;
+  
+  boost::posix_time::ptime currentTime = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration msdiff = currentTime - lastTime;
+
+  if (msdiff.total_milliseconds() > 1000)
+  {
+    FPS = frameCount;
+    frameCount = 0;
+    lastTime = currentTime;
+  }
+
+  return FPS;
+}
 
 void syncCb(const sensor_msgs::ImageConstPtr& img,
             const object_msgs::ObjectsInBoxes::ConstPtr& objs_in_boxes)
 {
+  //****
+  ROS_INFO("begin of syncCb");
+
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int width = img->width;
   int height = img->height;
+
+  //****
+  ROS_INFO("before for");
 
   for (auto obj : objs_in_boxes->objects_vector)
   {
@@ -54,12 +83,22 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
     cv::putText(cvImage, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
                 1, cv::Scalar(0, 0, 255), 1);
   }
+  
+  //****
+  ROS_INFO("after for");
 
   std::stringstream ss;
-  ss << "inference time: " << objs_in_boxes->inference_time_ms << " ms";
+  //ss << "inference time: " << objs_in_boxes->inference_time_ms << " ms";
+  int FPS = getFPS();
+  ss << "FPS: " << FPS;
+  
   cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING),
               cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
+ 
+  //****
+  ROS_INFO("before wait key");
+ 
   int key = cv::waitKey(5);
   if ( key == 13 || key == 27 || key == 32 || key == 113)
   {
@@ -72,6 +111,10 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_stream");
   ros::NodeHandle nh;
+
+  //****
+  ROS_INFO("begin of client");
+
   message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
                                                          "/camera/color/image_raw",
                                                          1);
@@ -82,6 +125,10 @@ int main(int argc, char** argv)
                                                                                                 objSub,
                                                                                                 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));
+
+  //****
+  ROS_INFO("end of client");
+
   ros::spin();
   return 0;
 }
