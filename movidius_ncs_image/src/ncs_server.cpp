@@ -31,7 +31,7 @@ using movidius_ncs_lib::Device;
 namespace movidius_ncs_image
 {
 NCSServer::NCSServer(ros::NodeHandle& nh)
-    : ncs_handle_(nullptr),
+    : ncs_manager_handle_(nullptr),
       nh_(nh),
       device_index_(0),
       log_level_(Device::Errors),
@@ -178,8 +178,9 @@ void NCSServer::getParameters()
 void NCSServer::init()
 {
   ROS_DEBUG("NCSServer init");
-  ncs_handle_ = std::make_shared<movidius_ncs_lib::NCS>(device_index_,
-                                                        static_cast<Device::LogLevel>(log_level_),
+  //classification or detection: 
+  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(device_index_,
+                                                       static_cast<Device::LogLevel>(log_level_),
                                                         cnn_type_,
                                                         graph_file_path_,
                                                         category_file_path_,
@@ -187,6 +188,7 @@ void NCSServer::init()
                                                         mean_,
                                                         scale_,
                                                         top_n_);
+
   if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
       || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("inception_v2")
       || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4")
@@ -202,61 +204,84 @@ void NCSServer::init()
                                     &NCSServer::cbDetectObject,
                                     this);
   }
+  // all cnn_type -> cbStarnNcsManager
+  // new NcsManager instance
 }
 
 bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
-                                 object_msgs::ClassifyObject::Response& response)
+                               object_msgs::ClassifyObject::Response& response)
 {
-  cv::Mat imageData = cv_bridge::toCvCopy(request.image, "bgr8")->image;
-  ncs_handle_->loadTensor(imageData);
-  ncs_handle_->classify();
-  ClassificationResultPtr result = ncs_handle_->getClassificationResult();
+  //****
+  ROS_INFO("call back begin");
+  
+  std::vector<ClassificationResultPtr> results = ncs_manager_handle_->classify_image(request.images_path);
+ 
+  //****
+  ROS_INFO("call back and got result");
 
-  if (result == nullptr)
+  //****
+  ROS_INFO("begin to parse result, total %lu results", results.size());
+
+  for (unsigned int i = 0; i < results.size(); i++)
   {
-    return false;
-  }
+    object_msgs::Objects objs;
+    for (auto item : results[i]->items)
+    {
+      object_msgs::Object obj;
+      obj.object_name = item.category;
+      obj.probability = item.probability;
+      objs.objects_vector.push_back(obj);
+    }
 
-  for (auto item : result->items)
-  {
-    object_msgs::Object obj;
-    obj.object_name = item.category;
-    obj.probability = item.probability;
-    response.objects.objects_vector.push_back(obj);
+    objs.inference_time_ms = results[i]->time_taken;
+    response.objects.push_back(objs);
   }
-
-  response.objects.inference_time_ms = result->time_taken;
+ 
+  //****
+  ROS_INFO("call back end");
+  
   return true;
 }
 
 bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
                                object_msgs::DetectObject::Response& response)
 {
-  cv::Mat imageData = cv_bridge::toCvCopy(request.image, "bgr8")->image;
-  ncs_handle_->loadTensor(imageData);
-  ncs_handle_->detect();
-  DetectionResultPtr result = ncs_handle_->getDetectionResult();
+  //****
+  ROS_INFO("call back begin");
 
-  if (result == nullptr)
+  std::vector<DetectionResultPtr> results = ncs_manager_handle_->detect_image(request.images_path);
+ 
+  //****
+  ROS_INFO("call back and got result");
+
+  //****
+  ROS_INFO("begin to parse result, total %lu results", results.size());
+
+  for (unsigned int i = 0; i < results.size(); i++)
   {
-    return false;
+    object_msgs::ObjectsInBoxes objs;
+    for (auto item : results[i]->items_in_boxes)
+    {
+      object_msgs::ObjectInBox obj;
+      obj.object.object_name = item.item.category;
+      obj.object.probability = item.item.probability;
+      obj.roi.x_offset = item.bbox.x;
+      obj.roi.y_offset = item.bbox.y;
+      obj.roi.width = item.bbox.width;
+      obj.roi.height = item.bbox.height;
+      objs.objects_vector.push_back(obj);
+    }
+
+  objs.inference_time_ms = results[i]->time_taken;
+  response.objects.push_back(objs);
   }
 
-  for (auto item : result->items_in_boxes)
-  {
-    object_msgs::ObjectInBox obj;
-    obj.object.object_name = item.item.category;
-    obj.object.probability = item.item.probability;
-    obj.roi.x_offset = item.bbox.x;
-    obj.roi.y_offset = item.bbox.y;
-    obj.roi.width = item.bbox.width;
-    obj.roi.height = item.bbox.height;
-    response.objects.objects_vector.push_back(obj);
-  }
+  //****
+  ROS_INFO("call back end");
 
-  response.objects.inference_time_ms = result->time_taken;
   return true;
 }
+
 }  // namespace movidius_ncs_image
 
 int main(int argc, char** argv)

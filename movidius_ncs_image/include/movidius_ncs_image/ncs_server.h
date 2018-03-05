@@ -25,6 +25,8 @@
 #include <object_msgs/ClassifyObject.h>
 #include <object_msgs/DetectObject.h>
 #include "movidius_ncs_lib/ncs.h"
+#include "movidius_ncs_lib/ncs_manager.h"
+
 
 namespace movidius_ncs_image
 {
@@ -32,18 +34,26 @@ class NCSServer
 {
 public:
   explicit NCSServer(ros::NodeHandle& nh);
+  //static void cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result);
+  //static void cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result);
 
 private:
   void getParameters();
   void init();
 
-  bool cbClassifyObject(object_msgs::ClassifyObject::Request& request,
-                        object_msgs::ClassifyObject::Response& response);
+  //bool cbClassifyObject(object_msgs::ClassifyObject::Request& request,
+  //                      object_msgs::ClassifyObject::Response& response);
+  //bool cbDetectObject(object_msgs::DetectObject::Request& request,
+  //                    object_msgs::DetectObject::Response& response);
   bool cbDetectObject(object_msgs::DetectObject::Request& request,
-                      object_msgs::DetectObject::Response& response);
+                         object_msgs::DetectObject::Response& response);
+  bool cbClassifyObject(object_msgs::ClassifyObject::Request& request,
+                         object_msgs::ClassifyObject::Response& response);
+
   ros::ServiceServer service_;
 
-  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  //std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
   ros::NodeHandle nh_;
 
   int device_index_;
