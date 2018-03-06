@@ -201,9 +201,6 @@ void NCSImpl::init()
                                                         scale_,
                                                         top_n_);
 
-  //****
-  ROS_INFO("after create ncs manager instance");
-
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
 
   if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
@@ -220,12 +217,9 @@ void NCSImpl::init()
     NCSImpl::pub_ = nh_.advertise<object_msgs::ObjectsInBoxes>("detected_objects", 1);
   }
   
-  //****
-  ROS_INFO("call start threads");
   ncs_manager_handle_->startThreads();
 }
 
-/*
 void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
 {
   if (pub_.getNumSubscribers() == 0)
@@ -235,95 +229,7 @@ void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
   }
 
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-  msgs_header_.push_back(image_msg->header);
-  frame_id_++;
-  
-  ncs_manager_handle_->startThreads();
-  ncs_manager_handle_->classify_stream(cameraData, cbGetClassificationResult, frame_id_);
-}
-
-void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
-{
-  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-  msgs_header_.push_back(image_msg->header);
-  frame_id_++;
-
-  ncs_manager_handle_->startThreads();
-  ncs_manager_handle_->detect_stream(cameraData, cbGetDetectionResult, frame_id_);
-}
-
-NCSNodelet::~NCSNodelet()
-{
-}
-
-//callback
-void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, int frame_id)
-{
-  object_msgs::Objects objs;
-
-  for (auto item : result->items)
-  {
-    object_msgs::Object obj;
-    obj.object_name = item.category;
-    obj.probability = item.probability;
-    objs.objects_vector.push_back(obj);
-  }
-
-  objs.header = impl_->msgs_header_[frame_id];
-  //std::vector<std_msgs::Header>
-  objs.inference_time_ms = result->time_taken;
-  impl_->pub_.publish(objs);
-  
-}
-
-void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, int frame_id)
-{
-  
-  object_msgs::ObjectsInBoxes objs_in_boxes;
-
-  for (auto item : result->items_in_boxes)
-  {
-    object_msgs::ObjectInBox obj;
-    obj.object.object_name = item.item.category;
-    obj.object.probability = item.item.probability;
-    obj.roi.x_offset = item.bbox.x;
-    obj.roi.y_offset = item.bbox.y;
-    obj.roi.width = item.bbox.width;
-    obj.roi.height = item.bbox.height;
-    objs_in_boxes.objects_vector.push_back(obj);
-  }
-
-  objs_in_boxes.header = impl_->msgs_header_[frame_id];
-  objs_in_boxes.inference_time_ms = result->time_taken;
-  impl_->pub_.publish(objs_in_boxes); 
-  
-}
-*/
-
-void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
-{
-
-  //****
-  //ROS_INFO("begin of cbClassify");
-
-  if (pub_.getNumSubscribers() == 0)
-  {
-    ROS_DEBUG_STREAM("skip inferring for no subscriber");
-    return;
-  }
-
-  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-
-  //msgs_header_.push_back(image_msg->header);
-  //frame_id_++;
-
-  //****
-  ROS_INFO("ready to call ncs_manager");
-
   ncs_manager_handle_->classify_stream(cameraData, cbGetClassificationResult, image_msg);
-  
-  //****
-  ROS_INFO("called classify_stream, end of cbClassify");
 }
 
 void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
@@ -335,13 +241,6 @@ void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
   }
 
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-
-  //msgs_header_.push_back(image_msg->header);
-  //frame_id_++;
-
-  //****
-  ROS_INFO("ready to call ncs_manager");
-
   ncs_manager_handle_->detect_stream(cameraData, cbGetDetectionResult, image_msg);
 }
 
@@ -351,12 +250,8 @@ NCSNodelet::~NCSNodelet()
 
 ros::Publisher NCSImpl::pub_;
 
-//callback
 void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header)
 {
-  //****
-  ROS_INFO("call back to parse one result");
-
   object_msgs::Objects objs;
 
   for (auto item : result->items)
@@ -368,17 +263,12 @@ void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPt
   }
 
   objs.header = header;
-  //std::vector<std_msgs::Header>
   objs.inference_time_ms = result->time_taken;
   NCSImpl::pub_.publish(objs);
-
-  //****
-  ROS_INFO("call back parse one result done");
 }
 
 void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header)
 {
-  
   object_msgs::ObjectsInBoxes objs_in_boxes;
 
   for (auto item : result->items_in_boxes)
@@ -395,14 +285,12 @@ void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, 
 
   objs_in_boxes.header = header;
   objs_in_boxes.inference_time_ms = result->time_taken;
+
   NCSImpl::pub_.publish(objs_in_boxes); 
 }
 
 void NCSNodelet::onInit()
 {
-  //****
-  ROS_INFO("begin of onInit(main)");
-
   ros::NodeHandle nh = getNodeHandle();
   ros::NodeHandle pnh = getPrivateNodeHandle();
   try

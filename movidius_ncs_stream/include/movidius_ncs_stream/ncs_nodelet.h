@@ -47,9 +47,6 @@ private:
   void getParameters();
   void init();
   
-  //void cbStartNcsManager();
-
-  //std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
   std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
 
   static ros::Publisher pub_;
@@ -66,10 +63,6 @@ private:
   std::vector<float> mean_;
   float scale_;
   int top_n_;
-  //std::vector<std_msgs::Header> msgs_header_;
-  //int frame_id_;
-
-  //static NCSImpl *impl_;
 };
 
 
