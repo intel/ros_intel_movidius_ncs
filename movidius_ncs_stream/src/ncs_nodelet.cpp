@@ -42,7 +42,7 @@ NCSImpl::NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
     : ncs_manager_handle_(nullptr),
       nh_(nh),
       pnh_(pnh),
-      device_index_(0),
+      max_device_number_(255),
       log_level_(Device::Errors),
       cnn_type_(""),
       graph_file_path_(""),
@@ -64,18 +64,18 @@ void NCSImpl::getParameters()
 {
   ROS_DEBUG("NCSImpl get parameters");
 
-  if (!pnh_.getParam("device_index", device_index_))
+  if (!pnh_.getParam("max_device_number", max_device_number_))
   {
-    ROS_WARN("param device_index not set, use default");
+    ROS_WARN("param max_device_number not set, use default");
   }
 
-  if (device_index_ < 0)
+  if (max_device_number_ <= 0)
   {
-    ROS_ERROR_STREAM("invalid param device_index = " << device_index_);
+    ROS_ERROR_STREAM("invalid param max_device_number = " << max_device_number_);
     throw std::exception();
   }
 
-  ROS_INFO_STREAM("use device_index = " << device_index_);
+  ROS_INFO_STREAM("use max_device_number = " << max_device_number_);
 
   if (!pnh_.getParam("log_level", log_level_))
   {
@@ -191,7 +191,7 @@ void NCSImpl::init()
 {
   ROS_DEBUG("NCSImpl onInit");
 
-  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(device_index_,
+  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(max_device_number_,
                                               static_cast<Device::LogLevel>(log_level_),
                                                         cnn_type_,
                                                         graph_file_path_,

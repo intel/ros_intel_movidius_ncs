@@ -49,7 +49,7 @@ private:
   std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
   ros::NodeHandle nh_;
 
-  int device_index_;
+  int max_device_number_;
   int log_level_;
   std::string cnn_type_;
   std::string graph_file_path_;

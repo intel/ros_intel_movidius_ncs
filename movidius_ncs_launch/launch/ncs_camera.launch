@@ -39,7 +39,7 @@ limitations under the License.
   <arg name="top_n" default="3" />
   
   <!-- NCS related parameter -->
-  <arg name="device_index" default="0" />
+  <arg name="max_device_number" default="255" />
   <arg name="log_level" default="1" />
   
   <!-- camera related parameters -->
@@ -88,7 +88,7 @@ limitations under the License.
         <arg name="manager" value="$(arg manager)" />
         <arg name="input_topic" value="$(arg input_topic)" />
         <arg name="output_topic" value="$(arg output_topic)" />
-        <arg name="device_index" value="$(arg device_index)" />
+        <arg name="max_device_number" value="$(arg max_device_number)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="top_n" value="$(arg top_n)" />
         <arg name="cnn_type" value="$(arg cnn_type)"  />
@@ -102,7 +102,7 @@ limitations under the License.
         <arg name="manager" value="$(arg manager)" />
         <arg name="input_topic" value="$(arg input_topic)" />
         <arg name="output_topic" value="$(arg output_topic)" />
-        <arg name="device_index" value="$(arg device_index)" />
+        <arg name="max_device_number" value="$(arg max_device_number)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="top_n" value="$(arg top_n)" />
         <arg name="cnn_type" value="$(arg cnn_type)"  />

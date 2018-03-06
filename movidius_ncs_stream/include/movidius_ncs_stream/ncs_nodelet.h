@@ -54,7 +54,7 @@ private:
   ros::NodeHandle nh_;
   ros::NodeHandle pnh_;
 
-  int device_index_;
+  int max_device_number_;
   int log_level_;
   std::string cnn_type_;
   std::string graph_file_path_;
