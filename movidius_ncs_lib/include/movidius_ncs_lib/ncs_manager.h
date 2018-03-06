@@ -28,7 +28,6 @@
 #include "movidius_ncs_lib/device.h"
 #include "movidius_ncs_lib/ncs.h"
 
-
 namespace movidius_ncs_lib
 {
 typedef void (*FUNP_C) (ClassificationResultPtr result, std_msgs::Header header);
@@ -56,8 +55,8 @@ public:
 
   void classify_stream(const cv::Mat& image, FUNP_C cbGetClassificationResult, const sensor_msgs::ImageConstPtr& image_msg);
   void detect_stream(const cv::Mat& image, FUNP_D cbGetDetectionResult, const sensor_msgs::ImageConstPtr& image_msg);
-  std::vector<ClassificationResultPtr> classify_image(std::vector<std::string> images);
-  std::vector<DetectionResultPtr> detect_image(std::vector<std::string> images);
+  std::vector<ClassificationResult> classify_image(std::vector<std::string> images);
+  std::vector<DetectionResult> detect_image(std::vector<std::string> images);
 
 private:
   void initDeviceManager();
@@ -68,7 +67,6 @@ private:
   const std::string cnn_type_;
   const std::string& graph_file_path_;
   const std::string& category_file_path_;
-  //std::vector<std::string> categories_;
   const int network_dimension_;
   const std::vector<float> mean_;
   const float scale_;
@@ -84,8 +82,6 @@ private:
   std::vector<Image_frame> image_list_;
   std::mutex mtx_;
   std::vector<std::thread> threads_;
-
-  //int frame_id_;
 };
 }  // namespace movidius_ncs_lib
 #endif  // MOVIDIUS_NCS_LIB_NCS_MANAGER_H

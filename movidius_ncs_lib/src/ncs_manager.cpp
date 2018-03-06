@@ -43,8 +43,6 @@ NcsManager::NcsManager(int device_index,
           user_param_(nullptr),
           device_count_(0)
 {
-  //****
-  ROS_INFO("in ncs manager constructor");
   initDeviceManager();
 }
 
@@ -54,8 +52,6 @@ NcsManager::~NcsManager()
 
 void NcsManager::initDeviceManager()
 {
-  // new NCS instances
-
   char device_name[100];
   while (mvncGetDeviceName(device_count_, device_name, 100) != MVNC_DEVICE_NOT_FOUND)
   {
@@ -69,11 +65,8 @@ void NcsManager::initDeviceManager()
                                                           scale_,
                                                           top_n_);
     ncs_handle_list_.push_back(ncs_handle);
-   // image or stream, move to inference
-   // threads_.push_back(std::thread(&NcsManager::deviceThread, this, device_count_));
     device_count_++;
   }
- 
 }
 
 void do_join(std::thread& t) 
@@ -83,20 +76,10 @@ void do_join(std::thread& t)
 
 void NcsManager::deviceThread(int device_index)
 {
-  //****
-  ROS_INFO("inside thread %d", device_index);
-
   while(1)
   {
-    //****
-    //int while_count = 0;
-    //ROS_INFO("inside while %d times", while_count++);
-
     if (!image_list_.empty())
     {
-      //****
-      ROS_INFO("image list is not empty now");
-
       mtx_.lock();
 
       auto first_image = image_list_[0].image;
@@ -121,36 +104,23 @@ void NcsManager::deviceThread(int device_index)
         ncs_handle_list_[device_index]->loadTensor(first_image);
         ncs_handle_list_[device_index]->classify();
         ClassificationResultPtr result = ncs_handle_list_[device_index]->getClassificationResult();
-        //****
-        ROS_INFO("get one result");
 
         (*p_c_)(result, first_image_header);
-
-        //****
-        ROS_INFO("return one result");
-        
       }
       else
       {
         ncs_handle_list_[device_index]->loadTensor(first_image);
         ncs_handle_list_[device_index]->detect();
         DetectionResultPtr result = ncs_handle_list_[device_index]->getDetectionResult();
+
         (*p_d_)(result, first_image_header);
       }
-     
-    }
-    else
-    {
-      //****
-      //ROS_INFO("image list is empty now");
     }
   }
 }
 
 void NcsManager::startThreads()
 {
-  //****
-  ROS_INFO("starting %d threads", device_count_);
 
   for(int i = 0; i < device_count_; i++)
   {
@@ -159,111 +129,53 @@ void NcsManager::startThreads()
     
   std::for_each(threads_.begin(), threads_.end(), do_join);
 
-  //****
   ROS_INFO("started %d threads", device_count_);
 }
 
 
-std::vector<ClassificationResultPtr> NcsManager::classify_image(std::vector<std::string> images)
+std::vector<ClassificationResult> NcsManager::classify_image(std::vector<std::string> images)
 {
-  //****
-  for(unsigned int i = 0; i < images.size(); i++)
-  {
-    ROS_INFO("%u image name is %s", i, images[i].c_str());
-  }
-
-  //****
-  ROS_INFO("begin ncs manager -> classify_image: begin ");
-  ROS_INFO("device count is %d", device_count_);
-
   int image_size = int(images.size()); 
-
-  std::vector<ClassificationResultPtr> results(image_size);
+  std::vector<ClassificationResult> results(image_size);
 
   int parallel_group = image_size / device_count_;
   int parallel_left = image_size % device_count_;
-
-  //****
-  ROS_INFO("total size is %d", image_size);
-  ROS_INFO("group is %d", parallel_group);
-  ROS_INFO("left is %d", parallel_left);
-
-  //****
-  ROS_INFO("ncs manager -> classify_image: before parallel");
   
   for (int i = 0; i < parallel_group; i++)
   {
-    //****
-    ROS_INFO("begin of loop i = %d", i);
-
     #pragma omp parallel for
     for (int device_index = 0; device_index < device_count_; device_index++)
     {
-      //****
-      ROS_INFO("read image: %d", i * device_count_ + device_index);
       cv::Mat imageData = cv::imread(images[i * device_count_ + device_index]);
-
-      ROS_INFO("load %d image into No. %d NCS", i * device_count_ + device_index, device_index);
       ncs_handle_list_[device_index]->loadTensor(imageData);
-
-      ROS_INFO("call classify in No. %d NCS", device_index);
       ncs_handle_list_[device_index]->classify();
-
-      ROS_INFO("get result from No. %d NCS", device_index);
       ClassificationResultPtr result = ncs_handle_list_[device_index]->getClassificationResult();
-
-      ROS_INFO("put result into %d of results", i * device_count_ + device_index);
-      results[i * device_count_ + device_index] = result;
+      results[i * device_count_ + device_index] = *(result);
     }
-    
-    //****
-    ROS_INFO("done for loop i = %d", i);
   }
-
+ 
   for (int j = 0; j < parallel_left; j++)
   {
     cv::Mat imageData = cv::imread(images[parallel_group * device_count_ + j]);
     ncs_handle_list_[j]->loadTensor(imageData);
     ncs_handle_list_[j]->classify();
     ClassificationResultPtr result = ncs_handle_list_[j]->getClassificationResult();
-    results[parallel_group * device_count_ + j] = result;
-
-    //****
-    ROS_INFO("second for: device_index = %d", j);
+    results[parallel_group * device_count_ + j] = *(result);
   }
-  
-  //****
-  ROS_INFO("ncs manager -> classify_image: after parallel and end");
-  
+      
   return results;
 }
 
-std::vector<DetectionResultPtr> NcsManager::detect_image(std::vector<std::string> images)
+std::vector<DetectionResult> NcsManager::detect_image(std::vector<std::string> images)
 {
-  //****
-  ROS_INFO("begin ncs manager -> classify_image: begin ");
-  ROS_INFO("device count is %d", device_count_);
-
   int image_size = int(images.size());
-  std::vector<DetectionResultPtr> results(image_size);
+  std::vector<DetectionResult> results(image_size);
 
   int parallel_group = image_size / device_count_;
   int parallel_left = image_size % device_count_;
-  
-  //****
-  ROS_INFO("total size is %d", image_size);
-  ROS_INFO("group is %d", parallel_group);
-  ROS_INFO("left is %d", parallel_left);
-
-  //****
-  ROS_INFO("ncs manager -> classify_image: before parallel");
 
   for (int i = 0; i < parallel_group; i++)
   {
-    //****
-    ROS_INFO("begin first for at i = %d", i);
-
-    //#pragma omp parallel for private (imageData)
     #pragma omp parallel for
     for (int device_index = 0; device_index < device_count_; device_index++)
     {
@@ -271,56 +183,52 @@ std::vector<DetectionResultPtr> NcsManager::detect_image(std::vector<std::string
       ncs_handle_list_[device_index]->loadTensor(imageData);
       ncs_handle_list_[device_index]->detect();
       DetectionResultPtr result = ncs_handle_list_[device_index]->getDetectionResult();
-      results[i * device_count_ + device_index] = result;
-    }
-
-    for (int i = 0; i < parallel_left; i++)
-    {
-      cv::Mat imageData = cv::imread(images[parallel_group * device_count_ + i]);
-      ncs_handle_list_[i]->loadTensor(imageData);
-      ncs_handle_list_[i]->detect();
-      DetectionResultPtr result = ncs_handle_list_[i]->getDetectionResult();
-      results[parallel_group * device_count_ + i] = result;
+      results[i * device_count_ + device_index] = *(result);
     }
   }
 
-  //****
-  ROS_INFO("ncs manager -> classify_image: after parallel and end");
+  for (int i = 0; i < parallel_left; i++)
+  {
+    cv::Mat imageData = cv::imread(images[parallel_group * device_count_ + i]);
+    ncs_handle_list_[i]->loadTensor(imageData);
+    ncs_handle_list_[i]->detect();
+    DetectionResultPtr result = ncs_handle_list_[i]->getDetectionResult();
+    results[parallel_group * device_count_ + i] = *(result);
+  }
 
   return results;
 }
 
 void NcsManager::classify_stream(const cv::Mat& image, FUNP_C cbGetClassificationResult, const sensor_msgs::ImageConstPtr& image_msg)
 {
-  //****
-  ROS_INFO("NCSManager: classify_stream is called");
-
-  // regsiter callback
   p_c_ = cbGetClassificationResult;
 
-  //
   Image_frame image_frame;
   image_frame.header = image_msg->header;
   image_frame.image = image;
 
-  // push frame into buffer 
   mtx_.lock();
+  if(image_list_.size() > 10)
+  {
+    image_list_.erase(image_list_.begin());
+  }
   image_list_.push_back(image_frame);
   mtx_.unlock();
 }
 
 void NcsManager::detect_stream(const cv::Mat& image, FUNP_D cbGetDetectionResult, const sensor_msgs::ImageConstPtr& image_msg)
 {
-  // regsiter callback
   p_d_ = cbGetDetectionResult;
 
-  // 
   Image_frame image_frame;
   image_frame.header = image_msg->header;
   image_frame.image = image;
 
-  // push frame into buffer 
   mtx_.lock();
+  if(image_list_.size() > 10)
+  {
+    image_list_.erase(image_list_.begin());
+  }
   image_list_.push_back(image_frame);
   mtx_.unlock();
 }
