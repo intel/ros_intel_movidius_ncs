@@ -53,14 +53,8 @@ int getFPS()
 void syncCb(const sensor_msgs::ImageConstPtr& img,
             const object_msgs::Objects::ConstPtr& objs)
 {
-  //****
-  ROS_INFO("begin of syncCb");
-
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int cnt = 0;
-
-  //****
-  ROS_INFO("before for");
 
   for (auto obj : objs->objects_vector)
   {
@@ -74,11 +68,7 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
                 cv::Scalar(0, 255, 0));
   }
 
-  //****
-  ROS_INFO("after for");
-
   std::stringstream ss;
-  //ss << "inference time: " << objs->inference_time_ms << " ms";
   int FPS = getFPS();
   ss << "FPS: " << FPS;
 
@@ -89,9 +79,6 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
               1,
               cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
-
-  //**** 
-  ROS_INFO("before wait key");
 
   int key = cv::waitKey(5);
   if (key == 13 || key == 27 || key == 32 || key == 113)
@@ -106,9 +93,6 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "movidius_ncs_example_stream");
   ros::NodeHandle nh;
 
-  //****
-  ROS_INFO("begin of client");
-
   message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
                                                          "/camera/color/image_raw",
                                                          1);
@@ -118,9 +102,6 @@ int main(int argc, char** argv)
 
   message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::Objects> sync(camSub, objSub, 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));
-
-  //****
-  ROS_INFO("end of client");
 
   ros::spin();
   return 0;

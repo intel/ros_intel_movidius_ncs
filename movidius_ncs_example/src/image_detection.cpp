@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -54,13 +55,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
 
 int main(int argc, char** argv)
 {
-  //*****
-  ROS_INFO("main begin");
-
   ros::init(argc, argv, "movidius_ncs_example");
-
-  //char basePath[256] = "/opt/movidius/ncappzoo/data/images/";
-
 
   if (argc != 2)
   {
@@ -68,9 +63,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  //basePath = *argv;
   std::vector<std::string> images_path=getImagePath(*(argv+1));
-  //std::vector<std::string> images_path=getImagePath(basePath);
 
   ros::NodeHandle n;
   ros::ServiceClient client;
@@ -79,21 +72,6 @@ int main(int argc, char** argv)
 
   srv.request.images_path = images_path;
 
-/*
-  cv_bridge::CvImage cv_image;
-  sensor_msgs::Image ros_image;
-  cv_image.image = cv::imread(argv[1]);
-  cv_image.encoding = "bgr8";
-  cv_image.toImageMsg(ros_image);
-  int width = cv_image.image.cols;
-  int height = cv_image.image.rows;
-
-  srv.request.image = ros_image;
-*/
-
-  //*****
-  ROS_INFO("before call");
-
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
 
   if (!client.call(srv))
@@ -101,32 +79,22 @@ int main(int argc, char** argv)
     ROS_ERROR("failed to call service DetectObject");
     return 1;
   }
- 
-  //*****
-  ROS_INFO("after call, before display");
 
   boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = end - start;
 
-  //****
-  ROS_INFO("total %lu results", srv.response.objects.size());
-
   for (unsigned int i = 0; i < srv.response.objects.size(); i++)
   {
-    //****
-    ROS_INFO("result %u: begin of loop", i);
-
     cv_bridge::CvImage cv_image;
     cv_image.image = cv::imread(images_path[i]);
     cv_image.encoding = "bgr8";
     int width = cv_image.image.cols;
     int height = cv_image.image.rows;
 
+    ROS_INFO("Detection result for image No. %u:", i);
+
     for (unsigned int j = 0; j < srv.response.objects[i].objects_vector.size(); j++)
     {
-      //****
-      ROS_INFO("total %lu: now is %u",srv.response.objects[i].objects_vector.size(), j);
-
       std::stringstream ss;
       ss << srv.response.objects[i].objects_vector[j].object.object_name << ": "
          << srv.response.objects[i].objects_vector[j].object.probability * 100 << "%";
@@ -153,15 +121,11 @@ int main(int argc, char** argv)
       cv::rectangle(cv_image.image, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20), cv::Scalar(0, 255, 0), -1);
       cv::putText(cv_image.image, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
                 1, cv::Scalar(0, 0, 255), 1);
-    
-      //cv::imshow("image_detection", cv_image.image);
-      //cv::waitKey(0);
     }
+    cv::imshow("image_detection", cv_image.image);
+    cv::waitKey(0);
   }
   
-  //****
-  ROS_INFO("almost end, after for");
-
   ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
 
     return 0;
