@@ -28,6 +28,7 @@
 
 std::vector<std::string> getImagePath(std::string image_dir)
 {
+  image_dir += "/";
   std::vector<std::string> files;
 
   DIR *dir;
