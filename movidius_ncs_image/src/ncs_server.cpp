@@ -24,8 +24,8 @@
 #include "movidius_ncs_image/ncs_server.h"
 #include <cv_bridge/cv_bridge.h>
 
-using movidius_ncs_lib::ClassificationResultPtr;
-using movidius_ncs_lib::DetectionResultPtr;
+using movidius_ncs_lib::ClassificationResult;
+using movidius_ncs_lib::DetectionResult;
 using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_image
@@ -178,7 +178,6 @@ void NCSServer::getParameters()
 void NCSServer::init()
 {
   ROS_DEBUG("NCSServer init");
-  //classification or detection: 
   ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(device_index_,
                                                        static_cast<Device::LogLevel>(log_level_),
                                                         cnn_type_,
@@ -204,28 +203,18 @@ void NCSServer::init()
                                     &NCSServer::cbDetectObject,
                                     this);
   }
-  // all cnn_type -> cbStarnNcsManager
-  // new NcsManager instance
 }
 
 bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
                                object_msgs::ClassifyObject::Response& response)
 {
-  //****
-  ROS_INFO("call back begin");
   
-  std::vector<ClassificationResultPtr> results = ncs_manager_handle_->classify_image(request.images_path);
- 
-  //****
-  ROS_INFO("call back and got result");
-
-  //****
-  ROS_INFO("begin to parse result, total %lu results", results.size());
+  std::vector<ClassificationResult> results = ncs_manager_handle_->classify_image(request.images_path);
 
   for (unsigned int i = 0; i < results.size(); i++)
   {
     object_msgs::Objects objs;
-    for (auto item : results[i]->items)
+    for (auto item : results[i].items)
     {
       object_msgs::Object obj;
       obj.object_name = item.category;
@@ -233,34 +222,22 @@ bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
       objs.objects_vector.push_back(obj);
     }
 
-    objs.inference_time_ms = results[i]->time_taken;
+    objs.inference_time_ms = results[i].time_taken;
     response.objects.push_back(objs);
   }
  
-  //****
-  ROS_INFO("call back end");
-  
   return true;
 }
 
 bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
                                object_msgs::DetectObject::Response& response)
 {
-  //****
-  ROS_INFO("call back begin");
-
-  std::vector<DetectionResultPtr> results = ncs_manager_handle_->detect_image(request.images_path);
+  std::vector<DetectionResult> results = ncs_manager_handle_->detect_image(request.images_path);
  
-  //****
-  ROS_INFO("call back and got result");
-
-  //****
-  ROS_INFO("begin to parse result, total %lu results", results.size());
-
   for (unsigned int i = 0; i < results.size(); i++)
   {
     object_msgs::ObjectsInBoxes objs;
-    for (auto item : results[i]->items_in_boxes)
+    for (auto item : results[i].items_in_boxes)
     {
       object_msgs::ObjectInBox obj;
       obj.object.object_name = item.item.category;
@@ -272,12 +249,9 @@ bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
       objs.objects_vector.push_back(obj);
     }
 
-  objs.inference_time_ms = results[i]->time_taken;
+  objs.inference_time_ms = results[i].time_taken;
   response.objects.push_back(objs);
   }
-
-  //****
-  ROS_INFO("call back end");
 
   return true;
 }
