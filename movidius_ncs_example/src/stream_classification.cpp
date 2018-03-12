@@ -36,7 +36,7 @@ int getFPS()
   static int frameCount = 0;
 
   frameCount++;
-  
+
   boost::posix_time::ptime currentTime = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = currentTime - lastTime;
 
@@ -50,8 +50,7 @@ int getFPS()
   return FPS;
 }
 
-void syncCb(const sensor_msgs::ImageConstPtr& img,
-            const object_msgs::Objects::ConstPtr& objs)
+void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::Objects::ConstPtr& objs)
 {
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int cnt = 0;
@@ -60,11 +59,7 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
   {
     std::stringstream ss;
     ss << obj.object_name << ": " << obj.probability * 100 << '%';
-    cv::putText(cvImage,
-                ss.str(),
-                cvPoint(LINESPACING, LINESPACING * (++cnt)),
-                cv::FONT_HERSHEY_SIMPLEX,
-                1,
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar(0, 255, 0));
   }
 
@@ -72,11 +67,7 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
   int FPS = getFPS();
   ss << "FPS: " << FPS;
 
-  cv::putText(cvImage,
-              ss.str(),
-              cvPoint(LINESPACING, LINESPACING * (++cnt)),
-              cv::FONT_HERSHEY_SIMPLEX,
-              1,
+  cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 1,
               cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
 
@@ -87,18 +78,13 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
   }
 }
 
-
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_stream");
   ros::NodeHandle nh;
 
-  message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
-                                                         "/camera/color/image_raw",
-                                                         1);
-  message_filters::Subscriber<object_msgs::Objects> objSub(nh,
-                                                           "/movidius_ncs_nodelet/classified_objects",
-                                                           1);
+  message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
+  message_filters::Subscriber<object_msgs::Objects> objSub(nh, "/movidius_ncs_nodelet/classified_objects", 1);
 
   message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::Objects> sync(camSub, objSub, 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));

@@ -30,23 +30,27 @@
 
 std::vector<std::string> getImagePath(std::string image_dir)
 {
-  image_dir += "/";
+  if (image_dir.back() != '/')
+  {
+    image_dir += "/";
+  }
+
   std::vector<std::string> files;
 
-  DIR *dir;
-  struct dirent *ptr;
+  DIR* dir;
+  struct dirent* ptr;
 
-  if ((dir=opendir(image_dir.c_str())) == NULL)
+  if ((dir = opendir(image_dir.c_str())) == NULL)
   {
     perror("Open Dir error...");
     exit(1);
   }
 
-  while ((ptr=readdir(dir)) != NULL)
+  while ((ptr = readdir(dir)) != NULL)
   {
-    if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)
+    if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
       continue;
-    else if(ptr->d_type == 8)
+    else if (ptr->d_type == 8)
       files.push_back(image_dir + ptr->d_name);
   }
   closedir(dir);
@@ -64,7 +68,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  std::vector<std::string> images_path=getImagePath(*(argv+1));
+  std::vector<std::string> images_path = getImagePath(*(argv + 1));
 
   ros::NodeHandle n;
   ros::ServiceClient client;
@@ -102,33 +106,31 @@ int main(int argc, char** argv)
 
       ROS_INFO("%d: object: %s", j, srv.response.objects[i].objects_vector[j].object.object_name.c_str());
       ROS_INFO("prob: %f", srv.response.objects[i].objects_vector[j].object.probability);
-      ROS_INFO("location: (%d, %d, %d, %d)",
-             srv.response.objects[i].objects_vector[j].roi.x_offset,
-             srv.response.objects[i].objects_vector[j].roi.y_offset,
-             srv.response.objects[i].objects_vector[j].roi.width,
-             srv.response.objects[i].objects_vector[j].roi.height);
+      ROS_INFO("location: (%d, %d, %d, %d)", srv.response.objects[i].objects_vector[j].roi.x_offset,
+               srv.response.objects[i].objects_vector[j].roi.y_offset,
+               srv.response.objects[i].objects_vector[j].roi.width,
+               srv.response.objects[i].objects_vector[j].roi.height);
 
       int xmin = srv.response.objects[i].objects_vector[j].roi.x_offset;
       int ymin = srv.response.objects[i].objects_vector[j].roi.y_offset;
       int w = srv.response.objects[i].objects_vector[j].roi.width;
       int h = srv.response.objects[i].objects_vector[j].roi.height;
 
-      int xmax = ((xmin + w) < width)? (xmin + w) : width;
-      int ymax = ((ymin + h) < height)? (ymin + h) : height;
+      int xmax = ((xmin + w) < width) ? (xmin + w) : width;
+      int ymax = ((ymin + h) < height) ? (ymin + h) : height;
 
       cv::Point left_top = cv::Point(xmin, ymin);
       cv::Point right_bottom = cv::Point(xmax, ymax);
       cv::rectangle(cv_image.image, left_top, right_bottom, cv::Scalar(0, 255, 0), 1, cv::LINE_8, 0);
       cv::rectangle(cv_image.image, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20), cv::Scalar(0, 255, 0), -1);
-      cv::putText(cv_image.image, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
-                1, cv::Scalar(0, 0, 255), 1);
+      cv::putText(cv_image.image, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN, 1,
+                  cv::Scalar(0, 0, 255), 1);
     }
     cv::imshow("image_detection", cv_image.image);
     cv::waitKey(0);
   }
-  
+
   ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
 
-    return 0;
-  
+  return 0;
 }

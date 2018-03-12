@@ -25,19 +25,19 @@
 #include <sensor_msgs/Image.h>
 
 #include "movidius_ncs_lib/ncs.h"
-#include "movidius_ncs_lib/ncs_manager.h" 
+#include "movidius_ncs_lib/ncs_manager.h"
 
 namespace movidius_ncs_stream
 {
-typedef void (*FUNP_C) (movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
-typedef void (*FUNP_D) (movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
+typedef void (*FUNP_C)(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
+typedef void (*FUNP_D)(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
 
 class NCSImpl
 {
 public:
   NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh);
   ~NCSImpl();
-  
+
   static void cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
   static void cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
 
@@ -46,7 +46,7 @@ private:
   void cbDetect(const sensor_msgs::ImageConstPtr& image);
   void getParameters();
   void init();
-  
+
   std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
 
   static ros::Publisher pub_;
@@ -65,8 +65,7 @@ private:
   int top_n_;
 };
 
-
-class NCSNodelet: public nodelet::Nodelet
+class NCSNodelet : public nodelet::Nodelet
 {
 public:
   virtual ~NCSNodelet();

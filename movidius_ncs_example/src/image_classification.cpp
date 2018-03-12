@@ -28,23 +28,27 @@
 
 std::vector<std::string> getImagePath(std::string image_dir)
 {
-  image_dir += "/";
+  if (image_dir.back() != '/')
+  {
+    image_dir += "/";
+  }
+
   std::vector<std::string> files;
 
-  DIR *dir;
-  struct dirent *ptr;
+  DIR* dir;
+  struct dirent* ptr;
 
-  if ((dir=opendir(image_dir.c_str())) == NULL)
+  if ((dir = opendir(image_dir.c_str())) == NULL)
   {
     perror("Open Dir error...");
     exit(1);
   }
 
-  while ((ptr=readdir(dir)) != NULL)
+  while ((ptr = readdir(dir)) != NULL)
   {
-    if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)
+    if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
       continue;
-    else if(ptr->d_type == 8)
+    else if (ptr->d_type == 8)
       files.push_back(image_dir + ptr->d_name);
   }
   closedir(dir);
@@ -62,7 +66,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  std::vector<std::string> images_path=getImagePath(*(argv+1));
+  std::vector<std::string> images_path = getImagePath(*(argv + 1));
 
   ros::NodeHandle n;
   ros::ServiceClient client;
@@ -87,8 +91,7 @@ int main(int argc, char** argv)
     ROS_INFO("Classification result for image No. %u:", i);
     for (unsigned int j = 0; j < srv.response.objects[i].objects_vector.size(); j++)
     {
-      ROS_INFO("%d: object: %s\nprobability: %lf%%", j,
-               srv.response.objects[i].objects_vector[j].object_name.c_str(),
+      ROS_INFO("%d: object: %s\nprobability: %lf%%", j, srv.response.objects[i].objects_vector[j].object_name.c_str(),
                srv.response.objects[i].objects_vector[j].probability * 100);
     }
   }

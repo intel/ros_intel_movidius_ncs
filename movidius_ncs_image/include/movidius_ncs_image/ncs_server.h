@@ -27,7 +27,6 @@
 #include "movidius_ncs_lib/ncs.h"
 #include "movidius_ncs_lib/ncs_manager.h"
 
-
 namespace movidius_ncs_image
 {
 class NCSServer
@@ -39,10 +38,8 @@ private:
   void getParameters();
   void init();
 
-  bool cbDetectObject(object_msgs::DetectObject::Request& request,
-                         object_msgs::DetectObject::Response& response);
-  bool cbClassifyObject(object_msgs::ClassifyObject::Request& request,
-                         object_msgs::ClassifyObject::Response& response);
+  bool cbDetectObject(object_msgs::DetectObject::Request& request, object_msgs::DetectObject::Response& response);
+  bool cbClassifyObject(object_msgs::ClassifyObject::Request& request, object_msgs::ClassifyObject::Response& response);
 
   ros::ServiceServer service_;
 

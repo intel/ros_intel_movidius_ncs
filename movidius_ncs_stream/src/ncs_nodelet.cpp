@@ -39,18 +39,18 @@ using movidius_ncs_lib::Device;
 namespace movidius_ncs_stream
 {
 NCSImpl::NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh)
-    : ncs_manager_handle_(nullptr),
-      nh_(nh),
-      pnh_(pnh),
-      max_device_number_(255),
-      log_level_(Device::Errors),
-      cnn_type_(""),
-      graph_file_path_(""),
-      category_file_path_(""),
-      network_dimension_(0),
-      mean_(0),
-      scale_(1.0),
-      top_n_(1)
+  : ncs_manager_handle_(nullptr)
+  , nh_(nh)
+  , pnh_(pnh)
+  , max_device_number_(255)
+  , log_level_(Device::Errors)
+  , cnn_type_("")
+  , graph_file_path_("")
+  , category_file_path_("")
+  , network_dimension_(0)
+  , mean_(0)
+  , scale_(1.0)
+  , top_n_(1)
 {
   getParameters();
   init();
@@ -121,11 +121,10 @@ void NCSImpl::getParameters()
     ROS_WARN("param cnn_type not set, use default");
   }
 
-  if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet")
-      && cnn_type_.compare("inception_v1") && cnn_type_.compare("inception_v2")
-      && cnn_type_.compare("inception_v3") && cnn_type_.compare("inception_v4")
-      && cnn_type_.compare("mobilenet") && cnn_type_.compare("squeezenet")
-      && cnn_type_.compare("tinyyolo_v1") && cnn_type_.compare("mobilenetssd"))
+  if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet") && cnn_type_.compare("inception_v1") &&
+      cnn_type_.compare("inception_v2") && cnn_type_.compare("inception_v3") && cnn_type_.compare("inception_v4") &&
+      cnn_type_.compare("mobilenet") && cnn_type_.compare("squeezenet") && cnn_type_.compare("tinyyolo_v1") &&
+      cnn_type_.compare("mobilenetssd"))
   {
     ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
     throw std::exception();
@@ -145,7 +144,6 @@ void NCSImpl::getParameters()
   }
 
   ROS_INFO_STREAM("use network_dimension = " << network_dimension_);
-
 
   for (int i = 0; i < 3; i++)
   {
@@ -191,22 +189,15 @@ void NCSImpl::init()
 {
   ROS_DEBUG("NCSImpl onInit");
 
-  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(max_device_number_,
-                                              static_cast<Device::LogLevel>(log_level_),
-                                                        cnn_type_,
-                                                        graph_file_path_,
-                                                        category_file_path_,
-                                                        network_dimension_,
-                                                        mean_,
-                                                        scale_,
-                                                        top_n_);
+  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(
+      max_device_number_, static_cast<Device::LogLevel>(log_level_), cnn_type_, graph_file_path_, category_file_path_,
+      network_dimension_, mean_, scale_, top_n_);
 
   boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
 
-  if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
-      || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("inception_v2")
-      || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4")
-      || !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
+  if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
+      !cnn_type_.compare("inception_v2") || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4") ||
+      !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbClassify, this);
     NCSImpl::pub_ = nh_.advertise<object_msgs::Objects>("classified_objects", 1);
@@ -216,7 +207,7 @@ void NCSImpl::init()
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbDetect, this);
     NCSImpl::pub_ = nh_.advertise<object_msgs::ObjectsInBoxes>("detected_objects", 1);
   }
-  
+
   ncs_manager_handle_->startThreads();
 }
 
@@ -286,7 +277,7 @@ void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, 
   objs_in_boxes.header = header;
   objs_in_boxes.inference_time_ms = result->time_taken;
 
-  NCSImpl::pub_.publish(objs_in_boxes); 
+  NCSImpl::pub_.publish(objs_in_boxes);
 }
 
 void NCSNodelet::onInit()

@@ -36,7 +36,7 @@ int getFPS()
   static int frameCount = 0;
 
   frameCount++;
-  
+
   boost::posix_time::ptime currentTime = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration msdiff = currentTime - lastTime;
 
@@ -50,8 +50,7 @@ int getFPS()
   return FPS;
 }
 
-void syncCb(const sensor_msgs::ImageConstPtr& img,
-            const object_msgs::ObjectsInBoxes::ConstPtr& objs_in_boxes)
+void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::ObjectsInBoxes::ConstPtr& objs_in_boxes)
 {
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int width = img->width;
@@ -67,47 +66,38 @@ void syncCb(const sensor_msgs::ImageConstPtr& img,
     int w = obj.roi.width;
     int h = obj.roi.height;
 
-    int xmax = ((xmin + w) < width)? (xmin + w) : width;
-    int ymax = ((ymin + h) < height)? (ymin + h) : height;
-  
+    int xmax = ((xmin + w) < width) ? (xmin + w) : width;
+    int ymax = ((ymin + h) < height) ? (ymin + h) : height;
+
     cv::Point left_top = cv::Point(xmin, ymin);
     cv::Point right_bottom = cv::Point(xmax, ymax);
     cv::rectangle(cvImage, left_top, right_bottom, cv::Scalar(0, 255, 0), 1, cv::LINE_8, 0);
     cv::rectangle(cvImage, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20), cv::Scalar(0, 255, 0), -1);
-    cv::putText(cvImage, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN,
-                1, cv::Scalar(0, 0, 255), 1);
+    cv::putText(cvImage, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255), 1);
   }
-  
+
   std::stringstream ss;
   int FPS = getFPS();
   ss << "FPS: " << FPS;
-  
-  cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING),
-              cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
+
+  cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
   cv::imshow("image_viewer", cvImage);
- 
+
   int key = cv::waitKey(5);
-  if ( key == 13 || key == 27 || key == 32 || key == 113)
+  if (key == 13 || key == 27 || key == 32 || key == 113)
   {
     ros::shutdown();
   }
 }
-
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_stream");
   ros::NodeHandle nh;
 
-  message_filters::Subscriber<sensor_msgs::Image> camSub(nh,
-                                                         "/camera/color/image_raw",
-                                                         1);
-  message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh,
-                                                                        "/movidius_ncs_nodelet/detected_objects",
-                                                                        1);
-  message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub,
-                                                                                                objSub,
-                                                                                                60);
+  message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
+  message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh, "/movidius_ncs_nodelet/detected_objects", 1);
+  message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub, objSub, 60);
   sync.registerCallback(boost::bind(&syncCb, _1, _2));
 
   ros::spin();

@@ -24,24 +24,24 @@
 #include "movidius_ncs_image/ncs_server.h"
 #include <cv_bridge/cv_bridge.h>
 
-using movidius_ncs_lib::ClassificationResult;
-using movidius_ncs_lib::DetectionResult;
+using movidius_ncs_lib::ClassificationResultPtr;
+using movidius_ncs_lib::DetectionResultPtr;
 using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_image
 {
 NCSServer::NCSServer(ros::NodeHandle& nh)
-    : ncs_manager_handle_(nullptr),
-      nh_(nh),
-      max_device_number_(255),
-      log_level_(Device::Errors),
-      cnn_type_(""),
-      graph_file_path_(""),
-      category_file_path_(""),
-      network_dimension_(0),
-      mean_(0),
-      scale_(1.0),
-      top_n_(1)
+  : ncs_manager_handle_(nullptr)
+  , nh_(nh)
+  , max_device_number_(255)
+  , log_level_(Device::Errors)
+  , cnn_type_("")
+  , graph_file_path_("")
+  , category_file_path_("")
+  , network_dimension_(0)
+  , mean_(0)
+  , scale_(1.0)
+  , top_n_(1)
 {
   getParameters();
   init();
@@ -82,11 +82,10 @@ void NCSServer::getParameters()
     ROS_WARN("param cnn_type not set, use default");
   }
 
-  if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet")
-      && cnn_type_.compare("inception_v1") && cnn_type_.compare("inception_v2")
-      && cnn_type_.compare("inception_v3") && cnn_type_.compare("inception_v4")
-      && cnn_type_.compare("mobilenet") && cnn_type_.compare("squeezenet")
-      && cnn_type_.compare("tinyyolo_v1") && cnn_type_.compare("mobilenetssd"))
+  if (cnn_type_.compare("alexnet") && cnn_type_.compare("googlenet") && cnn_type_.compare("inception_v1") &&
+      cnn_type_.compare("inception_v2") && cnn_type_.compare("inception_v3") && cnn_type_.compare("inception_v4") &&
+      cnn_type_.compare("mobilenet") && cnn_type_.compare("squeezenet") && cnn_type_.compare("tinyyolo_v1") &&
+      cnn_type_.compare("mobilenetssd"))
   {
     ROS_WARN_STREAM("invalid cnn_type_=" << cnn_type_);
     throw std::exception();
@@ -174,47 +173,34 @@ void NCSServer::getParameters()
   ROS_INFO_STREAM("use scale = " << scale_);
 }
 
-
 void NCSServer::init()
 {
   ROS_DEBUG("NCSServer init");
-  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(max_device_number_,
-                                                       static_cast<Device::LogLevel>(log_level_),
-                                                        cnn_type_,
-                                                        graph_file_path_,
-                                                        category_file_path_,
-                                                        network_dimension_,
-                                                        mean_,
-                                                        scale_,
-                                                        top_n_);
+  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(
+      max_device_number_, static_cast<Device::LogLevel>(log_level_), cnn_type_, graph_file_path_, category_file_path_,
+      network_dimension_, mean_, scale_, top_n_);
 
-  if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet")
-      || !cnn_type_.compare("inception_v1") || !cnn_type_.compare("inception_v2")
-      || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4")
-      || !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
+  if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
+      !cnn_type_.compare("inception_v2") || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4") ||
+      !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
   {
-    service_ = nh_.advertiseService("classify_object",
-                                    &NCSServer::cbClassifyObject,
-                                    this);
+    service_ = nh_.advertiseService("classify_object", &NCSServer::cbClassifyObject, this);
   }
   else
   {
-    service_ = nh_.advertiseService("detect_object",
-                                    &NCSServer::cbDetectObject,
-                                    this);
+    service_ = nh_.advertiseService("detect_object", &NCSServer::cbDetectObject, this);
   }
 }
 
 bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
-                               object_msgs::ClassifyObject::Response& response)
+                                 object_msgs::ClassifyObject::Response& response)
 {
-  
-  std::vector<ClassificationResult> results = ncs_manager_handle_->classify_image(request.images_path);
+  std::vector<ClassificationResultPtr> results = ncs_manager_handle_->classify_image(request.images_path);
 
   for (unsigned int i = 0; i < results.size(); i++)
   {
     object_msgs::Objects objs;
-    for (auto item : results[i].items)
+    for (auto item : results[i]->items)
     {
       object_msgs::Object obj;
       obj.object_name = item.category;
@@ -222,22 +208,22 @@ bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
       objs.objects_vector.push_back(obj);
     }
 
-    objs.inference_time_ms = results[i].time_taken;
+    objs.inference_time_ms = results[i]->time_taken;
     response.objects.push_back(objs);
   }
- 
+
   return true;
 }
 
 bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
                                object_msgs::DetectObject::Response& response)
 {
-  std::vector<DetectionResult> results = ncs_manager_handle_->detect_image(request.images_path);
- 
+  std::vector<DetectionResultPtr> results = ncs_manager_handle_->detect_image(request.images_path);
+
   for (unsigned int i = 0; i < results.size(); i++)
   {
     object_msgs::ObjectsInBoxes objs;
-    for (auto item : results[i].items_in_boxes)
+    for (auto item : results[i]->items_in_boxes)
     {
       object_msgs::ObjectInBox obj;
       obj.object.object_name = item.item.category;
@@ -249,8 +235,8 @@ bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
       objs.objects_vector.push_back(obj);
     }
 
-  objs.inference_time_ms = results[i].time_taken;
-  response.objects.push_back(objs);
+    objs.inference_time_ms = results[i]->time_taken;
+    response.objects.push_back(objs);
   }
 
   return true;
