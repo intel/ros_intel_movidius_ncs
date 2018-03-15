@@ -1,11 +1,11 @@
 # Copyright (c) 2017 Intel Corporation
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,13 +42,14 @@ add_executable(${PROJECT_NAME}_image_classification src/image_classification.cpp
 add_executable(${PROJECT_NAME}_image_detection src/image_detection.cpp)
 add_executable(${PROJECT_NAME}_stream_classification src/stream_classification.cpp)
 add_executable(${PROJECT_NAME}_stream_detection src/stream_detection.cpp)
+add_executable(${PROJECT_NAME}_device_parallel_demo src/device_parallel_demo.cpp)
 
 add_dependencies(${PROJECT_NAME}_image_classification
-                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
                  ${catkin_EXPORTED_TARGETS})
 
 add_dependencies(${PROJECT_NAME}_image_detection
-                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
                  ${catkin_EXPORTED_TARGETS})
 
 add_dependencies(${PROJECT_NAME}_stream_classification
@@ -56,6 +57,10 @@ add_dependencies(${PROJECT_NAME}_stream_classification
                  ${catkin_EXPORTED_TARGETS})
 
 add_dependencies(${PROJECT_NAME}_stream_detection
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
+                 ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${PROJECT_NAME}_device_parallel_demo
                  ${${PROJECT_NAME}_EXPORTED_TARGETS}
                  ${catkin_EXPORTED_TARGETS})
 
@@ -78,6 +83,12 @@ target_link_libraries(${PROJECT_NAME}_stream_detection
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
+target_link_libraries(${PROJECT_NAME}_device_parallel_demo
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.
@@ -119,7 +130,7 @@ if(UNIX OR APPLE)
 endif()
 
 install(TARGETS ${PROJECT_NAME}_image_classification ${PROJECT_NAME}_image_detection
-  ${PROJECT_NAME}_stream_classification ${PROJECT_NAME}_stream_detection
+  ${PROJECT_NAME}_stream_classification ${PROJECT_NAME}_stream_detection ${PROJECT_NAME}_device_parallel_demo
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

@@ -247,10 +247,12 @@ bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_node");
+  ROS_INFO("before try");
   ros::NodeHandle nh("~");
 
   try
   {
+    ROS_INFO("inside try");
     movidius_ncs_image::NCSServer node(nh);
     ros::spin();
   }

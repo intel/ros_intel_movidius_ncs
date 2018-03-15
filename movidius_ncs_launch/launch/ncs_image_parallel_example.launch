@@ -1,0 +1,62 @@
+<!--
+Copyright (c) 2017 Intel Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<launch>
+  <arg name="max_device_number" default="255" />
+  <arg name="log_level" default="0" />
+  <arg name="top_n" default="3" />
+  <arg name="cnn_type" default="googlenet" />
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml"
+       if="$(eval cnn_type == 'alexnet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml"
+       if="$(eval cnn_type == 'googlenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v1.yaml"
+       if="$(eval cnn_type == 'inception_v1')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v2.yaml"
+       if="$(eval cnn_type == 'inception_v2')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v3.yaml"
+       if="$(eval cnn_type == 'inception_v3')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v4.yaml"
+       if="$(eval cnn_type == 'inception_v4')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenet.yaml"
+       if="$(eval cnn_type == 'mobilenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
+       if="$(eval cnn_type == 'squeezenet')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"
+       if="$(eval cnn_type == 'tinyyolo_v1')"/>
+  <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml"
+       if="$(eval cnn_type == 'mobilenetssd')"/>
+
+  <node pkg="movidius_ncs_image" type="movidius_ncs_image"
+        name="movidius_ncs_image_single" output="screen">
+      <param name="max_device_number" value="1" />
+      <param name="log_level" value="$(arg log_level)" />
+      <param name="cnn_type" value="$(arg cnn_type)" />
+      <param name="top_n" value="$(arg top_n)" />
+      <rosparam command="load" file="$(arg param_file)" />
+  </node>
+
+  <node pkg="movidius_ncs_image" type="movidius_ncs_image"
+        name="movidius_ncs_image_multiple" output="screen">
+      <param name="max_device_number" value="$(arg max_device_number)" />
+      <param name="log_level" value="$(arg log_level)" />
+      <param name="cnn_type" value="$(arg cnn_type)" />
+      <param name="top_n" value="$(arg top_n)" />
+      <rosparam command="load" file="$(arg param_file)" />
+  </node>
+
+</launch>
+
