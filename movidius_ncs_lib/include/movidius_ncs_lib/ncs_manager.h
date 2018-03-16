@@ -25,13 +25,17 @@
 #include <vector>
 #include <thread>
 
+#include "boost/bind.hpp"
+#include "boost/function.hpp"
+
 #include "movidius_ncs_lib/device.h"
 #include "movidius_ncs_lib/ncs.h"
 
 namespace movidius_ncs_lib
 {
-typedef void (*FUNP_C)(ClassificationResultPtr result, std_msgs::Header header);
-typedef void (*FUNP_D)(DetectionResultPtr result, std_msgs::Header header);
+typedef boost::function<void(ClassificationResultPtr result, std_msgs::Header header)> FUNP_C;
+typedef boost::function<void(DetectionResultPtr result, std_msgs::Header header)> FUNP_D;
+
 struct ImageFrame
 {
   cv::Mat image;

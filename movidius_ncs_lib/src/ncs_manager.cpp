@@ -98,7 +98,7 @@ void NcsManager::deviceThread(int device_index)
         ncs_handle_list_[device_index]->classify();
         ClassificationResultPtr result = ncs_handle_list_[device_index]->getClassificationResult();
 
-        (*p_c_)(result, first_image_header);
+        p_c_(result, first_image_header);
       }
       else
       {
@@ -106,7 +106,7 @@ void NcsManager::deviceThread(int device_index)
         ncs_handle_list_[device_index]->detect();
         DetectionResultPtr result = ncs_handle_list_[device_index]->getDetectionResult();
 
-        (*p_d_)(result, first_image_header);
+        p_d_(result, first_image_header);
       }
     }
   }

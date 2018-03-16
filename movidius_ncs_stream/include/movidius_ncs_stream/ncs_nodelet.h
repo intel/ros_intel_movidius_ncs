@@ -24,13 +24,16 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 
+#include "boost/bind.hpp"
+#include "boost/function.hpp"
+
 #include "movidius_ncs_lib/ncs.h"
 #include "movidius_ncs_lib/ncs_manager.h"
 
 namespace movidius_ncs_stream
 {
-typedef void (*FUNP_C)(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
-typedef void (*FUNP_D)(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
+typedef boost::function<void(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header)> FUNP_C;
+typedef boost::function<void(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header)> FUNP_D;
 
 class NCSImpl
 {
@@ -38,8 +41,8 @@ public:
   NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh);
   ~NCSImpl();
 
-  static void cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
-  static void cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
+  void cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
+  void cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
 
 private:
   void cbClassify(const sensor_msgs::ImageConstPtr& image);
@@ -49,7 +52,7 @@ private:
 
   std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
 
-  static ros::Publisher pub_;
+  ros::Publisher pub_;
   image_transport::Subscriber sub_;
   ros::NodeHandle nh_;
   ros::NodeHandle pnh_;

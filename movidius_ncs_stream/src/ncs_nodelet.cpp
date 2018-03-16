@@ -200,12 +200,12 @@ void NCSImpl::init()
       !cnn_type_.compare("mobilenet") || !cnn_type_.compare("squeezenet"))
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbClassify, this);
-    NCSImpl::pub_ = nh_.advertise<object_msgs::Objects>("classified_objects", 1);
+    pub_ = nh_.advertise<object_msgs::Objects>("classified_objects", 1);
   }
   else
   {
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbDetect, this);
-    NCSImpl::pub_ = nh_.advertise<object_msgs::ObjectsInBoxes>("detected_objects", 1);
+    pub_ = nh_.advertise<object_msgs::ObjectsInBoxes>("detected_objects", 1);
   }
 
   ncs_manager_handle_->startThreads();
@@ -220,7 +220,9 @@ void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
   }
 
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-  ncs_manager_handle_->classify_stream(cameraData, cbGetClassificationResult, image_msg);
+
+  FUNP_C classification_result_callback = boost::bind(&NCSImpl::cbGetClassificationResult, this, _1, _2);
+  ncs_manager_handle_->classify_stream(cameraData, classification_result_callback, image_msg);
 }
 
 void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
@@ -232,14 +234,16 @@ void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
   }
 
   cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-  ncs_manager_handle_->detect_stream(cameraData, cbGetDetectionResult, image_msg);
+
+  FUNP_D detection_result_callback = boost::bind(&NCSImpl::cbGetDetectionResult, this, _1, _2);
+  ncs_manager_handle_->detect_stream(cameraData, detection_result_callback, image_msg);
 }
 
 NCSNodelet::~NCSNodelet()
 {
 }
 
-ros::Publisher NCSImpl::pub_;
+// ros::Publisher NCSImpl::pub_;
 
 void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header)
 {
@@ -255,7 +259,8 @@ void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPt
 
   objs.header = header;
   objs.inference_time_ms = result->time_taken;
-  NCSImpl::pub_.publish(objs);
+  // NCSImpl::pub_.publish(objs);
+  pub_.publish(objs);
 }
 
 void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header)
@@ -277,7 +282,8 @@ void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, 
   objs_in_boxes.header = header;
   objs_in_boxes.inference_time_ms = result->time_taken;
 
-  NCSImpl::pub_.publish(objs_in_boxes);
+  // NCSImpl::pub_.publish(objs_in_boxes);
+  pub_.publish(objs_in_boxes);
 }
 
 void NCSNodelet::onInit()
