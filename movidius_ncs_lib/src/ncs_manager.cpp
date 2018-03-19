@@ -22,11 +22,12 @@
 
 namespace movidius_ncs_lib
 {
-NcsManager::NcsManager(int max_device_number, Device::LogLevel log_level, const std::string& cnn_type,
+NcsManager::NcsManager(int max_device_number, int device_index, Device::LogLevel log_level, const std::string& cnn_type,
                        const std::string& graph_file_path, const std::string& category_file_path,
                        const int network_dimension, const std::vector<float>& mean, const float& scale,
                        const int& top_n)
   : max_device_number_(max_device_number)
+  , device_index_(device_index)
   , log_level_(log_level)
   , cnn_type_(cnn_type)
   , graph_file_path_(graph_file_path)
@@ -50,11 +51,12 @@ void NcsManager::initDeviceManager()
   char device_name[100];
   while (mvncGetDeviceName(device_count_, device_name, 100) != MVNC_DEVICE_NOT_FOUND)
   {
-    auto ncs_handle = std::make_shared<movidius_ncs_lib::NCS>(device_count_, static_cast<Device::LogLevel>(log_level_),
+    auto ncs_handle = std::make_shared<movidius_ncs_lib::NCS>(device_index_, static_cast<Device::LogLevel>(log_level_),
                                                               cnn_type_, graph_file_path_, category_file_path_,
                                                               network_dimension_, mean_, scale_, top_n_);
     ncs_handle_list_.push_back(ncs_handle);
     device_count_++;
+    device_index_++;
 
     if (device_count_ == max_device_number_)
     {

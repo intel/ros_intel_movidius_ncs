@@ -45,7 +45,7 @@ struct ImageFrame
 class NcsManager
 {
 public:
-  NcsManager(int max_device_number, Device::LogLevel log_level, const std::string& cnn_type,
+  NcsManager(int max_device_number, int device_index, Device::LogLevel log_level, const std::string& cnn_type,
              const std::string& graph_file_path, const std::string& category_file_path, const int network_dimension,
              const std::vector<float>& mean, const float& scale, const int& top_n);
   ~NcsManager();
@@ -63,6 +63,7 @@ private:
   void deviceThread(int device_index);
 
   int max_device_number_;
+  int device_index_;
   const Device::LogLevel log_level_;
   const std::string cnn_type_;
   const std::string& graph_file_path_;
