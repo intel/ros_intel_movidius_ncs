@@ -26,6 +26,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <chrono>
 
+#define LINESPACING 30
+
 std::vector<std::string> getImagePath(std::string image_dir)
 {
   if (image_dir.back() != '/')
@@ -88,12 +90,27 @@ int main(int argc, char** argv)
 
   for (unsigned int i = 0; i < srv.response.objects.size(); i++)
   {
-    ROS_INFO("Classification result for image No. %u:", i);
+    cv_bridge::CvImage cv_image;
+    cv_image.image = cv::imread(images_path[i]);
+    cv_image.encoding = "bgr8";
+    int cnt = 0;
+
+    ROS_INFO("Classification result for image No.%u:", i + 1);
     for (unsigned int j = 0; j < srv.response.objects[i].objects_vector.size(); j++)
     {
+      std::stringstream ss;
+      ss << srv.response.objects[i].objects_vector[j].object_name << ": "
+         << srv.response.objects[i].objects_vector[j].probability * 100 << "%";
+
       ROS_INFO("%d: object: %s\nprobability: %lf%%", j, srv.response.objects[i].objects_vector[j].object_name.c_str(),
                srv.response.objects[i].objects_vector[j].probability * 100);
+
+      cv::putText(cv_image.image, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                  cv::Scalar(0, 255, 0), 1);
     }
+
+    cv::imshow("image_classification", cv_image.image);
+    cv::waitKey(0);
   }
 
   ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
