@@ -15,50 +15,18 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="max_device_number" default="255" />
-  <arg name="device_index" default="0" />
-  <arg name="log_level" default="0" />
-  <arg name="top_n" default="3" />
-  <arg name="cnn_type" default="googlenet" />
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/alexnet.yaml"
-       if="$(eval cnn_type == 'alexnet')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/googlenet.yaml"
-       if="$(eval cnn_type == 'googlenet')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v1.yaml"
-       if="$(eval cnn_type == 'inception_v1')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v2.yaml"
-       if="$(eval cnn_type == 'inception_v2')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v3.yaml"
-       if="$(eval cnn_type == 'inception_v3')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/inception_v4.yaml"
-       if="$(eval cnn_type == 'inception_v4')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenet.yaml"
-       if="$(eval cnn_type == 'mobilenet')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/squeezenet.yaml"
-       if="$(eval cnn_type == 'squeezenet')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml"
-       if="$(eval cnn_type == 'tinyyolo_v1')"/>
-  <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml"
-       if="$(eval cnn_type == 'mobilenetssd')"/>
+  <arg name="parallel_size" default="5" />
+  <arg name="image_base_path" default="/opt/movidius/ncappzoo/data/images/"/>
 
-  <node pkg="movidius_ncs_image" type="movidius_ncs_image"
-        name="movidius_ncs_image_single" output="screen">
-      <param name="max_device_number" value="1" />
-      <param name="log_level" value="$(arg log_level)" />
-      <param name="cnn_type" value="$(arg cnn_type)" />
-      <param name="top_n" value="$(arg top_n)" />
-      <rosparam command="load" file="$(arg param_file)" />
+  <node pkg="movidius_ncs_example" type="movidius_ncs_example_single_device_classification"
+        name="movidius_ncs_image_single_classification" output="screen">
+      <param name="parallel_size" value="1" />
+      <param name="image_base_path" value="$(arg image_base_path)" />
   </node>
 
-  <node pkg="movidius_ncs_image" type="movidius_ncs_image"
-        name="movidius_ncs_image_multiple" output="screen">
-      <param name="max_device_number" value="$(arg max_device_number)" />
-      <param name="device_index" value="$(arg device_index)" />
-      <param name="log_level" value="$(arg log_level)" />
-      <param name="cnn_type" value="$(arg cnn_type)" />
-      <param name="top_n" value="$(arg top_n)" />
-      <rosparam command="load" file="$(arg param_file)" />
+  <node pkg="movidius_ncs_example" type="movidius_ncs_example_multiple_devices_classification"
+        name="movidius_ncs_image_multiple_classification" output="screen">
+      <param name="parallel_size" value="$(arg parallel_size)" />
+      <param name="image_base_path" value="$(arg image_base_path)" />
   </node>
-
 </launch>
-
