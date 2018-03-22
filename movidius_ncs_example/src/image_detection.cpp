@@ -91,9 +91,7 @@ int main(int argc, char** argv)
     int width = cv_image.image.cols;
     int height = cv_image.image.rows;
 
-    ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
     ROS_INFO("Detection result for image No.%u:", i + 1);
-
     for (unsigned int j = 0; j < srv.response.objects[i].objects_vector.size(); j++)
     {
       std::stringstream ss;
@@ -126,5 +124,7 @@ int main(int argc, char** argv)
     cv::imshow("image_detection", cv_image.image);
     cv::waitKey(0);
   }
+  ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
+
   return 0;
 }

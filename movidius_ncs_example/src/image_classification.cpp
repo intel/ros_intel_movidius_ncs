@@ -109,7 +109,6 @@ int main(int argc, char** argv)
     cv::imshow("image_classification", cv_image.image);
     cv::waitKey(0);
   }
-
   ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
 
   return 0;
