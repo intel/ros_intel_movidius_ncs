@@ -14,40 +14,37 @@
  * limitations under the License.
  */
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <chrono>
 
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
+#include <opencv2/opencv.hpp>
 #include <ros/ros.h>
-
 #include <object_msgs/Object.h>
 #include <object_msgs/Objects.h>
-
-#include <chrono>
 
 #define LINESPACING 50
 
 int getFPS()
 {
-  static int FPS = 0;
-  static boost::posix_time::ptime lastTime = boost::posix_time::microsec_clock::local_time();
-  static int frameCount = 0;
+  static int fps = 0;
+  static boost::posix_time::ptime duration_start = boost::posix_time::microsec_clock::local_time();
+  static int frame_cnt = 0;
 
-  frameCount++;
+  frame_cnt++;
 
-  boost::posix_time::ptime currentTime = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration msdiff = currentTime - lastTime;
+  boost::posix_time::ptime current = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration msdiff = current - duration_start;
 
   if (msdiff.total_milliseconds() > 1000)
   {
-    FPS = frameCount;
-    frameCount = 0;
-    lastTime = currentTime;
+    fps = frame_cnt;
+    frame_cnt = 0;
+    duration_start = current;
   }
 
-  return FPS;
+  return fps;
 }
 
 void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::Objects::ConstPtr& objs)
@@ -64,8 +61,8 @@ void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::Objects::C
   }
 
   std::stringstream ss;
-  int FPS = getFPS();
-  ss << "FPS: " << FPS;
+  int fps = getFPS();
+  ss << "FPS: " << fps;
 
   cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 1,
               cv::Scalar(0, 255, 0));
