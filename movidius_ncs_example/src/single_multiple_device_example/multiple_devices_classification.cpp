@@ -64,17 +64,6 @@ std::vector<std::string> getImagePath(std::string image_dir)
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_multiple_devices_classification");
-
-  /*
-  if (argc != 2)
-  {
-    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_multiple_device_demo <image_path>");
-    return -1;
-  }
-
-  std::vector<std::string> images_path = getImagePath(argv[1]);
-  */
-
   ros::NodeHandle n;
   std::string image_base_path = DEFAULT_IMAGE_BASE_PATH;
   if (!n.getParam("image_base_path", image_base_path))
