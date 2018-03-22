@@ -51,17 +51,22 @@ void NCSManager::initDeviceManager()
   char device_name[MVNC_MAX_NAME_SIZE];
   while (mvncGetDeviceName(device_count_, device_name, sizeof(device_name)) != MVNC_DEVICE_NOT_FOUND)
   {
-    auto ncs_handle = std::make_shared<movidius_ncs_lib::NCS>(device_index_, static_cast<Device::LogLevel>(log_level_),
-                                                              cnn_type_, graph_file_path_, category_file_path_,
-                                                              network_dimension_, mean_, scale_, top_n_);
-    ncs_handle_list_.push_back(ncs_handle);
     device_count_++;
-    device_index_++;
 
     if (device_count_ == max_device_number_)
     {
       break;
     }
+  }
+
+  assert(device_index_ < device_count_);
+
+  for (int i = device_index_; i < device_count_; i++)
+  {
+    auto ncs_handle = std::make_shared<movidius_ncs_lib::NCS>(i, static_cast<Device::LogLevel>(log_level_),
+                                                              cnn_type_, graph_file_path_, category_file_path_,
+                                                              network_dimension_, mean_, scale_, top_n_);
+    ncs_handle_list_.push_back(ncs_handle);
   }
 }
 
@@ -81,7 +86,7 @@ void NCSManager::deviceThread(int device_index)
       auto first_image = image_list_[0].image;
       auto first_image_header = image_list_[0].header;
       image_list_.erase(image_list_.begin());
-      
+
       mtx_.unlock();
 
       if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
@@ -203,7 +208,7 @@ void NCSManager::classifyStream(const cv::Mat& image, FUNP_C cbGetClassification
 }
 
 void NCSManager::detectStream(const cv::Mat& image, FUNP_D cbGetDetectionResult,
-                               const sensor_msgs::ImageConstPtr& image_msg)
+                              const sensor_msgs::ImageConstPtr& image_msg)
 {
   p_d_ = cbGetDetectionResult;
 
