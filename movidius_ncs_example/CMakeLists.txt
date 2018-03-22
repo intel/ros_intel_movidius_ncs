@@ -42,8 +42,8 @@ add_executable(${PROJECT_NAME}_image_classification src/image_classification.cpp
 add_executable(${PROJECT_NAME}_image_detection src/image_detection.cpp)
 add_executable(${PROJECT_NAME}_stream_classification src/stream_classification.cpp)
 add_executable(${PROJECT_NAME}_stream_detection src/stream_detection.cpp)
-add_executable(${PROJECT_NAME}_single_device_classification src/single_device_classification.cpp)
-add_executable(${PROJECT_NAME}_multiple_devices_classification src/multiple_devices_classification.cpp)
+add_executable(${PROJECT_NAME}_single_device_classification src/single_multiple_device_example/single_device_classification.cpp)
+add_executable(${PROJECT_NAME}_multiple_devices_classification src/single_multiple_device_example/multiple_devices_classification.cpp)
 
 add_dependencies(${PROJECT_NAME}_image_classification
                  ${${PROJECT_NAME}_EXPORTED_TARGETS}
