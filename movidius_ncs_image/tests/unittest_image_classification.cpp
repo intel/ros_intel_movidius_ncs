@@ -30,15 +30,9 @@ TEST(UnitTestClassification, testImage)
   client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
   object_msgs::ClassifyObject srv;
 
-  cv_bridge::CvImage cv_image;
-  sensor_msgs::Image ros_image;
-  cv_image.image = cv::imread(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
-  cv_image.encoding = "bgr8";
-  cv_image.toImageMsg(ros_image);
-  srv.request.image = ros_image;
-  srv.request.images_path.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
+  srv.request.image_paths.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
 
-  client.waitForExistence(ros::Duration(60));
+  client.waitForExistence(ros::Duration(80));
   EXPECT_TRUE(client.call(srv));
   EXPECT_TRUE(srv.response.objects[0].objects_vector.size());
   EXPECT_TRUE(srv.response.objects[0].objects_vector[0].object_name.find("cycle") != std::string::npos);

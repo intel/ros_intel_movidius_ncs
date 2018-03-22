@@ -51,8 +51,8 @@ TEST(UnitTestFunction, testLibraryFunctions)
   {
     ASSERT_NO_THROW(
     {
-      std::shared_ptr<movidius_ncs_lib::NcsManager> handle =
-          std::make_shared<movidius_ncs_lib::NcsManager>(50, static_cast<movidius_ncs_lib::Device::LogLevel>(0), caffe_nets[i],
+      std::shared_ptr<movidius_ncs_lib::NCSManager> handle =
+          std::make_shared<movidius_ncs_lib::NCSManager>(50, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), caffe_nets[i],
                                                   "/opt/movidius/ncappzoo/caffe/" + caffe_dirs[i] + "/graph",
                                                   "/opt/movidius/ncappzoo/data/ilsvrc12/" + caffe_categories[i],
                                                   caffe_dimensions[i], caffe_means[i], caffe_scales[i], 3);
@@ -61,11 +61,11 @@ TEST(UnitTestFunction, testLibraryFunctions)
       images_path.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
       if (i < 3)
       {
-        handle->classify_image(images_path);
+        handle->classifyImage(images_path);
       }
       else
       {
-        handle->detect_image(images_path);
+        handle->detectImage(images_path);
       }
     });
   }
@@ -74,14 +74,14 @@ TEST(UnitTestFunction, testLibraryFunctions)
   {
     ASSERT_NO_THROW(
     {
-      std::shared_ptr<movidius_ncs_lib::NcsManager> handle = std::make_shared<movidius_ncs_lib::NcsManager>(
-          50, static_cast<movidius_ncs_lib::Device::LogLevel>(0), tf_nets[i],
+      std::shared_ptr<movidius_ncs_lib::NCSManager> handle = std::make_shared<movidius_ncs_lib::NCSManager>(
+          50, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), tf_nets[i],
           "/opt/movidius/ncappzoo/tensorflow/" + tf_dirs[i] + "/graph",
           "/opt/movidius/ncappzoo/data/ilsvrc12/imagenet1001.txt", tf_dimensions[i], tf_means[i], tf_scales[i], 3);
       EXPECT_TRUE(handle != nullptr);
       std::vector<std::string> images_path;
       images_path.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
-      handle->classify_image(images_path);
+      handle->classifyImage(images_path);
       sleep(10);
     });
   }
@@ -92,8 +92,8 @@ TEST(UnitTestFunction, testLibraryIncorrectInputs)
   try
   {
     std::vector<float> incorrect_mean = { 0, 0, 0 };
-    std::shared_ptr<movidius_ncs_lib::NCS> handle =
-      std::make_shared<movidius_ncs_lib::NCS>(0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), "Incorrect_type",
+    std::shared_ptr<movidius_ncs_lib::NCSManager> handle =
+      std::make_shared<movidius_ncs_lib::NCSManager>(0, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), "Incorrect_type",
                                               "graph_not_exist",
                                               "categories_not_exist",
                                               0, incorrect_mean, 0, 3);

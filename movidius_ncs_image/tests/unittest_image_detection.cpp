@@ -30,17 +30,10 @@ TEST(UnitTestDetection, testImage)
   ros::ServiceClient client = n.serviceClient<object_msgs::DetectObject>("/movidius_ncs_image/detect_object");
   object_msgs::DetectObject srv;
 
-  cv_bridge::CvImage cv_image;
-  sensor_msgs::Image ros_image;
   std::vector<std::string> image_format = {".jpg", ".jpeg", ".png", ".bmp"};
   for (std::string suffix : image_format)
   {
-    cv_image.image = cv::imread(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle"+suffix);
-    cv_image.encoding = "bgr8";
-    cv_image.toImageMsg(ros_image);
-
-    srv.request.image = ros_image;
-    srv.request.images_path.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle"+suffix);
+    srv.request.image_paths.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle"+suffix);
 
     client.waitForExistence(ros::Duration(60));
     EXPECT_TRUE(client.call(srv));
