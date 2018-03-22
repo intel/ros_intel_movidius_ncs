@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   cv_bridge
   roslint
+  rostest
   object_msgs
   movidius_ncs_lib
 )

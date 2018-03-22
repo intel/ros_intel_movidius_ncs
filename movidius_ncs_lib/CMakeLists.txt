@@ -18,6 +18,7 @@ project(movidius_ncs_lib)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslint
+  rostest
 )
 
 catkin_package(
@@ -125,6 +126,18 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 if(CATKIN_ENABLE_TESTING)
   find_package(roslint REQUIRED)
+  find_package(OpenCV REQUIRED)
+  find_package(catkin REQUIRED COMPONENTS roslib)
   roslint_cpp()
   roslint_add_test()
+
+  # rostest NCS SDK environment
+  add_executable(unittest_environment tests/unittest_environment.cpp)
+  target_link_libraries(unittest_environment ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  # rostest library function
+  add_executable(unittest_function tests/unittest_function.cpp)
+  target_link_libraries(unittest_function ${PROJECT_NAME} ${OpenCV_LIBS} ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  add_dependencies(unittest_function ${catkin_EXPORTED_TARGETS})
+
+  add_rostest(tests/test_all.test)
 endif()
