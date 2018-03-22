@@ -18,6 +18,7 @@ limitations under the License.
   <arg name="manager" />
   <arg name="input_topic" default="/camera/rgb/image_raw" />
   <arg name="output_topic" default="/movidius_ncs_nodelet/detected_objects" />
+  <arg name="max_device_number" default="255" />
   <arg name="device_index" default="0" />
   <arg name="log_level" default="0" />
   <arg name="cnn_type" default="mobilenetssd" />
@@ -29,6 +30,7 @@ limitations under the License.
         output="screen">
       <remap from="/camera/rgb/image_raw" to="$(arg input_topic)" />
       <remap from="detected_objects" to="$(arg output_topic)" />
+      <param name="max_device_number" value="$(arg max_device_number)" />
       <param name="device_index" value="$(arg device_index)" />
       <param name="log_level" value="$(arg log_level)" />
       <param name="cnn_type" value="$(arg cnn_type)"  />

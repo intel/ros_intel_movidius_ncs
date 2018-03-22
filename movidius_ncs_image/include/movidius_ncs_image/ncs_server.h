@@ -25,6 +25,7 @@
 #include <object_msgs/ClassifyObject.h>
 #include <object_msgs/DetectObject.h>
 #include "movidius_ncs_lib/ncs.h"
+#include "movidius_ncs_lib/ncs_manager.h"
 
 namespace movidius_ncs_image
 {
@@ -37,15 +38,15 @@ private:
   void getParameters();
   void init();
 
-  bool cbClassifyObject(object_msgs::ClassifyObject::Request& request,
-                        object_msgs::ClassifyObject::Response& response);
-  bool cbDetectObject(object_msgs::DetectObject::Request& request,
-                      object_msgs::DetectObject::Response& response);
+  bool cbDetectObject(object_msgs::DetectObject::Request& request, object_msgs::DetectObject::Response& response);
+  bool cbClassifyObject(object_msgs::ClassifyObject::Request& request, object_msgs::ClassifyObject::Response& response);
+
   ros::ServiceServer service_;
 
-  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
   ros::NodeHandle nh_;
 
+  int max_device_number_;
   int device_index_;
   int log_level_;
   std::string cnn_type_;

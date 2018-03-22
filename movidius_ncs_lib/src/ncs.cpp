@@ -214,6 +214,8 @@ void NCS::loadGraph(const std::string& graph_file_path)
 {
   std::string graph = getFileContent(graph_file_path);
   graph_.reset(new Graph(device_, graph, network_dimension_));
+
+  ROS_INFO("graph is loaded");
 }
 
 void NCS::loadCategories(const std::string& category_file_path)

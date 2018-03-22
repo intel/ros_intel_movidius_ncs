@@ -17,10 +17,10 @@ limitations under the License.
 <launch>
   <arg name="manager" default="movidius_manager" />
   <arg name="namespace" default="movidius_ncs_nodelet" />
-  
+
   <!-- CNN model related parameter -->
   <arg name="cnn_type" default="googlenet" />
-  <arg name="output_topic" value="classified_objects" 
+  <arg name="output_topic" value="classified_objects"
        if="$(eval cnn_type == 'alexnet' or cnn_type == 'googlenet'
        or cnn_type == 'inception_v1' or cnn_type == 'inception_v2'
        or cnn_type == 'inception_v3' or cnn_type == 'inception_v4'
@@ -37,23 +37,24 @@ limitations under the License.
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/tinyyolo_v1.yaml" if="$(eval cnn_type == 'tinyyolo_v1')"/>
   <arg name="param_file" value="$(find movidius_ncs_launch)/config/mobilenetssd.yaml" if="$(eval cnn_type == 'mobilenetssd')"/>
   <arg name="top_n" default="3" />
-  
+
   <!-- NCS related parameter -->
+  <arg name="max_device_number" default="255" />
   <arg name="device_index" default="0" />
   <arg name="log_level" default="1" />
-  
+
   <!-- camera related parameters -->
   <arg name="camera" default="others" />
   <arg name="input_topic" value="/usb_cam/image_raw" if="$(eval camera == 'usb')" />
   <arg name="input_topic" value="/camera/color/image_raw" if="$(eval camera == 'realsense')" />
   <arg name="input_topic" default="/camera/rgb/image_raw" if="$(eval camera == 'others')" />
-  
+
   <!-- launch usb camera with the relevant parameters if any -->
   <group if="$(eval camera == 'usb')">
     <arg name="image_width" default="640" />
     <arg name="image_height" default="480" />
     <arg name="video_device" default="/dev/video0" />
-    
+
     <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
       <param name="video_device" value="$(arg video_device)" />
       <param name="image_width" value="$(arg image_width)" />
@@ -63,18 +64,18 @@ limitations under the License.
       <param name="io_method" value="mmap"/>
     </node>
   </group>
-  
+
   <!-- launch realsense camera with the relevant parameters if any -->
   <group if="$(eval camera == 'realsense')">
     <arg name="color_width" default="640" />
     <arg name="color_height" default="480" />
-    
+
     <include file="$(find realsense_ros_camera)/launch/rs_camera.launch">
         <arg name="color_width" value="$(arg color_width)" />
         <arg name="color_height" value="$(arg color_height)" />
     </include>
   </group>
-  
+
   <!-- launch NCS nodelet -->
   <group ns="$(arg namespace)">
     <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen" />
@@ -88,6 +89,7 @@ limitations under the License.
         <arg name="manager" value="$(arg manager)" />
         <arg name="input_topic" value="$(arg input_topic)" />
         <arg name="output_topic" value="$(arg output_topic)" />
+        <arg name="max_device_number" value="$(arg max_device_number)" />
         <arg name="device_index" value="$(arg device_index)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="top_n" value="$(arg top_n)" />
@@ -102,6 +104,7 @@ limitations under the License.
         <arg name="manager" value="$(arg manager)" />
         <arg name="input_topic" value="$(arg input_topic)" />
         <arg name="output_topic" value="$(arg output_topic)" />
+        <arg name="max_device_number" value="$(arg max_device_number)" />
         <arg name="device_index" value="$(arg device_index)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="top_n" value="$(arg top_n)" />
