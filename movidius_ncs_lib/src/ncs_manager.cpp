@@ -16,16 +16,16 @@
 
 #include <string>
 #include <vector>
-#include <image_transport/image_transport.h>
 
+#include <image_transport/image_transport.h>
 #include "movidius_ncs_lib/ncs_manager.h"
 
 namespace movidius_ncs_lib
 {
-NcsManager::NcsManager(int max_device_number, int device_index, Device::LogLevel log_level, const std::string& cnn_type,
-                       const std::string& graph_file_path, const std::string& category_file_path,
-                       const int network_dimension, const std::vector<float>& mean, const float& scale,
-                       const int& top_n)
+NCSManager::NCSManager(const int& max_device_number, const int& device_index, const Device::LogLevel& log_level,
+                       const std::string& cnn_type, const std::string& graph_file_path,
+                       const std::string& category_file_path, const int& network_dimension,
+                       const std::vector<float>& mean, const float& scale, const int& top_n)
   : max_device_number_(max_device_number)
   , device_index_(device_index)
   , log_level_(log_level)
@@ -42,14 +42,14 @@ NcsManager::NcsManager(int max_device_number, int device_index, Device::LogLevel
   initDeviceManager();
 }
 
-NcsManager::~NcsManager()
+NCSManager::~NCSManager()
 {
 }
 
-void NcsManager::initDeviceManager()
+void NCSManager::initDeviceManager()
 {
-  char device_name[100];
-  while (mvncGetDeviceName(device_count_, device_name, 100) != MVNC_DEVICE_NOT_FOUND)
+  char device_name[MVNC_MAX_NAME_SIZE];
+  while (mvncGetDeviceName(device_count_, device_name, sizeof(device_name)) != MVNC_DEVICE_NOT_FOUND)
   {
     auto ncs_handle = std::make_shared<movidius_ncs_lib::NCS>(device_index_, static_cast<Device::LogLevel>(log_level_),
                                                               cnn_type_, graph_file_path_, category_file_path_,
@@ -70,7 +70,7 @@ void join(std::thread& t)
   t.join();
 }
 
-void NcsManager::deviceThread(int device_index)
+void NCSManager::deviceThread(int device_index)
 {
   while (1)
   {
@@ -80,16 +80,8 @@ void NcsManager::deviceThread(int device_index)
 
       auto first_image = image_list_[0].image;
       auto first_image_header = image_list_[0].header;
-
-      if (!image_list_.empty())
-      {
-        image_list_.erase(image_list_.begin());
-      }
-      else
-      {
-        mtx_.unlock();
-        continue;
-      }
+      image_list_.erase(image_list_.begin());
+      
       mtx_.unlock();
 
       if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
@@ -114,11 +106,11 @@ void NcsManager::deviceThread(int device_index)
   }
 }
 
-void NcsManager::startThreads()
+void NCSManager::startThreads()
 {
   for (int i = 0; i < device_count_; i++)
   {
-    threads_.push_back(std::thread(&NcsManager::deviceThread, this, i));
+    threads_.push_back(std::thread(&NCSManager::deviceThread, this, i));
   }
 
   std::for_each(threads_.begin(), threads_.end(), join);
@@ -126,7 +118,7 @@ void NcsManager::startThreads()
   ROS_INFO("started %d threads", device_count_);
 }
 
-std::vector<ClassificationResultPtr> NcsManager::classify_image(std::vector<std::string> images)
+std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector<std::string>& images)
 {
   int image_size = int(images.size());
   std::vector<ClassificationResultPtr> results(image_size);
@@ -159,7 +151,7 @@ std::vector<ClassificationResultPtr> NcsManager::classify_image(std::vector<std:
   return results;
 }
 
-std::vector<DetectionResultPtr> NcsManager::detect_image(std::vector<std::string> images)
+std::vector<DetectionResultPtr> NCSManager::detectImage(const std::vector<std::string>& images)
 {
   int image_size = int(images.size());
   std::vector<DetectionResultPtr> results(image_size);
@@ -192,8 +184,8 @@ std::vector<DetectionResultPtr> NcsManager::detect_image(std::vector<std::string
   return results;
 }
 
-void NcsManager::classify_stream(const cv::Mat& image, FUNP_C cbGetClassificationResult,
-                                 const sensor_msgs::ImageConstPtr& image_msg)
+void NCSManager::classifyStream(const cv::Mat& image, FUNP_C cbGetClassificationResult,
+                                const sensor_msgs::ImageConstPtr& image_msg)
 {
   p_c_ = cbGetClassificationResult;
 
@@ -202,7 +194,7 @@ void NcsManager::classify_stream(const cv::Mat& image, FUNP_C cbGetClassificatio
   imageFrame.image = image;
 
   mtx_.lock();
-  if (image_list_.size() > 10)
+  if (image_list_.size() > IMAGE_BUFFER_SIZE)
   {
     image_list_.erase(image_list_.begin());
   }
@@ -210,7 +202,7 @@ void NcsManager::classify_stream(const cv::Mat& image, FUNP_C cbGetClassificatio
   mtx_.unlock();
 }
 
-void NcsManager::detect_stream(const cv::Mat& image, FUNP_D cbGetDetectionResult,
+void NCSManager::detectStream(const cv::Mat& image, FUNP_D cbGetDetectionResult,
                                const sensor_msgs::ImageConstPtr& image_msg)
 {
   p_d_ = cbGetDetectionResult;
@@ -220,7 +212,7 @@ void NcsManager::detect_stream(const cv::Mat& image, FUNP_D cbGetDetectionResult
   imageFrame.image = image;
 
   mtx_.lock();
-  if (image_list_.size() > 10)
+  if (image_list_.size() > IMAGE_BUFFER_SIZE)
   {
     image_list_.erase(image_list_.begin());
   }

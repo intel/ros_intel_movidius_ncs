@@ -20,13 +20,11 @@
 #include <string>
 #include <vector>
 
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <nodelet/nodelet.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
-
-#include "boost/bind.hpp"
-#include "boost/function.hpp"
-
 #include "movidius_ncs_lib/ncs.h"
 #include "movidius_ncs_lib/ncs_manager.h"
 
@@ -50,7 +48,7 @@ private:
   void getParameters();
   void init();
 
-  std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
+  std::shared_ptr<movidius_ncs_lib::NCSManager> ncs_manager_handle_;
 
   ros::Publisher pub_;
   image_transport::Subscriber sub_;

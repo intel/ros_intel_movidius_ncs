@@ -43,7 +43,7 @@ private:
 
   ros::ServiceServer service_;
 
-  std::shared_ptr<movidius_ncs_lib::NcsManager> ncs_manager_handle_;
+  std::shared_ptr<movidius_ncs_lib::NCSManager> ncs_manager_handle_;
   ros::NodeHandle nh_;
 
   int max_device_number_;

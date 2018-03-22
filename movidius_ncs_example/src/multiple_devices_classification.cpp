@@ -83,7 +83,7 @@ int main(int argc, char** argv)
   }
   ROS_INFO_STREAM("use image_base_path = " << image_base_path << " for multiple devices demo");
 
-  std::vector<std::string> images_path = getImagePath(image_base_path);
+  std::vector<std::string> image_paths = getImagePath(image_base_path);
 
   ros::ServiceClient client_for_multiple;
   client_for_multiple = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image_multiple/classify_object");
@@ -104,11 +104,11 @@ int main(int argc, char** argv)
     {
       std::random_device rd;
       std::default_random_engine engine(rd());
-      std::uniform_int_distribution<> dis(0, images_path.size() - 1);
+      std::uniform_int_distribution<> dis(0, image_paths.size() - 1);
       auto dice = std::bind(dis, engine);
       random_index.push_back(dice());
 
-      srv_for_multiple.request.images_path.push_back(images_path[dice()]);
+      srv_for_multiple.request.image_paths.push_back(image_paths[dice()]);
     }
 
     if (!client_for_multiple.call(srv_for_multiple))
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     for (unsigned int i = 0; i < srv_for_multiple.response.objects.size(); i++)
     {
       cv_bridge::CvImage cv_image;
-      cv_image.image = cv::imread(images_path[random_index[i]]);
+      cv_image.image = cv::imread(image_paths[random_index[i]]);
       cv_image.encoding = "bgr8";
       int cnt = 0;
 

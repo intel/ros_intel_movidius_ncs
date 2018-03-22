@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     auto dice = std::bind(dis, engine);
     random_index = dice();
 
-    srv_for_single.request.images_path.push_back(images_path[random_index]);
+    srv_for_single.request.image_paths.push_back(images_path[random_index]);
 
     if (!client_for_single.call(srv_for_single))
     {

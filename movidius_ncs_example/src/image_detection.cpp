@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include <cv_bridge/cv_bridge.h>
-#include <ros/ros.h>
-
-#include <object_msgs/DetectObject.h>
-
-#include <vector>
 #include <dirent.h>
+#include <chrono>
+#include <vector>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <chrono>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
+#include <ros/ros.h>
+#include <object_msgs/DetectObject.h>
 
 std::vector<std::string> getImagePath(std::string image_dir)
 {
@@ -42,7 +38,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
 
   if ((dir = opendir(image_dir.c_str())) == NULL)
   {
-    perror("Open Dir error...");
+    std::cerr << "Open Dir error..." << std::endl;
     exit(1);
   }
 
@@ -50,7 +46,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
   {
     if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
       continue;
-    else if (ptr->d_type == 8)
+    else if (ptr->d_type == DT_REG)
       files.push_back(image_dir + ptr->d_name);
   }
   closedir(dir);
@@ -64,18 +60,18 @@ int main(int argc, char** argv)
 
   if (argc != 2)
   {
-    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_image_detection <image_path>");
+    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_image_detection <image_dir>");
     return -1;
   }
 
-  std::vector<std::string> images_path = getImagePath(*(argv + 1));
+  std::vector<std::string> image_paths = getImagePath(*(argv + 1));
 
   ros::NodeHandle n;
   ros::ServiceClient client;
   client = n.serviceClient<object_msgs::DetectObject>("/movidius_ncs_image/detect_object");
   object_msgs::DetectObject srv;
 
-  srv.request.images_path = images_path;
+  srv.request.image_paths = image_paths;
 
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
 
@@ -91,11 +87,12 @@ int main(int argc, char** argv)
   for (unsigned int i = 0; i < srv.response.objects.size(); i++)
   {
     cv_bridge::CvImage cv_image;
-    cv_image.image = cv::imread(images_path[i]);
+    cv_image.image = cv::imread(image_paths[i]);
     cv_image.encoding = "bgr8";
     int width = cv_image.image.cols;
     int height = cv_image.image.rows;
 
+    ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
     ROS_INFO("Detection result for image No.%u:", i + 1);
 
     for (unsigned int j = 0; j < srv.response.objects[i].objects_vector.size(); j++)
@@ -130,8 +127,5 @@ int main(int argc, char** argv)
     cv::imshow("image_detection", cv_image.image);
     cv::waitKey(0);
   }
-
-  ROS_INFO("inference %lu images during %ld ms", srv.response.objects.size(), msdiff.total_milliseconds());
-
   return 0;
 }

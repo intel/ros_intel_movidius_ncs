@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-#include <opencv2/highgui.hpp>
-#include <cv_bridge/cv_bridge.h>
-
-#include <ros/ros.h>
-#include <object_msgs/ClassifyObject.h>
-
-#include <vector>
 #include <dirent.h>
+#include <chrono>
+#include <vector>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <chrono>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
+#include <ros/ros.h>
+#include <object_msgs/ClassifyObject.h>
 
 #define LINESPACING 30
 
@@ -42,7 +40,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
 
   if ((dir = opendir(image_dir.c_str())) == NULL)
   {
-    perror("Open Dir error...");
+    std::cerr << "Open Dir error..." << std::endl;
     exit(1);
   }
 
@@ -50,7 +48,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
   {
     if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
       continue;
-    else if (ptr->d_type == 8)
+    else if (ptr->d_type == DT_REG)
       files.push_back(image_dir + ptr->d_name);
   }
   closedir(dir);
@@ -64,18 +62,18 @@ int main(int argc, char** argv)
 
   if (argc != 2)
   {
-    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_image_classification <image_path>");
+    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_image_classification <image_dir>");
     return -1;
   }
 
-  std::vector<std::string> images_path = getImagePath(*(argv + 1));
+  std::vector<std::string> image_paths = getImagePath(*(argv + 1));
 
   ros::NodeHandle n;
   ros::ServiceClient client;
   client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
   object_msgs::ClassifyObject srv;
 
-  srv.request.images_path = images_path;
+  srv.request.image_paths = image_paths;
 
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
 
@@ -91,7 +89,7 @@ int main(int argc, char** argv)
   for (unsigned int i = 0; i < srv.response.objects.size(); i++)
   {
     cv_bridge::CvImage cv_image;
-    cv_image.image = cv::imread(images_path[i]);
+    cv_image.image = cv::imread(image_paths[i]);
     cv_image.encoding = "bgr8";
     int cnt = 0;
 

@@ -16,16 +16,19 @@
 
 #include <string>
 #include <vector>
+
 #include <boost/filesystem/operations.hpp>
+#include <cv_bridge/cv_bridge.h>
+
 #include <object_msgs/Object.h>
 #include <object_msgs/Objects.h>
 #include <object_msgs/ObjectInBox.h>
 #include <object_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_image/ncs_server.h"
-#include <cv_bridge/cv_bridge.h>
 
 using movidius_ncs_lib::ClassificationResultPtr;
 using movidius_ncs_lib::DetectionResultPtr;
+using movidius_ncs_lib::NCSManager;
 using movidius_ncs_lib::Device;
 
 namespace movidius_ncs_image
@@ -190,9 +193,11 @@ void NCSServer::getParameters()
 void NCSServer::init()
 {
   ROS_DEBUG("NCSServer init");
-  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(
-      max_device_number_, device_index_, static_cast<Device::LogLevel>(log_level_), cnn_type_, graph_file_path_,
-      category_file_path_, network_dimension_, mean_, scale_, top_n_);
+
+  ncs_manager_handle_ = std::make_shared<NCSManager>(max_device_number_,
+                                                     static_cast<Device::LogLevel>(log_level_), cnn_type_, 
+                                                     graph_file_path_, category_file_path_, network_dimension_,
+                                                     mean_, scale_, top_n_);
 
   if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
       !cnn_type_.compare("inception_v2") || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4") ||
@@ -209,7 +214,7 @@ void NCSServer::init()
 bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
                                  object_msgs::ClassifyObject::Response& response)
 {
-  std::vector<ClassificationResultPtr> results = ncs_manager_handle_->classify_image(request.images_path);
+  std::vector<ClassificationResultPtr> results = ncs_manager_handle_->classifyImage(request.image_paths);
 
   for (unsigned int i = 0; i < results.size(); i++)
   {
@@ -232,7 +237,7 @@ bool NCSServer::cbClassifyObject(object_msgs::ClassifyObject::Request& request,
 bool NCSServer::cbDetectObject(object_msgs::DetectObject::Request& request,
                                object_msgs::DetectObject::Response& response)
 {
-  std::vector<DetectionResultPtr> results = ncs_manager_handle_->detect_image(request.images_path);
+  std::vector<DetectionResultPtr> results = ncs_manager_handle_->detectImage(request.image_paths);
 
   for (unsigned int i = 0; i < results.size(); i++)
   {

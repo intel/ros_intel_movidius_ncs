@@ -17,14 +17,12 @@
 #include <string>
 #include <vector>
 
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/opencv.hpp>
 #include <boost/filesystem/operations.hpp>
-
+#include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
-#include <sensor_msgs/RegionOfInterest.h>
+#include <opencv2/opencv.hpp>
 #include <pluginlib/class_list_macros.h>
-
+#include <sensor_msgs/RegionOfInterest.h>
 #include <object_msgs/Objects.h>
 #include <object_msgs/ObjectsInBoxes.h>
 #include "movidius_ncs_stream/ncs_nodelet.h"
@@ -203,11 +201,11 @@ void NCSImpl::init()
 {
   ROS_DEBUG("NCSImpl onInit");
 
-  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NcsManager>(
+  ncs_manager_handle_ = std::make_shared<movidius_ncs_lib::NCSManager>(
       max_device_number_, device_index_, static_cast<Device::LogLevel>(log_level_), cnn_type_, graph_file_path_,
       category_file_path_, network_dimension_, mean_, scale_, top_n_);
 
-  boost::shared_ptr<ImageTransport> it = boost::make_shared<ImageTransport>(nh_);
+  std::shared_ptr<ImageTransport> it = std::make_shared<ImageTransport>(nh_);
 
   if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
       !cnn_type_.compare("inception_v2") || !cnn_type_.compare("inception_v3") || !cnn_type_.compare("inception_v4") ||
@@ -233,10 +231,10 @@ void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)
     return;
   }
 
-  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
+  cv::Mat camera_data = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
 
   FUNP_C classification_result_callback = boost::bind(&NCSImpl::cbGetClassificationResult, this, _1, _2);
-  ncs_manager_handle_->classify_stream(cameraData, classification_result_callback, image_msg);
+  ncs_manager_handle_->classifyStream(camera_data, classification_result_callback, image_msg);
 }
 
 void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
@@ -247,17 +245,15 @@ void NCSImpl::cbDetect(const sensor_msgs::ImageConstPtr& image_msg)
     return;
   }
 
-  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
+  cv::Mat camera_data = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
 
   FUNP_D detection_result_callback = boost::bind(&NCSImpl::cbGetDetectionResult, this, _1, _2);
-  ncs_manager_handle_->detect_stream(cameraData, detection_result_callback, image_msg);
+  ncs_manager_handle_->detectStream(camera_data, detection_result_callback, image_msg);
 }
 
 NCSNodelet::~NCSNodelet()
 {
 }
-
-// ros::Publisher NCSImpl::pub_;
 
 void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header)
 {
@@ -273,7 +269,6 @@ void NCSImpl::cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPt
 
   objs.header = header;
   objs.inference_time_ms = result->time_taken;
-  // NCSImpl::pub_.publish(objs);
   pub_.publish(objs);
 }
 
@@ -296,7 +291,6 @@ void NCSImpl::cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, 
   objs_in_boxes.header = header;
   objs_in_boxes.inference_time_ms = result->time_taken;
 
-  // NCSImpl::pub_.publish(objs_in_boxes);
   pub_.publish(objs_in_boxes);
 }
 
