@@ -15,8 +15,8 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="max_device_number" default="255" />
-  <arg name="device_index" default="1" />
+  <arg name="max_device_number" default="2" />
+  <arg name="start_device_index" default="1" />
   <arg name="log_level" default="0" />
   <arg name="top_n" default="3" />
   <arg name="cnn_type" default="googlenet" />
@@ -44,7 +44,7 @@ limitations under the License.
   <node pkg="movidius_ncs_image" type="movidius_ncs_image"
         name="movidius_ncs_image_multiple" output="screen">
       <param name="max_device_number" value="$(arg max_device_number)" />
-      <param name="device_index" value="$(arg device_index)" />
+      <param name="start_device_index" value="$(arg start_device_index)" />
       <param name="log_level" value="$(arg log_level)" />
       <param name="cnn_type" value="$(arg cnn_type)" />
       <param name="top_n" value="$(arg top_n)" />
