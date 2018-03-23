@@ -108,4 +108,15 @@ if(CATKIN_ENABLE_TESTING)
   find_package(roslint REQUIRED)
   roslint_cpp()
   roslint_add_test()
+  # rostest classification
+
+  add_executable(unittest_stream_classification tests/unittest_stream_classification.cpp)
+  target_link_libraries(unittest_stream_classification ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  add_dependencies(unittest_stream_classification ${catkin_EXPORTED_TARGETS})
+  # rostest detection
+  add_executable(unittest_stream_detection tests/unittest_stream_detection.cpp)
+  target_link_libraries(unittest_stream_detection ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  add_dependencies(unittest_stream_detection ${catkin_EXPORTED_TARGETS})
+
+  add_rostest(tests/test_unit.test)
 endif()
