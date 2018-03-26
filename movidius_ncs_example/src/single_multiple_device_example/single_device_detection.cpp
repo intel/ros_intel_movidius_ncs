@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include <cv_bridge/cv_bridge.h>
-#include <ros/ros.h>
-
-#include <object_msgs/DetectObject.h>
-
-#include <vector>
 #include <dirent.h>
 #include <random>
+#include <vector>
+
+#include <cv_bridge/cv_bridge.h>
+#include <object_msgs/DetectObject.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <ros/ros.h>
 
 #define DEFAULT_PARALLEL_SIZE 1
 #define DEFAULT_IMAGE_BASE_PATH "/opt/movidius/ncappzoo/data/images/"
@@ -43,7 +41,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
 
   if ((dir = opendir(image_dir.c_str())) == NULL)
   {
-    perror("Open Dir error...");
+    std::cerr << "Open Dir error..." << std::endl;
     exit(1);
   }
 
@@ -51,7 +49,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
   {
     if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
       continue;
-    else if (ptr->d_type == 8)
+    else if (ptr->d_type == DT_REG)
       files.push_back(image_dir + ptr->d_name);
   }
   closedir(dir);
