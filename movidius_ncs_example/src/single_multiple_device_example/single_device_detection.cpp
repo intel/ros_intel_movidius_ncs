@@ -103,6 +103,7 @@ int main(int argc, char** argv)
     {
       cv_bridge::CvImage cv_image;
       cv_image.image = cv::imread(images_path[dice()]);
+      cv::resize(cv_image.image, cv_image.image, cv::Size(640, 480));
       cv_image.encoding = "bgr8";
       int width = cv_image.image.cols;
       int height = cv_image.image.rows;
