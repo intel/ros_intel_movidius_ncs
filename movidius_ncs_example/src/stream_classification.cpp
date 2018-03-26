@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#include <chrono>
-
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>

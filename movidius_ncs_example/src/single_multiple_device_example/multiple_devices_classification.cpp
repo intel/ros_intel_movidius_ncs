@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include <cv_bridge/cv_bridge.h>
-#include <ros/ros.h>
-
-#include <object_msgs/ClassifyObject.h>
-
-#include <vector>
 #include <dirent.h>
 #include <random>
+#include <vector>
+
+#include <cv_bridge/cv_bridge.h>
+#include <object_msgs/ClassifyObject.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <ros/ros.h>
 
 #define LINESPACING 30
 #define MOVEWINDOW 1000
@@ -45,7 +43,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
 
   if ((dir = opendir(image_dir.c_str())) == NULL)
   {
-    perror("Open Dir error...");
+    std::cerr << "Open Dir error..." << std::endl;
     exit(1);
   }
 
@@ -53,7 +51,7 @@ std::vector<std::string> getImagePath(std::string image_dir)
   {
     if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
       continue;
-    else if (ptr->d_type == 8)
+    else if (ptr->d_type == DT_REG)
       files.push_back(image_dir + ptr->d_name);
   }
   closedir(dir);
@@ -64,17 +62,6 @@ std::vector<std::string> getImagePath(std::string image_dir)
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_multiple_devices_classification");
-
-  /*
-  if (argc != 2)
-  {
-    ROS_INFO("Usage: rosrun movidius_ncs_example movidius_ncs_example_multiple_device_demo <image_path>");
-    return -1;
-  }
-
-  std::vector<std::string> images_path = getImagePath(argv[1]);
-  */
-
   ros::NodeHandle n;
   std::string image_base_path = DEFAULT_IMAGE_BASE_PATH;
   if (!n.getParam("image_base_path", image_base_path))
@@ -95,12 +82,12 @@ int main(int argc, char** argv)
   }
   ROS_INFO_STREAM("use parallel_size = " << parallel_size << " for multiple devices demo");
 
-  while(1)
+  while (1)
   {
     object_msgs::ClassifyObject srv_for_multiple;
 
     std::vector<int> random_index;
-    for(int i = 0; i < parallel_size; i++)
+    for (int i = 0; i < parallel_size; i++)
     {
       std::random_device rd;
       std::default_random_engine engine(rd());

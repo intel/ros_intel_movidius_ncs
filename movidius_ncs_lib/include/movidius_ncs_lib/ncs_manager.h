@@ -65,7 +65,7 @@ private:
   void deviceThread(int device_index);
 
   const int max_device_number_;
-  int device_index_;
+  const int start_device_index_;
   const Device::LogLevel log_level_;
   const std::string cnn_type_;
   const std::string graph_file_path_;
