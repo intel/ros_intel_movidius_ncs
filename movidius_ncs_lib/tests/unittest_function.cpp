@@ -29,8 +29,8 @@ TEST(UnitTestFunction, testLibraryFunctions)
   std::vector<std::string> tf_dirs = { "inception_v1", "inception_v2", "inception_v3", "inception_v4", "mobilenets" };
   std::vector<std::string> caffe_nets = { "alexnet", "googlenet", "squeezenet", "mobilenetssd", "tinyyolo_v1" };
   std::vector<std::string> tf_nets = { "inception_v1", "inception_v2", "inception_v3", "inception_v4", "mobilenet" };
-  std::vector<std::string> caffe_categories =
-    {"imagenet1000.txt", "imagenet1000.txt", "imagenet1000.txt", "voc21.txt", "voc20.txt" };
+  std::vector<std::string> caffe_categories = { "imagenet1000.txt", "imagenet1000.txt", "imagenet1000.txt", "voc21.txt",
+                                                "voc20.txt" };
   std::vector<std::vector<float>> caffe_means = { { 104.0069879317889, 116.66876761696767, 122.6789143406786 },
                                                   { 104.0069879317889, 116.66876761696767, 122.6789143406786 },
                                                   { 104.0069879317889, 116.66876761696767, 122.6789143406786 },
@@ -49,13 +49,12 @@ TEST(UnitTestFunction, testLibraryFunctions)
 
   for (unsigned int i = 0; i < caffe_nets.size(); i++)
   {
-    ASSERT_NO_THROW(
-    {
-      std::shared_ptr<movidius_ncs_lib::NCSManager> handle =
-          std::make_shared<movidius_ncs_lib::NCSManager>(50, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), caffe_nets[i],
-                                                  "/opt/movidius/ncappzoo/caffe/" + caffe_dirs[i] + "/graph",
-                                                  "/opt/movidius/ncappzoo/data/ilsvrc12/" + caffe_categories[i],
-                                                  caffe_dimensions[i], caffe_means[i], caffe_scales[i], 3);
+    ASSERT_NO_THROW({
+      std::shared_ptr<movidius_ncs_lib::NCSManager> handle = std::make_shared<movidius_ncs_lib::NCSManager>(
+          50, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), caffe_nets[i],
+          "/opt/movidius/ncappzoo/caffe/" + caffe_dirs[i] + "/graph",
+          "/opt/movidius/ncappzoo/data/ilsvrc12/" + caffe_categories[i], caffe_dimensions[i], caffe_means[i],
+          caffe_scales[i], 3);
       EXPECT_TRUE(handle != nullptr);
       std::vector<std::string> images_path;
       images_path.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
@@ -72,8 +71,7 @@ TEST(UnitTestFunction, testLibraryFunctions)
 
   for (unsigned int i = 0; i < tf_nets.size(); i++)
   {
-    ASSERT_NO_THROW(
-    {
+    ASSERT_NO_THROW({
       std::shared_ptr<movidius_ncs_lib::NCSManager> handle = std::make_shared<movidius_ncs_lib::NCSManager>(
           50, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), tf_nets[i],
           "/opt/movidius/ncappzoo/tensorflow/" + tf_dirs[i] + "/graph",
@@ -92,13 +90,11 @@ TEST(UnitTestFunction, testLibraryIncorrectInputs)
   try
   {
     std::vector<float> incorrect_mean = { 0, 0, 0 };
-    std::shared_ptr<movidius_ncs_lib::NCSManager> handle =
-      std::make_shared<movidius_ncs_lib::NCSManager>(0, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), "Incorrect_type",
-                                              "graph_not_exist",
-                                              "categories_not_exist",
-                                              0, incorrect_mean, 0, 3);
+    std::shared_ptr<movidius_ncs_lib::NCSManager> handle = std::make_shared<movidius_ncs_lib::NCSManager>(
+        0, 0, static_cast<movidius_ncs_lib::Device::LogLevel>(0), "Incorrect_type", "graph_not_exist",
+        "categories_not_exist", 0, incorrect_mean, 0, 3);
   }
-  catch(...)
+  catch (...)
   {
     SUCCEED();
   }

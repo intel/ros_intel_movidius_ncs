@@ -131,7 +131,7 @@ void NCSManager::startThreads()
 
 std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector<std::string>& images)
 {
-  int image_size = int(images.size());
+  int image_size = static_cast<int>(images.size());
   std::vector<ClassificationResultPtr> results(image_size);
 
   int parallel_group = image_size / (device_count_ - start_device_index_);
@@ -166,7 +166,7 @@ std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector
 
 std::vector<DetectionResultPtr> NCSManager::detectImage(const std::vector<std::string>& images)
 {
-  int image_size = int(images.size());
+  int image_size = static_cast<int>(images.size());
   std::vector<DetectionResultPtr> results(image_size);
 
   int parallel_group = image_size / (device_count_ - start_device_index_);

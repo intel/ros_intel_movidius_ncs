@@ -16,6 +16,7 @@
 
 #include <dirent.h>
 #include <random>
+#include <string>
 #include <vector>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
