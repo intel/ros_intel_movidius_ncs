@@ -15,7 +15,7 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="max_device_number" default="2" />
+  <arg name="max_device_number" default="3" />
   <arg name="start_device_index" default="1" />
   <arg name="log_level" default="0" />
   <arg name="top_n" default="3" />
