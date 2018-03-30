@@ -27,7 +27,7 @@ TEST(UnitTestClassification, testImage)
 {
   ros::NodeHandle n;
   ros::ServiceClient client;
-  client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image/classify_object");
+  client = n.serviceClient<object_msgs::ClassifyObject>("/movidius_ncs_image_multiple/classify_object");
   object_msgs::ClassifyObject srv;
 
   srv.request.image_paths.push_back(ros::package::getPath("movidius_ncs_lib") + "/../data/images/bicycle.jpg");
