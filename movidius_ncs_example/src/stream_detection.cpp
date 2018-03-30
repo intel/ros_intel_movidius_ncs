@@ -39,7 +39,7 @@ int getFPS()
   {
     fps = frame_cnt;
     frame_cnt = 0;
-    duration_start= current;
+    duration_start = current;
   }
 
   return fps;

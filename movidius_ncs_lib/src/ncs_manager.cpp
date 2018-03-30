@@ -59,7 +59,7 @@ void NCSManager::initDeviceManager()
     }
   }
 
-  assert(start_device_index_ < device_count_);
+  assert(start_device_index_ <= device_count_);
 
   for (int device_index = start_device_index_; device_index < device_count_; device_index++)
   {
@@ -82,11 +82,17 @@ void NCSManager::deviceThread(int device_index)
     if (!image_list_.empty())
     {
       mtx_.lock();
-
       auto first_image = image_list_[0].image;
       auto first_image_header = image_list_[0].header;
-      image_list_.erase(image_list_.begin());
-
+      if (!image_list_.empty())
+      {
+        image_list_.erase(image_list_.begin());
+      }
+      else
+      {
+        mtx_.unlock();
+        continue;
+      }
       mtx_.unlock();
 
       if (!cnn_type_.compare("alexnet") || !cnn_type_.compare("googlenet") || !cnn_type_.compare("inception_v1") ||
@@ -125,7 +131,7 @@ void NCSManager::startThreads()
 
 std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector<std::string>& images)
 {
-  int image_size = int(images.size());
+  int image_size = static_cast<int>(images.size());
   std::vector<ClassificationResultPtr> results(image_size);
 
   int parallel_group = image_size / (device_count_ - start_device_index_);
@@ -140,7 +146,8 @@ std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector
       ncs_handle_list_[device_index]->loadTensor(imageData);
       ncs_handle_list_[device_index]->classify();
       ClassificationResultPtr result = ncs_handle_list_[device_index]->getClassificationResult();
-      results[i * (device_count_ - start_device_index_) + device_index] = std::make_shared<ClassificationResult>(*result);
+      results[i * (device_count_ - start_device_index_) + device_index] =
+          std::make_shared<ClassificationResult>(*result);
     }
   }
 
@@ -150,7 +157,8 @@ std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector
     ncs_handle_list_[j]->loadTensor(imageData);
     ncs_handle_list_[j]->classify();
     ClassificationResultPtr result = ncs_handle_list_[j]->getClassificationResult();
-    results[parallel_group * (device_count_ - start_device_index_) + j] = std::make_shared<ClassificationResult>(*result);
+    results[parallel_group * (device_count_ - start_device_index_) + j] =
+        std::make_shared<ClassificationResult>(*result);
   }
 
   return results;
@@ -158,7 +166,7 @@ std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector
 
 std::vector<DetectionResultPtr> NCSManager::detectImage(const std::vector<std::string>& images)
 {
-  int image_size = int(images.size());
+  int image_size = static_cast<int>(images.size());
   std::vector<DetectionResultPtr> results(image_size);
 
   int parallel_group = image_size / (device_count_ - start_device_index_);

@@ -27,7 +27,7 @@
 TEST(UnitTestDetection, testImage)
 {
   ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<object_msgs::DetectObject>("/movidius_ncs_image/detect_object");
+  ros::ServiceClient client = n.serviceClient<object_msgs::DetectObject>("/movidius_ncs_image_multiple/detect_object");
   object_msgs::DetectObject srv;
 
   std::vector<std::string> image_format = {".jpg", ".jpeg", ".png", ".bmp"};

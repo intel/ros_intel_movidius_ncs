@@ -42,7 +42,7 @@ limitations under the License.
        if="$(eval cnn_type == 'mobilenetssd')"/>
 
   <node pkg="movidius_ncs_image" type="movidius_ncs_image"
-        name="movidius_ncs_image" output="screen">
+        name="movidius_ncs_image_multiple" output="screen">
       <param name="max_device_number" value="$(arg max_device_number)" />
       <param name="start_device_index" value="$(arg start_device_index)" />
       <param name="log_level" value="$(arg log_level)" />
