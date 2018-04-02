@@ -114,6 +114,10 @@ void NCSManager::deviceThread(int device_index)
         p_d_(result, first_image_header);
       }
     }
+    else
+    {
+      usleep(1);
+    }
   }
 }
 
