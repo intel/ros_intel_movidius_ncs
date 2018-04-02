@@ -108,10 +108,10 @@ rostest movidius_ncs_lib test_all.test
 
 ## 6 Interfaces
 ### 6.1 Topic
-Classification: ```/movidius_ncs_nodelet/classified_objects```
+Classification: ```/movidius_ncs_nodelet/classified_objects```  
 Detection: ```/movidius_ncs_nodelet/detected_objects```
 ### 6.2 Service
-Classification: ```/movidius_ncs_image/classify_object```
+Classification: ```/movidius_ncs_image/classify_object```  
 Detection: ```/movidius_ncs_image/detect_object```
 
 ## 7 Known Issues
