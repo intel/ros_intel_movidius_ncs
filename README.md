@@ -69,10 +69,6 @@ catkin_make install
 source install/setup.bash
 # Copy label files from this project to the installation location of NCSDK
 cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/data/ilsvrc12/
-# Run unit test
-rostest movidius_ncs_image test_unit.test
-rostest movidius_ncs_stream test_unit.test
-rostest movidius_ncs_lib test_all.test
 ```
 ## 5 Running the Demo
 ### 5.1 Classification

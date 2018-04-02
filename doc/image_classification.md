@@ -134,4 +134,4 @@ roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:
 |cnn_type|indicate different cnn models|googlenet|alexnet / googlenet / squeezenet / inception_v1 / inception_v2 / inception_v3 / inception_v4 / mobilenet|
 |top_n|the number of results to be shown, only valid for classification|3|0~5|
 |demo_mode|the display mode of processed results|0:sequentially output all results 1: display random results in infinite loop|0, 1|
-|image_base_path|directory of images to be inferenced|"/opt/movidius/ncappzoo/data/images/"||
+|image_base_path|directory of images to be inferred|"/opt/movidius/ncappzoo/data/images/"||

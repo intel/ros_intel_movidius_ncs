@@ -17,15 +17,15 @@ limitations under the License.
 
 <package>
   <name>movidius_ncs_launch</name>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
   <description>This launch project for Movidius NCS</description>
   <author email="xiaojun.huang@intel.com">Xiaojun Huang</author>
   <maintainer email="xiaojun.huang@intel.com">Xiaojun Huang</maintainer>
-  <maintainer email="peter.han@intel.com">Peter Han</maintainer>
+  <maintainer email="chao1.li@intel.com">Chao Li</maintainer>
 
   <license>Apache 2.0</license>
 
-  <!-- <url type="website">http://wiki.ros.org/movidius_ncs</url> -->
+  <url type="website">http://wiki.ros.org/ros_intel_movidius_ncs</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 

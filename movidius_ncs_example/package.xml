@@ -16,12 +16,13 @@ limitations under the License.
 -->
 <package>
   <name>movidius_ncs_example</name>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
   <description>The example package</description>
   <author email="xiaojun.huang@intel.com">Xiaojun Huang</author>
   <maintainer email="xiaojun.huang@intel.com">Xiaojun Huang</maintainer>
-
-  <!-- <url type="website">http://wiki.ros.org/test</url> -->
+  <maintainer email="chao1.li@intel.com">Chao Li</maintainer>
+  
+  <url type="website">http://wiki.ros.org/ros_intel_movidius_ncs</url>
 
   <license>Apache 2.0</license>
 
