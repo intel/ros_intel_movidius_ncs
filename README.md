@@ -102,6 +102,9 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 * [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_detection.md)
 * [Video Streaming](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_detection.md)
 
+### 5.3 Inference with multiple NCS devices
+We introduce multiple NCS support from v0.6.0, providing **x1.8 / x2.5 / x3** performance improvement with 2NCSs / 3NCSs / 4NCSs compared with 1 NCS respectively. Refer [here](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/multiple_device.md) for more details.
+
 ## 6 Interfaces
 ### 6.1 Topic
 Classification: ```/movidius_ncs_nodelet/classified_objects```  
