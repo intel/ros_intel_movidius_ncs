@@ -20,7 +20,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=mobilenetssd
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_detection_example.launch demo_mode:=0 image_base_path:=<absolute-image-directory>
 ```
 * #### TinyYolo_V1
 Compile NCS graph.
@@ -34,7 +34,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=tinyyolo_v1
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_detection_example.launch demo_mode:=0 image_base_path:=<absolute-image-directory>
 ```
 ### 2 Other Arguments
 |Arguments|Description|Default Value|Valid Values|
@@ -43,4 +43,4 @@ roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:
 |log_level|ncs log level|0|0:Nothing / 1:Errors / 2:Verbose|
 |cnn_type|indicate different cnn models|tinyyolo_v1|tinyyolo_v1 / mobilenetssd|
 |demo_mode|the display mode of processed results|0:sequentially output all results 1: display random results in infinite loop|0, 1|
-|image_base_path|directory of images to be inferenced|"/opt/movidius/ncappzoo/data/images/"||
+|image_base_path|directory of images to be inferred|"/opt/movidius/ncappzoo/data/images/"||

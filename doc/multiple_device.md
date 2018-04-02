@@ -18,5 +18,5 @@ roslaunch movidius_ncs_launch multiple_ncs_demo.launch cnn_type:=mobilenetssd
 ```
 Run the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_parallel_detection_example.launch
+roslaunch movidius_ncs_launch ncs_image_parallel_detection_example.launch image_base_path:=<absolute-image-directory>
 ``` 
