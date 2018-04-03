@@ -18,6 +18,7 @@ project(movidius_ncs_lib)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslint
+  rostest
 )
 
 catkin_package(
@@ -32,7 +33,7 @@ include_directories(
 )
 
 # add opencv dependency
-find_package(OpenCV)
+find_package(OpenCV 3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_path(MVNC_HEADER_FILE
@@ -51,6 +52,7 @@ add_library(${PROJECT_NAME}
   src/graph.cpp
   src/tensor.cpp
   src/result.cpp
+  src/ncs_manager.cpp
 )
 
 add_dependencies(${PROJECT_NAME}
@@ -106,6 +108,8 @@ if(UNIX OR APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+  # Add OpenMP support
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 endif()
 
 # Install nodelet library
@@ -122,6 +126,18 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 if(CATKIN_ENABLE_TESTING)
   find_package(roslint REQUIRED)
+  find_package(OpenCV REQUIRED)
+  find_package(catkin REQUIRED COMPONENTS roslib)
   roslint_cpp()
   roslint_add_test()
+
+  # rostest NCS SDK environment
+  add_executable(unittest_environment tests/unittest_environment.cpp)
+  target_link_libraries(unittest_environment ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  # rostest library function
+  add_executable(unittest_function tests/unittest_function.cpp)
+  target_link_libraries(unittest_function ${PROJECT_NAME} ${OpenCV_LIBS} ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UNITEST_LIBRARIES})
+  add_dependencies(unittest_function ${catkin_EXPORTED_TARGETS})
+
+  add_rostest(tests/test_all.test)
 endif()

@@ -20,19 +20,27 @@
 #include <string>
 #include <vector>
 
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <nodelet/nodelet.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
-
 #include "movidius_ncs_lib/ncs.h"
+#include "movidius_ncs_lib/ncs_manager.h"
 
 namespace movidius_ncs_stream
 {
+typedef boost::function<void(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header)> FUNP_C;
+typedef boost::function<void(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header)> FUNP_D;
+
 class NCSImpl
 {
 public:
   NCSImpl(ros::NodeHandle& nh, ros::NodeHandle& pnh);
   ~NCSImpl();
+
+  void cbGetClassificationResult(movidius_ncs_lib::ClassificationResultPtr result, std_msgs::Header header);
+  void cbGetDetectionResult(movidius_ncs_lib::DetectionResultPtr result, std_msgs::Header header);
 
 private:
   void cbClassify(const sensor_msgs::ImageConstPtr& image);
@@ -40,14 +48,15 @@ private:
   void getParameters();
   void init();
 
-  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NCSManager> ncs_manager_handle_;
 
   ros::Publisher pub_;
   image_transport::Subscriber sub_;
   ros::NodeHandle nh_;
   ros::NodeHandle pnh_;
 
-  int device_index_;
+  int max_device_number_;
+  int start_device_index_;
   int log_level_;
   std::string cnn_type_;
   std::string graph_file_path_;
@@ -58,7 +67,7 @@ private:
   int top_n_;
 };
 
-class NCSNodelet: public nodelet::Nodelet
+class NCSNodelet : public nodelet::Nodelet
 {
 public:
   virtual ~NCSNodelet();

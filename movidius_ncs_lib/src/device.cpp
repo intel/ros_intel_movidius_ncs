@@ -54,7 +54,7 @@ std::string Device::getName() const
 
 void Device::open()
 {
-  ROS_INFO_STREAM("open device #" << index_ << " name=" << name_);
+  ROS_INFO_STREAM("opening device #" << index_ << " name=" << name_);
   int ret = mvncOpenDevice(name_.c_str(), &handle_);
   ExceptionUtil::tryToThrowMvncException(ret);
 }

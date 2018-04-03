@@ -1,5 +1,6 @@
 ## Classification for Image
-This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.   
+This project supports multiple devices and multiple CNN models for classification. By default, maximum number of devices will be used in inference. <br>
+Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.   
 #### [1 CNN Models](#1-cnn-models-1)
 * [AlexNet](#alexnet)
 * [GoogleNet](#googlenet)
@@ -23,9 +24,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=alexnet
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### GoogleNet
 Compile NCS graph.
@@ -37,9 +38,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=googlenet
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### SqueezeNet
 Compile NCS graph.
@@ -51,9 +52,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=squeezenet
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### Inception_V1
 Compile NCS graph.
@@ -65,9 +66,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v1
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### Inception_V2
 Compile NCS graph.
@@ -79,9 +80,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v2
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### Inception_V3
 Compile NCS graph.
@@ -93,9 +94,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v3
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### Inception_V4
 Compile NCS graph.
@@ -107,9 +108,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v4
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 * #### MobileNet
 Compile NCS graph.
@@ -121,9 +122,9 @@ Launch object classification service.
 ```Shell
 roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=mobilenet
 ```
-Run the example application with an absolute path of an image on another console. For example,
+Launch the example application on another console. For example,
 ```Shell
-rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movidius/ncappzoo/data/images/cat.jpg
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
 ### 2 Other Arguments
 |Arguments|Description|Default Value|Valid Values|
@@ -132,3 +133,5 @@ rosrun movidius_ncs_example movidius_ncs_example_image_classification /opt/movid
 |log_level|ncs log level|0|0:Nothing / 1:Errors / 2:Verbose|
 |cnn_type|indicate different cnn models|googlenet|alexnet / googlenet / squeezenet / inception_v1 / inception_v2 / inception_v3 / inception_v4 / mobilenet|
 |top_n|the number of results to be shown, only valid for classification|3|0~5|
+|demo_mode|the display mode of processed results|0:sequentially output all results 1: display random results in infinite loop|0, 1|
+|image_base_path|directory of images to be inferred|"/opt/movidius/ncappzoo/data/images/"||

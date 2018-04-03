@@ -1,11 +1,11 @@
 # Copyright (c) 2017 Intel Corporation
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   cv_bridge
   sensor_msgs
-  movidius_ncs_msgs
+  object_msgs
   message_filters
   roslint
 )
@@ -44,11 +44,11 @@ add_executable(${PROJECT_NAME}_stream_classification src/stream_classification.c
 add_executable(${PROJECT_NAME}_stream_detection src/stream_detection.cpp)
 
 add_dependencies(${PROJECT_NAME}_image_classification
-                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
                  ${catkin_EXPORTED_TARGETS})
 
 add_dependencies(${PROJECT_NAME}_image_detection
-                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+                 ${${PROJECT_NAME}_EXPORTED_TARGETS}
                  ${catkin_EXPORTED_TARGETS})
 
 add_dependencies(${PROJECT_NAME}_stream_classification
@@ -78,6 +78,7 @@ target_link_libraries(${PROJECT_NAME}_stream_detection
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.

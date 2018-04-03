@@ -1,0 +1,38 @@
+<!--
+Copyright (c) 2017 Intel Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<launch>
+  <arg name="parallel_size" default="5" />
+  <arg name="image_base_path" default="/opt/movidius/ncappzoo/data/images/"/>
+  <arg name="demo_mode" default="1"/>
+  <arg name="parallel_flag" default="0"/>
+
+  <node pkg="movidius_ncs_example" type="movidius_ncs_example_image_classification"
+        name="movidius_ncs_image_single_classification" output="screen">
+      <param name="parallel_size" value="1" />
+      <param name="image_base_path" value="$(arg image_base_path)" />
+      <param name="demo_mode" value="$(arg demo_mode)" />
+      <param name="parallel_flag" value="$(arg parallel_flag)" />
+  </node>
+
+  <node pkg="movidius_ncs_example" type="movidius_ncs_example_image_classification"
+        name="movidius_ncs_image_multiple_classification" output="screen">
+      <param name="parallel_size" value="$(arg parallel_size)" />
+      <param name="image_base_path" value="$(arg image_base_path)" />
+      <param name="demo_mode" value="$(arg demo_mode)" />
+      <param name="parallel_flag" value="1" />
+  </node>
+</launch>

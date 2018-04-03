@@ -1,7 +1,7 @@
 <!--
-Copyright(c) 2017 Intel Corporation
+Copyright (c) 2017 Intel Corporation
 
-Licensed under the Apache License, Version 2.0(the "License");
+Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
@@ -15,7 +15,7 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="max_device_number" default="255" />
+  <arg name="max_device_number" default="1" />
   <arg name="start_device_index" default="0" />
   <arg name="log_level" default="0" />
   <arg name="top_n" default="3" />
@@ -42,12 +42,13 @@ limitations under the License.
        if="$(eval cnn_type == 'mobilenetssd')"/>
 
   <node pkg="movidius_ncs_image" type="movidius_ncs_image"
-        name="movidius_ncs_image_multiple" output="screen">
-      <param name="max_device_number" value="$(arg max_device_number)" />
+        name="movidius_ncs_image_single" output="screen">
+      <param name="max_device_number" value="1" />
       <param name="start_device_index" value="$(arg start_device_index)" />
       <param name="log_level" value="$(arg log_level)" />
       <param name="cnn_type" value="$(arg cnn_type)" />
       <param name="top_n" value="$(arg top_n)" />
       <rosparam command="load" file="$(arg param_file)" />
   </node>
+
 </launch>
