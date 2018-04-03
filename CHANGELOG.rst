@@ -2,6 +2,12 @@
 Changelog for ros_intel_movidius_ncs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.0 (2018-04-03)
+------------------
+* Support NCSDK `v1.12.00 <https://github.com/movidius/ncsdk/releases>`_ and above
+* Replace internal ros_movidius_ncs_msgs with the external object_msgs (`#50 <https://github.com/intel/ros_intel_movidius_ncs/pull/50>`_)
+* Support inference with multiple NCS devices (`#66 <https://github.com/intel/ros_intel_movidius_ncs/pull/66>`_)
+* Add unit test scripts(`#58 <https://github.com/intel/ros_intel_movidius_ncs/pull/58>`_)
 0.5.0 (2017-12-21)
 ------------------
 * Support NCSDK `v1.11.00 <https://github.com/movidius/ncsdk/releases>`_ and above
