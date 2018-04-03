@@ -8,7 +8,7 @@ This project is a ROS wrapper for NC API of [NCSDK](https://movidius.github.io/n
 * A ROS publisher for object classification and detection of a video stream from a RGB camera
 * Demo applications to show the capabilities of ROS service and publisher
 * Support multiple CNN models of Caffe and Tensorflow
-* Support multiple devices in parallel to acclerate inference
+* Support multiple devices in parallel to acclerate inference. See [demo video](https://www.youtube.com/watch?v=E21KY5osOqE).
 
 There are 2 active branches in this project:
 * master - *stable branch*  
