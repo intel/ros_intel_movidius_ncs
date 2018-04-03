@@ -20,3 +20,5 @@ Run the example application on another console. For example,
 ```Shell
 roslaunch movidius_ncs_launch ncs_image_parallel_detection_example.launch image_base_path:=<absolute-image-directory>
 ``` 
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/E21KY5osOqE/0.jpg)](http://www.youtube.com/watch?v=E21KY5osOqE)
