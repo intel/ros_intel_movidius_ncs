@@ -70,14 +70,15 @@ void NCSManager::initDeviceManager()
   }
 }
 
-void join(std::thread& t)
+void detach(std::thread& t)
 {
-  t.join();
+  t.detach();
 }
 
 void NCSManager::deviceThread(int device_index)
 {
-  while (1)
+  int waiting_time = 0;
+  while (waiting_time <= WAITING_THRESHOLD)
   {
     if (!image_list_.empty())
     {
@@ -116,9 +117,12 @@ void NCSManager::deviceThread(int device_index)
     }
     else
     {
-      usleep(1);
+      waiting_time++;
+      sleep(1);
     }
   }
+
+  std::vector <std::thread>().swap(threads_);
 }
 
 void NCSManager::startThreads()
@@ -128,9 +132,7 @@ void NCSManager::startThreads()
     threads_.push_back(std::thread(&NCSManager::deviceThread, this, i));
   }
 
-  std::for_each(threads_.begin(), threads_.end(), join);
-
-  ROS_INFO("started %d threads", device_count_ - start_device_index_);
+  std::for_each(threads_.begin(), threads_.end(), detach);
 }
 
 std::vector<ClassificationResultPtr> NCSManager::classifyImage(const std::vector<std::string>& images)
@@ -217,6 +219,11 @@ void NCSManager::classifyStream(const cv::Mat& image, FUNP_C cbGetClassification
   }
   image_list_.push_back(imageFrame);
   mtx_.unlock();
+
+  if(threads_.size() == 0)
+  {
+    startThreads();
+  }
 }
 
 void NCSManager::detectStream(const cv::Mat& image, FUNP_D cbGetDetectionResult,
@@ -235,5 +242,10 @@ void NCSManager::detectStream(const cv::Mat& image, FUNP_D cbGetDetectionResult,
   }
   image_list_.push_back(imageFrame);
   mtx_.unlock();
+
+  if(threads_.size() == 0)
+  {
+    startThreads();
+  }
 }
 }  // namespace movidius_ncs_lib

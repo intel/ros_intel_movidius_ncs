@@ -219,8 +219,6 @@ void NCSImpl::init()
     sub_ = it->subscribe("/camera/rgb/image_raw", 1, &NCSImpl::cbDetect, this);
     pub_ = nh_.advertise<object_msgs::ObjectsInBoxes>("detected_objects", 1);
   }
-
-  ncs_manager_handle_->startThreads();
 }
 
 void NCSImpl::cbClassify(const sensor_msgs::ImageConstPtr& image_msg)

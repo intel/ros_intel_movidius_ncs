@@ -31,6 +31,7 @@
 #include "movidius_ncs_lib/ncs.h"
 
 #define IMAGE_BUFFER_SIZE 10
+#define WAITING_THRESHOLD 10
 
 namespace movidius_ncs_lib
 {
@@ -51,8 +52,6 @@ public:
              const int& network_dimension, const std::vector<float>& mean, const float& scale, const int& top_n);
   ~NCSManager();
 
-  void startThreads();
-
   void classifyStream(const cv::Mat& image, FUNP_C cbGetClassificationResult,
                       const sensor_msgs::ImageConstPtr& image_msg);
   void detectStream(const cv::Mat& image, FUNP_D cbGetDetectionResult,
@@ -63,6 +62,7 @@ public:
 private:
   void initDeviceManager();
   void deviceThread(int device_index);
+  void startThreads();
 
   const int max_device_number_;
   const int start_device_index_;
