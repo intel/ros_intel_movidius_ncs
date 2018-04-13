@@ -5,8 +5,8 @@ Movidius NCS SDK supported multiple NCS in parallel for acceleration. We integra
 ### 2 Arguments
 |Arguments|Description|Default Value|Valid Values|
 |:-|:-|:-|:-|
-|max_device_number|max device number in one node|255|0~N-1(N is the maximum number of inserted availabe NCS devices)|
-|start_device_index|start index of all inserted NCS devices in one node|0|0~N-1(N is the maximum number of inserted availabe NCS devices)|
+|max_device_number|max device number in one node|255|0~N-1(N is the maximum number of inserted available NCS devices)|
+|start_device_index|start index of all inserted NCS devices in one node|0|0~N-1(N is the maximum number of inserted available NCS devices)|
 ### 3 Guide
 In order to control the inserted devices, we add two arguments as described above. One example of how to use these arguments is in the launch files [ncs_camera.launch](https://github.com/intel/ros_intel_movidius_ncs/blob/devel/movidius_ncs_launch/launch/ncs_camera.launch) in line 42 and line 43. By default, one process will use at most 255 devices, and use the start index as 0.<br>
 You can specify other choices of these arguments in your own launch files. Make sure they are in the valid scope.
