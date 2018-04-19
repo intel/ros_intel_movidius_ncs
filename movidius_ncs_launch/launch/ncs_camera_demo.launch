@@ -85,12 +85,24 @@ limitations under the License.
              or cnn_type == 'inception_v1' or cnn_type == 'inception_v2'
              or cnn_type == 'inception_v3' or cnn_type == 'inception_v4'
              or cnn_type == 'mobilenet' or cnn_type == 'squeezenet')">
+      <include file="$(find movidius_ncs_launch)/launch/includes/ncs_stream_classification_single.launch">
+        <arg name="manager" value="$(arg manager)" />
+        <arg name="input_topic" value="$(arg input_topic)" />
+        <arg name="output_topic" value="$(arg output_topic)" />
+        <arg name="max_device_number" value="1" />
+        <arg name="start_device_index" value="0" />
+        <arg name="log_level" value="$(arg log_level)" />
+        <arg name="top_n" value="$(arg top_n)" />
+        <arg name="cnn_type" value="$(arg cnn_type)"  />
+        <arg name="param_file" value="$(arg param_file)" />
+      </include>
+
       <include file="$(find movidius_ncs_launch)/launch/includes/ncs_stream_classification_multiple.launch">
         <arg name="manager" value="$(arg manager)" />
         <arg name="input_topic" value="$(arg input_topic)" />
         <arg name="output_topic" value="$(arg output_topic)" />
-        <arg name="max_device_number" value="$(arg max_device_number)" />
-        <arg name="start_device_index" value="$(arg start_device_index)" />
+        <arg name="max_device_number" value="255" />
+        <arg name="start_device_index" value="1" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="top_n" value="$(arg top_n)" />
         <arg name="cnn_type" value="$(arg cnn_type)"  />
@@ -100,12 +112,24 @@ limitations under the License.
 
     <!-- for detection -->
     <group if="$(eval cnn_type == 'mobilenetssd' or cnn_type == 'tinyyolo_v1')">
+      <include file="$(find movidius_ncs_launch)/launch/includes/ncs_stream_detection_single.launch">
+        <arg name="manager" value="$(arg manager)" />
+        <arg name="input_topic" value="$(arg input_topic)" />
+        <arg name="output_topic" value="$(arg output_topic)" />
+        <arg name="max_device_number" value="1" />
+        <arg name="start_device_index" value="0" />
+        <arg name="log_level" value="$(arg log_level)" />
+        <arg name="top_n" value="$(arg top_n)" />
+        <arg name="cnn_type" value="$(arg cnn_type)"  />
+        <arg name="param_file" value="$(arg param_file)" />
+      </include>
+
       <include file="$(find movidius_ncs_launch)/launch/includes/ncs_stream_detection_multiple.launch">
         <arg name="manager" value="$(arg manager)" />
         <arg name="input_topic" value="$(arg input_topic)" />
         <arg name="output_topic" value="$(arg output_topic)" />
-        <arg name="max_device_number" value="$(arg max_device_number)" />
-        <arg name="start_device_index" value="$(arg start_device_index)" />
+        <arg name="max_device_number" value="255" />
+        <arg name="start_device_index" value="1" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="top_n" value="$(arg top_n)" />
         <arg name="cnn_type" value="$(arg cnn_type)"  />
