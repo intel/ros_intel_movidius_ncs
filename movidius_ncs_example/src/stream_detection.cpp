@@ -17,10 +17,10 @@
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
-#include <opencv2/opencv.hpp>
-#include <ros/ros.h>
 #include <object_msgs/ObjectInBox.h>
 #include <object_msgs/ObjectsInBoxes.h>
+#include <opencv2/opencv.hpp>
+#include <ros/ros.h>
 
 #define LINESPACING 20
 #define DEFAULT_PARALLEL_FLAG 1
@@ -85,8 +85,7 @@ void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::ObjectsInB
   }
   else
   {
-    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1
-        , cv::Scalar(0, 255, 0));
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
     cv::namedWindow("image detection with multiple devices");
     cv::moveWindow("image detection with multiple devices", MOVEWINDOW, 0);
     cv::imshow("image detection with multiple devices", cvImage);
@@ -114,7 +113,8 @@ int main(int argc, char** argv)
   if (parallel_flag == 0)
   {
     message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
-    message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh, "/movidius_ncs_nodelet_single/detected_objects", 1);
+    message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh, "/movidius_ncs_nodelet/detected_objects_single",
+                                                                    1);
     message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub, objSub, 60);
     sync.registerCallback(boost::bind(&syncCb, _1, _2));
     ros::spin();
@@ -122,7 +122,8 @@ int main(int argc, char** argv)
   else
   {
     message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
-    message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh, "/movidius_ncs_nodelet_multiple/detected_objects", 1);
+    message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(
+        nh, "/movidius_ncs_nodelet/detected_objects_multiple", 1);
     message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub, objSub, 60);
     sync.registerCallback(boost::bind(&syncCb, _1, _2));
     ros::spin();

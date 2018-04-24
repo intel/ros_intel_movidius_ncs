@@ -16,12 +16,25 @@ limitations under the License.
 
 <launch>
   <arg name="camera_topic" default="/camera/color/image_raw" />
+  <arg name="parallel_flag" default="1"/>
+  <arg name="contrast_mode" default="0" />
 
-  <node name="movidius_ncs_example_stream_classification" pkg="movidius_ncs_example" type="movidius_ncs_example_stream_classification_single" output="screen" >
-    <remap from="/camera/color/image_raw" to="$(arg camera_topic)" />
-  </node>
+  <group if="$(eval contrast_mode == 0)">
+    <node name="movidius_ncs_example_stream_classification_multiple" pkg="movidius_ncs_example" type="movidius_ncs_example_stream_classification" output="screen" >
+      <remap from="/camera/color/image_raw" to="$(arg camera_topic)" />
+      <param name="parallel_flag" value="1" />
+    </node>
+  </group>
 
-  <node name="movidius_ncs_example_stream_classification" pkg="movidius_ncs_example" type="movidius_ncs_example_stream_classification_multiple" output="screen" >
-    <remap from="/camera/color/image_raw" to="$(arg camera_topic)" />
-  </node>
+  <group if="$(eval contrast_mode == 1)">
+    <node name="movidius_ncs_example_stream_classification_single" pkg="movidius_ncs_example" type="movidius_ncs_example_stream_classification" output="screen" >
+      <remap from="/camera/color/image_raw" to="$(arg camera_topic)" />
+      <param name="parallel_flag" value="0" />
+    </node>
+
+    <node name="movidius_ncs_example_stream_classification_multiple" pkg="movidius_ncs_example" type="movidius_ncs_example_stream_classification" output="screen" >
+      <remap from="/camera/color/image_raw" to="$(arg camera_topic)" />
+      <param name="parallel_flag" value="$(arg parallel_flag)" />
+    </node>
+  </group>
 </launch>

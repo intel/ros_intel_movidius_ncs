@@ -19,8 +19,8 @@
 #include <message_filters/time_synchronizer.h>
 #include <object_msgs/Object.h>
 #include <object_msgs/Objects.h>
-#include <ros/ros.h>
 #include <opencv2/opencv.hpp>
+#include <ros/ros.h>
 
 #define LINESPACING 50
 #define DEFAULT_PARALLEL_FLAG 1
@@ -29,7 +29,7 @@
 int getFPS()
 {
   static int fps = 0;
-  static boost::posix_time::ptime duration_start =boost::posix_time::microsec_clock::local_time();
+  static boost::posix_time::ptime duration_start = boost::posix_time::microsec_clock::local_time();
   static int frame_cnt = 0;
 
   frame_cnt++;
@@ -53,11 +53,12 @@ void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::Objects::C
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
   int cnt = 0;
 
-  for (auto obj : objs->objects_vector) {
+  for (auto obj : objs->objects_vector)
+  {
     std::stringstream ss;
     ss << obj.object_name << ": " << obj.probability * 100 << '%';
-    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
-                cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 1,
+                cv::Scalar(0, 255, 0));
   }
 
   std::stringstream ss;
@@ -66,27 +67,28 @@ void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::Objects::C
 
   if (parallel_flag == 0)
   {
-    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
-              cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 1,
+                cv::Scalar(0, 255, 0));
     cv::imshow("image classification with single device", cvImage);
   }
   else
   {
-
-    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
-              cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)), cv::FONT_HERSHEY_SIMPLEX, 1,
+                cv::Scalar(0, 255, 0));
     cv::namedWindow("image classification with multiple devices");
     cv::moveWindow("image classification with multiple devices", MOVEWINDOW, 0);
     cv::imshow("image classification with multiple devices", cvImage);
   }
 
   int key = cv::waitKey(5);
-  if (key == 13 || key == 27 || key == 32 || key == 113) {
+  if (key == 13 || key == 27 || key == 32 || key == 113)
+  {
     ros::shutdown();
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   ros::init(argc, argv, "movidius_ncs_example_stream");
   ros::NodeHandle nh("~");
 
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
   if (parallel_flag == 0)
   {
     message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
-    message_filters::Subscriber<object_msgs::Objects> objSub(nh, "/movidius_ncs_nodelet_single/classified_objects", 1);
+    message_filters::Subscriber<object_msgs::Objects> objSub(nh, "/movidius_ncs_nodelet/classified_objects_single", 1);
     message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::Objects> sync(camSub, objSub, 60);
     sync.registerCallback(boost::bind(&syncCb, _1, _2));
     ros::spin();
@@ -108,7 +110,8 @@ int main(int argc, char** argv) {
   else
   {
     message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
-    message_filters::Subscriber<object_msgs::Objects> objSub(nh, "/movidius_ncs_nodelet_multiple/classified_objects", 1);
+    message_filters::Subscriber<object_msgs::Objects> objSub(nh, "/movidius_ncs_nodelet/classified_objects_multiple",
+                                                             1);
     message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::Objects> sync(camSub, objSub, 60);
     sync.registerCallback(boost::bind(&syncCb, _1, _2));
     ros::spin();
