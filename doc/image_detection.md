@@ -20,7 +20,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=mobilenetssd
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_detection_example.launch demo_mode:=0 image_base_path:=<absolute-image-directory>
+roslaunch movidius_ncs_launch ncs_image_detection_example.launch image_base_path:=<absolute-image-directory>
 ```
 * #### TinyYolo_V1
 Compile NCS graph.
@@ -34,7 +34,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=tinyyolo_v1
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_detection_example.launch demo_mode:=0 image_base_path:=<absolute-image-directory>
+roslaunch movidius_ncs_launch ncs_image_detection_example.launch image_base_path:=<absolute-image-directory>
 ```
 ### 2 Other Arguments
 |Arguments|Description|Default Value|Valid Values|
