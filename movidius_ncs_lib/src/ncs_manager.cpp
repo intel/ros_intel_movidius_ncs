@@ -118,11 +118,14 @@ void NCSManager::deviceThread(int device_index)
     else
     {
       waiting_time++;
-      sleep(1);
+      usleep(1000);
     }
   }
 
-  std::vector <std::thread>().swap(threads_);
+  if (!threads_.empty())
+  {
+    std::vector <std::thread>().swap(threads_);
+  }
 }
 
 void NCSManager::startThreads()

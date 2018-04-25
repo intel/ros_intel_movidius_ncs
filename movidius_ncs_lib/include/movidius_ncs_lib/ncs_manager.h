@@ -31,7 +31,7 @@
 #include "movidius_ncs_lib/ncs.h"
 
 #define IMAGE_BUFFER_SIZE 10
-#define WAITING_THRESHOLD 10
+#define WAITING_THRESHOLD 10000
 
 namespace movidius_ncs_lib
 {
