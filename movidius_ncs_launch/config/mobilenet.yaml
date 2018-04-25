@@ -1,4 +1,4 @@
-graph_file_path: "/opt/movidius/ncappzoo/tensorflow/mobilenets/graph"
+graph_file_path: "/opt/movidius/ncappzoo/tensorflow/mobilenets/model/graph"
 category_file_path: "/opt/movidius/ncappzoo/data/ilsvrc12/imagenet1001.txt"
 network_dimension: 224
 channel1_mean: 127.5
