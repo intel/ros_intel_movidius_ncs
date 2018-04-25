@@ -1,8 +1,8 @@
 ## Classification for Video
-This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
+This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.
 #### [1 CNN Models](#1-cnn-models-1)
 * [AlexNet](#alexnet)
-* [GoogleNet](#googlenet)
+* [GoogLeNet](#googlenet)
 * [SqueezeNet](#squeezenet)
 * [Inception_V1](#inception_v1)
 * [Inception_V2](#inception_v2)
@@ -34,10 +34,10 @@ roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_to
 # Option 2: USB camera
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
 ```
-* #### GoogleNet
+* #### GoogLeNet
 Compile NCS graph.
 ```Shell
-cd /opt/movidius/ncappzoo/caffe/GoogleNet
+cd /opt/movidius/ncappzoo/caffe/GoogLeNet
 make
 ```
 Launch video streaming nodelet.
@@ -175,7 +175,7 @@ roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_to
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ### 2 Run with Other ROS Supported Cameras
-Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:  
+Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:
 Launch your preferred camera node.
 ```Shell
 #launch ROS master
