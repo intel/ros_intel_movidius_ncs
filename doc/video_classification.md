@@ -175,7 +175,7 @@ roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_to
 roslaunch movidius_ncs_launch ncs_stream_classification_example.launch camera_topic:="/usb_cam/image_raw"
 ```
 ### 2 Run with Other ROS Supported Cameras
-Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:
+Though this ROS package is only tested on RealSense D400 series camera and Microsoft HD-300 USB camera, other ROS supported cameras probably work as well. You can try in this way:  
 Launch your preferred camera node.
 ```Shell
 #launch ROS master
