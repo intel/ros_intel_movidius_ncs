@@ -11,9 +11,9 @@ This project is a ROS wrapper for NC API of [NCSDK](https://movidius.github.io/n
 * Support multiple devices in parallel to acclerate inference
 
 There are 2 active branches in this project:
-* master - *stable branch*
+* master - *stable branch*  
   The latest version on it is v0.6.0 which supports NCSDK v1.12.00. master branch is only updated when every milestone release ready.
-* devel - *default branch*
+* devel - *default branch*  
   This branch is updated from time to time and maintain the latest code on it. Each pull request should be submitted based on devel branch. We will merge patches to master branch on every milestone release.
 
 ## 2 Prerequisite
@@ -42,8 +42,8 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   2. RealSense D400 series camera
   - Install Intel® RealSense™ SDK 2.0 ([tag v2.9.1](https://github.com/IntelRealSense/librealsense/tree/v2.9.1))
     - [Install from source code](https://github.com/IntelRealSense/librealsense/blob/v2.9.1/doc/installation.md)(Recommended)
-    - [Install from package](https://github.com/IntelRealSense/librealsense/blob/v2.9.1/doc/distribution_linux.md)
-    **Note**: Create a symbol link from libusb.a to libusb-1.0.a, otherwise "libusb.a" is probably not to be found by librealsense.
+    - [Install from package](https://github.com/IntelRealSense/librealsense/blob/v2.9.1/doc/distribution_linux.md)  
+    **Note**: Create a symbol link from libusb.a to libusb-1.0.a, otherwise "libusb.a" is probably not to be found by librealsense.  
     ```sudo ln -s /usr/lib/x86_64-linux-gnu/libusb-1.0.a /usr/lib/libusb.a```
   - Install Intel® RealSense™ ROS ([guide](https://github.com/intel-ros/realsense))
   ```Shell
@@ -107,10 +107,10 @@ We introduce multiple NCS support from v0.6.0, providing **x1.8 / x2.5 / x3** pe
 
 ## 6 Interfaces
 ### 6.1 Topic
-Classification: ```/movidius_ncs_nodelet/classified_objects```
+Classification: ```/movidius_ncs_nodelet/classified_objects```  
 Detection: ```/movidius_ncs_nodelet/detected_objects```
 ### 6.2 Service
-Classification: ```/movidius_ncs_image/classify_object```
+Classification: ```/movidius_ncs_image/classify_object```  
 Detection: ```/movidius_ncs_image/detect_object```
 
 ## 7 Known Issues
