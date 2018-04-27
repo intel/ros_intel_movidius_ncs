@@ -17,12 +17,14 @@
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
-#include <opencv2/opencv.hpp>
-#include <ros/ros.h>
 #include <object_msgs/ObjectInBox.h>
 #include <object_msgs/ObjectsInBoxes.h>
+#include <opencv2/opencv.hpp>
+#include <ros/ros.h>
 
 #define LINESPACING 20
+#define DEFAULT_PARALLEL_FLAG 1
+#define MOVEWINDOW 1000
 
 int getFPS()
 {
@@ -45,6 +47,7 @@ int getFPS()
   return fps;
 }
 
+int parallel_flag;
 void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::ObjectsInBoxes::ConstPtr& objs_in_boxes)
 {
   cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
@@ -75,8 +78,18 @@ void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::ObjectsInB
   int fps = getFPS();
   ss << "FPS: " << fps;
 
-  cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
-  cv::imshow("image_viewer", cvImage);
+  if (parallel_flag == 0)
+  {
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
+    cv::imshow("stream detection with single device", cvImage);
+  }
+  else
+  {
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
+    cv::namedWindow("image detection with multiple devices");
+    cv::moveWindow("image detection with multiple devices", MOVEWINDOW, 0);
+    cv::imshow("image detection with multiple devices", cvImage);
+  }
 
   int key = cv::waitKey(5);
   if (key == 13 || key == 27 || key == 32 || key == 113)
@@ -88,13 +101,33 @@ void syncCb(const sensor_msgs::ImageConstPtr& img, const object_msgs::ObjectsInB
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "movidius_ncs_example_stream");
-  ros::NodeHandle nh;
+  ros::NodeHandle nh("~");
 
-  message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
-  message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh, "/movidius_ncs_nodelet/detected_objects", 1);
-  message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub, objSub, 60);
-  sync.registerCallback(boost::bind(&syncCb, _1, _2));
+  parallel_flag = DEFAULT_PARALLEL_FLAG;
+  if (!nh.getParam("parallel_flag", parallel_flag))
+  {
+    ROS_WARN("param parallel_flag not set, use default");
+  }
+  ROS_INFO_STREAM("use parallel_flag = " << parallel_flag);
 
-  ros::spin();
+  if (parallel_flag == 0)
+  {
+    message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
+    message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(nh, "/movidius_ncs_nodelet/detected_objects_single",
+                                                                    1);
+    message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub, objSub, 60);
+    sync.registerCallback(boost::bind(&syncCb, _1, _2));
+    ros::spin();
+  }
+  else
+  {
+    message_filters::Subscriber<sensor_msgs::Image> camSub(nh, "/camera/color/image_raw", 1);
+    message_filters::Subscriber<object_msgs::ObjectsInBoxes> objSub(
+        nh, "/movidius_ncs_nodelet/detected_objects_multiple", 1);
+    message_filters::TimeSynchronizer<sensor_msgs::Image, object_msgs::ObjectsInBoxes> sync(camSub, objSub, 60);
+    sync.registerCallback(boost::bind(&syncCb, _1, _2));
+    ros::spin();
+  }
+
   return 0;
 }

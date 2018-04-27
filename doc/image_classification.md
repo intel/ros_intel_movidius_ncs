@@ -40,7 +40,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=googlenet
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 * #### SqueezeNet
 Compile NCS graph.
@@ -54,7 +54,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=squeezenet
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 * #### Inception_V1
 Compile NCS graph.
@@ -68,7 +68,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v1
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 * #### Inception_V2
 Compile NCS graph.
@@ -82,7 +82,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v2
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 * #### Inception_V3
 Compile NCS graph.
@@ -96,7 +96,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v3
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 * #### Inception_V4
 Compile NCS graph.
@@ -110,7 +110,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=inception_v4
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 * #### MobileNet
 Compile NCS graph.
@@ -124,7 +124,7 @@ roslaunch movidius_ncs_launch ncs_image.launch cnn_type:=mobilenet
 ```
 Launch the example application on another console. For example,
 ```Shell
-roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
+roslaunch movidius_ncs_launch ncs_image_classification_example.launch
 ```
 ### 2 Other Arguments
 |Arguments|Description|Default Value|Valid Values|

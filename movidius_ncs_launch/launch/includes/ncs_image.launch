@@ -50,4 +50,5 @@ limitations under the License.
       <param name="top_n" value="$(arg top_n)" />
       <rosparam command="load" file="$(arg param_file)" />
   </node>
+
 </launch>
