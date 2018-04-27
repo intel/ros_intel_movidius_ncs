@@ -104,7 +104,10 @@ void NCSManager::deviceThread(int device_index)
         ncs_handle_list_[device_index]->classify();
         ClassificationResultPtr result = ncs_handle_list_[device_index]->getClassificationResult();
 
-        p_c_(result, first_image_header);
+        if (!p_c_.empty())
+        {
+          p_c_(result, first_image_header);
+        }
       }
       else
       {
@@ -112,17 +115,23 @@ void NCSManager::deviceThread(int device_index)
         ncs_handle_list_[device_index]->detect();
         DetectionResultPtr result = ncs_handle_list_[device_index]->getDetectionResult();
 
-        p_d_(result, first_image_header);
+        if(!p_d_.empty())
+        {
+          p_d_(result, first_image_header);
+        }
       }
     }
     else
     {
       waiting_time++;
-      sleep(1);
+      usleep(1000);
     }
   }
 
-  std::vector <std::thread>().swap(threads_);
+  if (!threads_.empty())
+  {
+    std::vector <std::thread>().swap(threads_);
+  }
 }
 
 void NCSManager::startThreads()
