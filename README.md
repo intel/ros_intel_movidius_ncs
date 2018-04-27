@@ -77,14 +77,14 @@ cp ~/catkin_ws/src/ros_intel_movidius_ncs/data/labels/* /opt/movidius/ncappzoo/d
 |CNN Model|Framework|Usage|
 |:-|:-|:-|
 |AlexNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#alexnet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#alexnet)|
-|GoogleNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#googlenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#googlenet)|
+|GoogLeNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#googlenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#googlenet)|
 |SqueezeNet|Caffe|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#squeezenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#squeezenet)|
 |Inception_v1|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#inception_v1)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#inception_v1)|
 |Inception_v2|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#inception_v2)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#inception_v2)|
 |Inception_v3|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#inception_v3)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#inception_v3)|
 |Inception_v4|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#inception_v4)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#inception_v4)|
 |MobileNet|Tensorflow|[Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md#mobilenet)/[Video](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/video_classification.md#mobilenet)|
-#### 5.1.2 Classification Result with GoogleNet
+#### 5.1.2 Classification Result with GoogLeNet
 ![classification with googlenet](https://github.com/intel/ros_intel_movidius_ncs/blob/master/data/results/googlenet_dog.png "classification with googlenet")
 #### 5.1.3 Running the Demo
 * [Static Image](https://github.com/intel/ros_intel_movidius_ncs/blob/master/doc/image_classification.md)

@@ -1,9 +1,9 @@
 ## Classification for Image
 This project supports multiple devices and multiple CNN models for classification. By default, maximum number of devices will be used in inference. <br>
-Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.   
+Please make sure you have already [set up environment](https://github.com/intel/ros_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.
 #### [1 CNN Models](#1-cnn-models-1)
 * [AlexNet](#alexnet)
-* [GoogleNet](#googlenet)
+* [GoogLeNet](#googlenet)
 * [SqueezeNet](#squeezenet)
 * [Inception_V1](#inception_v1)
 * [Inception_V2](#inception_v2)
@@ -28,10 +28,10 @@ Launch the example application on another console. For example,
 ```Shell
 roslaunch movidius_ncs_launch ncs_image_classification_example.launch demo_mode:=0
 ```
-* #### GoogleNet
+* #### GoogLeNet
 Compile NCS graph.
 ```Shell
-cd /opt/movidius/ncappzoo/caffe/GoogleNet
+cd /opt/movidius/ncappzoo/caffe/GoogLeNet
 make
 ```
 Launch object classification service.
