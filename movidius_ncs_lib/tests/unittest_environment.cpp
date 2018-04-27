@@ -40,7 +40,7 @@ TEST(UnitTestEnvironment, testAppZoo)
   EXPECT_TRUE(boost::filesystem::exists("/opt/movidius/ncappzoo"));
   std::system("cd /opt/movidius/ncappzoo && make > /dev/null 2>&1");
   std::vector<std::string> caffe_dirs = { "AlexNet", "GoogLeNet", "SqueezeNet", "SSD_MobileNet", "TinyYolo" };
-  std::vector<std::string> tf_dirs = { "inception_v1", "inception_v2", "inception_v3", "inception_v4", "mobilenets" };
+  std::vector<std::string> tf_dirs = { "inception_v1", "inception_v2", "inception_v3", "inception_v4", "mobilenets/model" };
   for (std::string caffe : caffe_dirs)
   {
     EXPECT_TRUE(boost::filesystem::exists("/opt/movidius/ncappzoo/caffe/" + caffe + "/graph"));
