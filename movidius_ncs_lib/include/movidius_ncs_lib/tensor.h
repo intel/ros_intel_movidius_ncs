@@ -55,7 +55,7 @@ public:
   {
     return image_height_;
   }
-#if !defined(__i386__) && !defined(__x86_64__)
+#ifndef SUPPORT_F16C
   static void fp32tofp16(uint16_t* __restrict out, float in);
   static void fp16tofp32(float* __restrict out, uint16_t in);
 #endif
