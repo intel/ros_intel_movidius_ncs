@@ -80,7 +80,7 @@ void NCS::classify()
     for (size_t index = 0; index < length / 2; ++index)
     {
       float fp32;
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef SUPPORT_F16C
       fp32 = _cvtsh_ss(probabilities[index]);
 #else
       Tensor::fp16tofp32(&fp32, probabilities[index]);
@@ -145,7 +145,7 @@ void NCS::detect()
     for (auto fp16 : result16_vector)
     {
       float fp32;
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef SUPPORT_F16C
       fp32 = _cvtsh_ss(fp16);
 #else
       Tensor::fp16tofp32(&fp32, fp16);
