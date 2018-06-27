@@ -41,7 +41,7 @@ find_path(MVNC_HEADER_FILE
           PATHS ENV ROS_ROOT)
 if(NOT MVNC_HEADER_FILE)
   message(FATAL_ERROR "Can't find mvnc.h, please install Movidius NCS SDK according to
-          https://developer.movidius.com/start/software-setup")
+          https://github.com/movidius/ncsdk")
 endif()
 
 add_library(${PROJECT_NAME}
