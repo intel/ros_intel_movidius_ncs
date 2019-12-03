@@ -1,4 +1,6 @@
 # ros_intel_movidius_ncs
+# Warning: This repo is deprecated. For latest ROS wrapper for Movidius NCS, please refer to our project ros_openvino_toolkit. 
+# See: https://github.com/intel/ros_openvino_toolkit!!
 
 ## 1 Introduction
 The Movidius™ Neural Compute Stick ([NCS](https://developer.movidius.com/)) is a tiny fanless deep learning device that you can use to learn AI programming at the edge. NCS is powered by the same low power high performance Movidius™ Vision Processing Unit ([VPU](https://www.movidius.com/solutions/vision-processing-unit)) that can be found in millions of smart security cameras, gesture controlled drones, industrial machine vision equipment, and more.
